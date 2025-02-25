@@ -1,0 +1,31 @@
+spring:
+
+  # ???? ?? ?? X( ?? ????? ?? ?? ?? )
+  thymeleaf:
+    cache: false
+
+  application:
+    name: variety-store-mono
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/h2db/variety-store-mono
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+  org.springframework.security: debug
+
+jwt:
+  secret-key: "The secret length must be at least 256 bits"
+  access-token-validity-millis: 7200000     # 2 * 60 * 60 * 1000 ???(= 2 ??)
+  refresh-token-validity-millis: 604800000  # 7 * 24 * 60 * 60 * 1000 ???(= 7 ?)
