@@ -4,7 +4,7 @@ import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.common.request.LoginRequest;
 import com.demo.variety_store_mono.common.request.SignUpRequest;
 import com.demo.variety_store_mono.common.response.TokenResponse;
-import com.demo.variety_store_mono.common.service.AuthenticationService;
+import com.demo.variety_store_mono.common.service.JwtAuthenticationService;
 import com.demo.variety_store_mono.common.service.UserService;
 import com.demo.variety_store_mono.security.jwt.JwtProperties;
 import com.demo.variety_store_mono.utility.CookieUtil;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminAuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    private final JwtAuthenticationService jwtAuthenticationService;
     private final UserService userService;
 
     private final JwtProperties jwtProperties;
@@ -36,7 +36,7 @@ public class AdminAuthenticationController {
     public String login(@ModelAttribute LoginRequest request, HttpServletResponse response) {
 
         // Access/Refresh 토큰 생성 및 저장.
-        TokenResponse tokenResponse = authenticationService.login(request);
+        TokenResponse tokenResponse = jwtAuthenticationService.login(request);
 
         // Access Token 쿠키에 저장.
         CookieUtil.addCookie(response, "accessToken",
@@ -74,7 +74,7 @@ public class AdminAuthenticationController {
         }
 
         // 새로운 Access Token 발급.
-        String newAccessToken = authenticationService.refreshAccessToken(Long.parseLong(refreshTokenId));
+        String newAccessToken = jwtAuthenticationService.refreshAccessToken(Long.parseLong(refreshTokenId));
         // 발급받은 Access Token을 쿠키에 저장.
         CookieUtil.addCookie(response, "accessToken", newAccessToken, jwtProperties.getAccessTokenValidityMillis().intValue());
 
@@ -88,7 +88,7 @@ public class AdminAuthenticationController {
         // DB에서 Refresh Token 삭제
         String refreshTokenId = CookieUtil.getCookieValue(request, "refreshTokenId").orElse(null);
         if (refreshTokenId != null) {
-            authenticationService.logout(Long.parseLong(refreshTokenId));
+            jwtAuthenticationService.logout(Long.parseLong(refreshTokenId));
         }
 
         // 세션 및 쿠키에서 Access Token & Refresh Token 삭제

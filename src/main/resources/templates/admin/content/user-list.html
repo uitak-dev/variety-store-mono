@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/head :: head}">
+    <title>사용자 목록</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+<main class="flex-fill">
+    <div class="container my-4">
+        <div class="row">
+            <!-- 사이드바 -->
+            <aside th:replace="~{admin/layout/sidebar :: sidebar}"></aside>
+            <!-- 메인 컨텐츠 -->
+            <section class="col-md-9">
+                <!-- 제목 -->
+                <h2>사용자 목록</h2>
+
+                <!-- 검색 폼 -->
+                <form th:object="${userSearch}" method="get" action="/admin/users" class="mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <input type="text" th:field="*{userName}" class="form-control" placeholder="아이디 검색">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" th:field="*{email}" class="form-control" placeholder="이메일 검색">
+                        </div>
+                        <div class="col-md-4">
+                            <!-- hidden 필드로 userType 값을 전달 -->
+                            <input type="hidden" name="userType" th:value="${userType}">
+                            <button type="submit" class="btn btn-primary">검색</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 사용자 목록 테이블 -->
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>순서</th>
+                        <th>아이디</th>
+                        <th>이메일</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user, userStat : ${userList.content}"
+                        th:attr="data-href='/admin/users/' + ${user.id} + '?userType=' + ${userType}"
+                        style="cursor:pointer;">
+                        <td th:text="${userStat.count}"></td>
+                        <td th:text="${user.userName}"></td>
+                        <td th:text="${user.email}"></td>
+                    </tr>
+                    <!-- 데이터가 없으면 표시 -->
+                    <tr th:if="${#lists.isEmpty(userList.content)}">
+                        <td colspan="3" class="text-center">데이터가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
+                <div th:if="${userList.totalElements > 0}">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- 이전 페이지 -->
+                            <li class="page-item" th:classappend="${userList.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/users(userType=${userType}, page=${userList.number - 1})}">&laquo;</a>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, userList.totalPages - 1)}"
+                                th:classappend="${userList.number} == ${i} ? 'active'">
+                                <a class="page-link" th:href="@{/admin/users(userType=${userType}, page=${i})}"
+                                   th:text="${i + 1}">1</a>
+                            </li>
+
+                            <!-- 다음 페이지 -->
+                            <li class="page-item" th:classappend="${userList.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/users(userType=${userType}, page=${userList.number + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('tr[data-href]').forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = row.getAttribute('data-href');
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

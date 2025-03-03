@@ -1,0 +1,41 @@
+/* 메뉴 간 간격과 구분선 스타일 */
+.navbar-nav .nav-link {
+    margin-right: 20px;
+    /* 메뉴 간 간격 조정 */
+    position: relative;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    /* 구분선 위치 */
+    height: 24px;
+    width: 1px;
+    background-color: white;
+    /* 구분선 색상 */
+}
+
+/* 마지막 메뉴 항목 구분선 제거 */
+.navbar-nav .nav-item:last-child .nav-link::after {
+    display: none;
+}
+
+/* 로그아웃 버튼 스타일 */
+.logout-btn {
+    margin-left: 30px;
+    /* 메뉴와 거리 조정 */
+    padding: 5px 20px;
+    border-radius: 50px;
+    /* 알약 모양 버튼 */
+}
+
+/* 클릭 가능한 테이블 행임을 시각적으로 표시 */
+tr.clickable {
+    cursor: pointer;
+}
+
+/* readonly 속성이 있는 input 태그의 배경을 회색으로 지정 */
+input[readonly] {
+    background-color: #e9ecef;
+}

@@ -1,6 +1,6 @@
 spring:
 
-  # ???? ?? ?? X( ?? ????? ?? ?? ?? )
+  # Remove this setting from the operating environment.
   thymeleaf:
     cache: false
 
@@ -22,10 +22,10 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
-  org.hibernate.orm.jdbc.bind: trace
-  org.springframework.security: debug
+#  org.hibernate.orm.jdbc.bind: trace
+#  org.springframework.security: debug
 
 jwt:
   secret-key: "The secret length must be at least 256 bits"
-  access-token-validity-millis: 7200000     # 2 * 60 * 60 * 1000 ???(= 2 ??)
-  refresh-token-validity-millis: 604800000  # 7 * 24 * 60 * 60 * 1000 ???(= 7 ?)
+  access-token-validity-millis: 7200000     # 2 * 60 * 60 * 1000 milliseconds(= 2 hours)
+  refresh-token-validity-millis: 604800000  # 7 * 24 * 60 * 60 * 1000 milliseconds(= 7 days)

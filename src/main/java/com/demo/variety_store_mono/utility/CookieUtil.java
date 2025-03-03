@@ -33,9 +33,9 @@ public class CookieUtil {
     /** 쿠키 삭제 */
     public static void deleteCookie(HttpServletResponse response, String name) {
         Cookie cookie = new Cookie(name, null);
-//        cookie.setPath("/");
-//        cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+//        cookie.setSecure(true);   운영 환경에서는 주석 제거.
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }

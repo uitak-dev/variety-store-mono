@@ -2,15 +2,32 @@ package com.demo.variety_store_mono.security.jwt;
 
 import com.demo.variety_store_mono.utility.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomBearerTokenResolver implements BearerTokenResolver {
 
+    // 공개 엔드포인트 목록.
+    private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
+            PathRequest.toStaticResources().atCommonLocations(),
+            new AntPathRequestMatcher("/auth/**"),
+            new AntPathRequestMatcher("/public/**")
+    );
+
     @Override
     public String resolve(HttpServletRequest request) {
+
+        // 요청이 공개 엔드포인트에 해당하면 토큰 추출을 건너뜁니다.
+        if (PUBLIC_URLS.matches(request)) {
+            return null;
+        }
+
         // Authorization 헤더 확인
         String headerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (headerToken != null && headerToken.startsWith("Bearer ")) {

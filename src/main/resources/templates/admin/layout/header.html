@@ -1,12 +1,28 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
-    <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="/admin/home">Admin Dashboard</a>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/admin/logout">Logout</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-gradient">
+        <div class="container">
+            <!-- 사이트 이름 왼쪽 표시 -->
+            <a class="navbar-brand" href="/admin/home">관리자 전용 페이지</a>
+            <!-- 오른쪽에 대분류 메뉴 -->
+            <div class="collapse navbar-collapse" id="headerMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link active">회원 관리</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/roles" class="nav-link">역할 관리</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">자원 관리(준비 중)</a>
+                    </li>
+                    <!-- 로그아웃 버튼 추가 -->
+                    <li class="nav-item">
+                        <form th:action="@{/auth/admin/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-light logout-btn">로그아웃</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 </header>

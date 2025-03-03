@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class JwtAuthenticationService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -88,6 +88,18 @@ public class AuthenticationService {
      * 로그아웃: 전달받은 리프레시 토큰을 DB에서 삭제하여 무효화.
      */
     public void logout(Long refreshTokenId) {
-        refreshTokenRepository.findById(refreshTokenId).ifPresent(refreshTokenRepository::delete);
+        // refreshToken 조회
+        RefreshToken refreshToken = refreshTokenRepository.findById(refreshTokenId)
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token id"));
+
+        // 연관관계 끊기: User에서 refreshToken 필드를 null로 설정
+        User user = refreshToken.getUser();
+        if (user != null) {
+            user.deleteRefreshToken();
+        }
+
+        // refreshToken 삭제
+        refreshTokenRepository.delete(refreshToken);
+//        refreshTokenRepository.flush();
     }
 }

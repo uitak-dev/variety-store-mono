@@ -1,15 +1,18 @@
 package com.demo.variety_store_mono.common.request;
 
-import com.demo.variety_store_mono.common.entity.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 회원 정보 수정 dto
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSearch {
+public class UserInfoRequest {
 
-    private String userName;
     private String email;
+    private String firstName;
+    private String lastName;
 }

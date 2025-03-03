@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<aside th:fragment="sidebar">
-    <div class="bg-dark text-white p-3">
-        <h5>Admin Menu</h5>
-        <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link text-white" href="/admin/home">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="/admin/users">Users</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="/admin/roles">Roles</a></li>
-        </ul>
+<aside th:fragment="sidebar" class="col-md-3 mb-3">
+    <div class="list-group">
+        <a class="list-group-item list-group-item-action bg-dark bg-gradient text-white">
+            메뉴
+        </a>
+        <!-- 모델에 담긴 메뉴 목록 출력 -->
+        <a th:each="menu : ${menuItems}"
+           th:href="${menu.url}"
+           th:text="${menu.label}"
+           class="list-group-item list-group-item-action"
+           th:classappend="${menu.active} ? ' bg-dark bg-gradient text-white' : ''">
+        </a>
     </div>
 </aside>

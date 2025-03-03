@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.admin.response;
 
+import com.demo.variety_store_mono.common.response.UserInfoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminResponse {
+public class AdminInfoResponse {
 
-    private Long id;
-    private String username;
-    private String email;
+    private UserInfoResponse userBasicInfo;
+
+    private String department;
 }

@@ -1,5 +1,8 @@
 package com.demo.variety_store_mono.common.entity;
 
+import com.demo.variety_store_mono.admin.entity.AdminDetail;
+import com.demo.variety_store_mono.customer.entity.CustomerDetail;
+import com.demo.variety_store_mono.seller.entity.SellerDetail;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,9 +34,6 @@ public class User extends Audit {
     @Column(unique = true)
     private String phoneNumber;
 
-    @Embedded
-    private Address address;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserType userType;      // CUSTOMER, SELLER, ADMIN
@@ -44,10 +44,20 @@ public class User extends Audit {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private RefreshToken refreshToken;
 
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CustomerDetail customerDetail;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SellerDetail sellerDetail;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AdminDetail adminDetail;
+
     @Builder
     public User(Long id, String userName, String password,
                 String email, String firstName, String lastName,
-                String phoneNumber, Address address, UserType userType) {
+                String phoneNumber, UserType userType) {
 
         this.id = id;
         this.userName = userName;
@@ -56,7 +66,6 @@ public class User extends Audit {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.address = address;
         this.userType = userType;
     }
 
@@ -66,8 +75,41 @@ public class User extends Audit {
                 .collect(Collectors.toSet());
     }
 
+    public void updateBasicInfo(String email, String firstName, String lastName) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public void createAdminDetail() {
+        this.adminDetail = AdminDetail.builder().user(this).build();
+    }
+
+    public void updateAdminDetail(String department) {
+        this.getAdminDetail().updateInfo(department);
+    }
+
+    public void createSellerDetail() {
+        this.sellerDetail = SellerDetail.builder().user(this).build();
+    }
+
+    public void updateSellerDetail(String companyName, String businessLicenseNumber) {
+        this.getSellerDetail().updateInfo(companyName, businessLicenseNumber);
+    }
+
+    public void createCustomerDetail() {
+        this.customerDetail = CustomerDetail.builder().user(this).build();
+    }
+
+    public void updateCustomerDetail(Address address) {
+        this.getCustomerDetail().updateInfo(address);
+    }
+
     public void addRole(Role role) {
         userRoles.add(new UserRole(this, role));
     }
 
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
 }

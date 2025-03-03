@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/head :: head}">
+    <title>판매자 상세 정보</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+<main class="flex-fill">
+    <div class="container my-4">
+        <h2>판매자 상세 정보</h2>
+        <!-- 공통 사용자 기본 정보 -->
+        <div class="mb-3">
+            <label for="id" class="form-label">ID</label>
+            <input type="text" id="id" class="form-control" th:value="${userDetailInfo.userBasicInfo.id}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="userName" class="form-label">아이디</label>
+            <input type="text" id="userName" class="form-control" th:value="${userDetailInfo.userBasicInfo.userName}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">이메일</label>
+            <input type="text" id="email" class="form-control" th:value="${userDetailInfo.userBasicInfo.email}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="firstName" class="form-label">이름</label>
+            <input type="text" id="firstName" class="form-control" th:value="${userDetailInfo.userBasicInfo.firstName}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="lastName" class="form-label">성</label>
+            <input type="text" id="lastName" class="form-control" th:value="${userDetailInfo.userBasicInfo.lastName}" readonly>
+        </div>
+        <!-- 판매자 상세 정보 -->
+        <div class="mb-3">
+            <label for="companyName" class="form-label">회사명</label>
+            <input type="text" id="companyName" class="form-control" th:value="${userDetailInfo.companyName}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
+            <input type="text" id="businessLicenseNumber" class="form-control" th:value="${userDetailInfo.businessLicenseNumber}" readonly>
+        </div>
+        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        th:onclick="|location.href='@{/admin/users(userType=${userType})}'|"
+                        type="button">
+                    목록
+                </button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg"
+                        th:attr="data-href='/admin/users/' + ${userDetailInfo.userBasicInfo.id} + '/edit?userType=' + ${userType}"
+                        type="button">
+                    정보 수정
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('button[data-href]').forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = row.getAttribute('data-href');
+            });
+        });
+    });
+</script>
+</body>
+</html>
