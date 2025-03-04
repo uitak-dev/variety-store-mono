@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.common.service;
 
+import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.entity.Role;
 import com.demo.variety_store_mono.common.entity.User;
 import com.demo.variety_store_mono.common.entity.UserType;
@@ -7,7 +8,10 @@ import com.demo.variety_store_mono.common.repository.RoleRepository;
 import com.demo.variety_store_mono.common.repository.UserRepository;
 import com.demo.variety_store_mono.common.request.SignUpRequest;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
+import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +56,11 @@ public class UserService {
 
         user.addRole(role);
         userRepository.save(user);
+    }
+
+    /** 사용자 목록 조회 */
+    public Page<UserBasicInfoResponse> getUserList(UserType userType, UserSearch userSearch, Pageable pageable) {
+        return userRepository.searchUserListByUserType(userType, userSearch, pageable);
     }
 
     /** 사용자 기본 정보 수정 */

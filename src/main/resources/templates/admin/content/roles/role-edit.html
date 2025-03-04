@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/head :: head}">
+    <title>역할 상세</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+<main class="flex-fill">
+    <div class="container my-4">
+        <h2>역할 정보 수정</h2>
+        <form th:object="${role}" method="post" th:action>
+            <!-- 역할 정보 -->
+            <div class="mb-3">
+                <label for="id" class="form-label">ID</label>
+                <input type="text" th:field="*{id}" id="id" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">역할 이름</label>
+                <input type="text" th:field="*{name}" id="name" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">역할 설명</label>
+                <input type="text" th:field="*{description}" id="description" class="form-control">
+            </div>
+
+            <!-- 버튼 -->
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="w-100 btn btn-primary">저장</button>
+                </div>
+                <div class="col">
+                    <button class="w-100 btn btn-secondary btn-lg"
+                            th:onclick="|location.href='@{/admin/roles/${role.id}}'|"
+                            type="button">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+</body>
+
+</html>

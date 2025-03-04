@@ -1,13 +1,13 @@
 package com.demo.variety_store_mono.admin.controller;
 
 import com.demo.variety_store_mono.admin.resolver.UserDetail;
-import com.demo.variety_store_mono.admin.service.AdminService;
 import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
-import com.demo.variety_store_mono.common.service.strategy.UserDetailStrategy;
-import com.demo.variety_store_mono.common.service.strategy.UserDetailStrategyFactory;
+import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategy;
+import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategyFactory;
+import com.demo.variety_store_mono.common.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserManagementController {
 
-    private final AdminService adminService;
+    private final UserService userService;
     private final UserDetailStrategyFactory strategyFactory;
 
     /** 사용자 목록 조회 페이지 */
@@ -46,10 +46,10 @@ public class UserManagementController {
         // 페이지 네비게이션 링크 등에 사용하기 위해, userType 도 모델에 담습니다.
         model.addAttribute("userType", userType.name());
 
-        Page<UserBasicInfoResponse> userList = adminService.getUserList(userType, userSearch, pageable);
+        Page<UserBasicInfoResponse> userList = userService.getUserList(userType, userSearch, pageable);
         model.addAttribute("userList", userList);
 
-        return "admin/content/user-list";
+        return "admin/content/users/user-list";
     }
 
     /** 사용자 상세 페이지 */

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/head :: head}">
+    <title>역할 목록</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+<main class="flex-fill">
+    <div class="container my-4">
+        <div class="row">
+
+            <!-- 메인 컨텐츠 -->
+            <section class="col-md-9">
+                <!-- 제목 -->
+                <h2>역할 목록</h2>
+
+                <!-- 검색 폼 -->
+                <form th:object="${roleSearch}" method="get" action="/admin/roles" class="mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <input type="text" th:field="*{name}" class="form-control" placeholder="역할 이름 검색">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">검색</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 역할 목록 테이블 -->
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>순서</th>
+                        <th>역할 이름</th>
+                        <th>설명</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="role, roleStat : ${roleList.content}"
+                        th:onclick="|location.href='@{/admin/roles/{id}(id=${role.id})}'|"
+                        style="cursor:pointer;">
+                        <td th:text="${roleStat.count}"></td>
+                        <td th:text="${role.name}"></td>
+                        <td th:text="${role.description}"></td>
+                    </tr>
+                    <!-- 데이터가 없으면 표시 -->
+                    <tr th:if="${#lists.isEmpty(roleList.content)}">
+                        <td colspan="3" class="text-center">데이터가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
+                <div th:if="${roleList.totalElements > 0}">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- 이전 페이지 -->
+                            <li class="page-item" th:classappend="${roleList.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/roles(page=${roleList.number - 1})}">&laquo;</a>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, roleList.totalPages - 1)}"
+                                th:classappend="${roleList.number} == ${i} ? 'active'">
+                                <a class="page-link" th:href="@{/admin/roles(page=${i})}"
+                                   th:text="${i + 1}">1</a>
+                            </li>
+
+                            <!-- 다음 페이지 -->
+                            <li class="page-item" th:classappend="${roleList.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/roles(page=${roleList.number + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+</body>
+
+</html>

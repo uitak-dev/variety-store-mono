@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.common.service.strategy;
+package com.demo.variety_store_mono.admin.service.strategy;
 
 import com.demo.variety_store_mono.common.entity.UserType;
 import jakarta.annotation.PostConstruct;

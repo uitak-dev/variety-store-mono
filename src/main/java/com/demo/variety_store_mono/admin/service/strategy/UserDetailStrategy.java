@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.common.service.strategy;
+package com.demo.variety_store_mono.admin.service.strategy;
 
 public interface UserDetailStrategy {
 

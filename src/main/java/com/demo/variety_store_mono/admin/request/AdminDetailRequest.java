@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AdminDetailRequest extends UserBasicInfoRequest {
 
-//    private UserBasicInfoRequest userBasicInfo;
     private String department;
 }
