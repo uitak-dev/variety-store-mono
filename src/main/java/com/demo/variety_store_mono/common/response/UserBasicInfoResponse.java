@@ -1,17 +1,16 @@
-package com.demo.variety_store_mono.common.request;
+package com.demo.variety_store_mono.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 회원 정보 수정 dto
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoRequest {
+public class UserBasicInfoResponse {
 
+    private Long id;
+    private String userName;
     private String email;
     private String firstName;
     private String lastName;

@@ -4,7 +4,7 @@ package com.demo.variety_store_mono.common.repository.custom;
 import com.demo.variety_store_mono.common.entity.QUser;
 import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
-import com.demo.variety_store_mono.common.response.UserInfoResponse;
+import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -31,9 +31,9 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     private QUser user = QUser.user;
 
     @Override
-    public Page<UserInfoResponse> searchUserListByUserType(UserType userType, UserSearch userSearch, Pageable pageable) {
+    public Page<UserBasicInfoResponse> searchUserListByUserType(UserType userType, UserSearch userSearch, Pageable pageable) {
 
-        List<UserInfoResponse> content = queryFactory
+        List<UserBasicInfoResponse> content = queryFactory
                 .selectFrom(user)
                 .where(
                         user.userType.eq(userType),
@@ -45,7 +45,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .distinct()
                 .fetch()
                 .stream()
-                .map(user -> modelMapper.map(user, UserInfoResponse.class))
+                .map(user -> modelMapper.map(user, UserBasicInfoResponse.class))
                 .toList();
 
         // 전체 개수 조회( 페이징 처리 )

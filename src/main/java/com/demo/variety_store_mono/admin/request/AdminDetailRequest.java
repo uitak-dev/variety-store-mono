@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.admin.request;
 
-import com.demo.variety_store_mono.common.request.UserInfoRequest;
+import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminInfoRequest {
+public class AdminDetailRequest extends UserBasicInfoRequest {
 
-    private UserInfoRequest userBasicInfo;
+//    private UserBasicInfoRequest userBasicInfo;
     private String department;
 }

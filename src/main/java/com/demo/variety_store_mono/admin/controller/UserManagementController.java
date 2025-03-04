@@ -1,16 +1,13 @@
 package com.demo.variety_store_mono.admin.controller;
 
-import com.demo.variety_store_mono.admin.request.AdminInfoRequest;
-import com.demo.variety_store_mono.admin.response.AdminInfoResponse;
+import com.demo.variety_store_mono.admin.resolver.UserDetail;
 import com.demo.variety_store_mono.admin.service.AdminService;
-import com.demo.variety_store_mono.common.entity.Address;
 import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
-import com.demo.variety_store_mono.common.response.UserInfoResponse;
-import com.demo.variety_store_mono.customer.request.CustomerInfoRequest;
-import com.demo.variety_store_mono.customer.response.CustomerInfoResponse;
-import com.demo.variety_store_mono.seller.request.SellerInfoRequest;
-import com.demo.variety_store_mono.seller.response.SellerInfoResponse;
+import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
+import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.common.service.strategy.UserDetailStrategy;
+import com.demo.variety_store_mono.common.service.strategy.UserDetailStrategyFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +28,7 @@ import java.util.List;
 public class UserManagementController {
 
     private final AdminService adminService;
+    private final UserDetailStrategyFactory strategyFactory;
 
     /** 사용자 목록 조회 페이지 */
     @GetMapping
@@ -48,7 +46,7 @@ public class UserManagementController {
         // 페이지 네비게이션 링크 등에 사용하기 위해, userType 도 모델에 담습니다.
         model.addAttribute("userType", userType.name());
 
-        Page<UserInfoResponse> userList = adminService.getUserList(userType, userSearch, pageable);
+        Page<UserBasicInfoResponse> userList = adminService.getUserList(userType, userSearch, pageable);
         model.addAttribute("userList", userList);
 
         return "admin/content/user-list";
@@ -61,23 +59,10 @@ public class UserManagementController {
 
         model.addAttribute("userType", userType.name());
 
-        if (userType.name().equals("ADMIN")) {
-            AdminInfoResponse adminInfo = adminService.getAdminInfo(userId);
-            model.addAttribute("userDetailInfo", adminInfo);
-            return "admin/content/detail/admin-detail";
-        }
-        else if (userType.name().equals("SELLER")) {
-            SellerInfoResponse sellerInfo = adminService.getSellerInfo(userId);
-            model.addAttribute("userDetailInfo", sellerInfo);
-            return "admin/content/detail/seller-detail";
-        }
-        else if (userType.name().equals("CUSTOMER")) {
-            CustomerInfoResponse customerInfo = adminService.getCustomerInfo(userId);
-            model.addAttribute("userDetailInfo", customerInfo);
-            return "admin/content/detail/customer-detail";
-        }
+        UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
+        model.addAttribute("userDetailInfo", strategy.getDetail(userId));
 
-        throw new RuntimeException("잘못된 사용자 유형.");
+        return strategy.getDetailView();
     }
 
     /** 사용자 수정 페이지 */
@@ -87,54 +72,22 @@ public class UserManagementController {
 
         model.addAttribute("userType", userType.name());
 
-        if (userType.name().equals("ADMIN")) {
-            AdminInfoResponse adminInfo = adminService.getAdminInfo(userId);
-            model.addAttribute("userDetailInfo", adminInfo);
-            return "admin/content/edit/admin-edit";
-        }
-        else if (userType.name().equals("SELLER")) {
-            SellerInfoResponse sellerInfo = adminService.getSellerInfo(userId);
-            model.addAttribute("userDetailInfo", sellerInfo);
-            return "admin/content/edit/seller-edit";
-        }
-        else if (userType.name().equals("CUSTOMER")) {
-            CustomerInfoResponse customerInfo = adminService.getCustomerInfo(userId);
-            model.addAttribute("userDetailInfo", customerInfo);
-            return "admin/content/edit/customer-edit";
-        }
+        UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
+        model.addAttribute("userDetailInfo", strategy.getDetail(userId));
 
-        throw new RuntimeException("잘못된 사용자 유형.");
+        return strategy.getEditView();
     }
 
-    /** 관리자 정보 수정 API */
-    @PostMapping(value = "/{userId}/edit", params = "userType=ADMIN")
-    public String editAdminInfo(@PathVariable Long userId, @RequestParam UserType userType,
-                               AdminInfoRequest request, RedirectAttributes redirectAttributes) {
+    /** 사용자 수정 API */
+    @PostMapping("/{userId}/edit")
+    public String editUserDetail(@PathVariable Long userId,
+                                 @RequestParam UserType userType,
+                                 @UserDetail UserBasicInfoRequest request,
+                                 RedirectAttributes redirectAttributes) {
 
-        adminService.updateAdminInfo(userId, request);
-
-        redirectAttributes.addAttribute("userType", userType.name());
-        return "redirect:/admin/users/{userId}";
-    }
-
-    /** 판매자 정보 수정 API */
-    @PostMapping(value = "/{userId}/edit", params = "userType=SELLER")
-    public String editSellerInfo(@PathVariable Long userId, @RequestParam UserType userType,
-                                 SellerInfoRequest request, RedirectAttributes redirectAttributes) {
-
-        adminService.updateSellerInfo(userId, request);
-
-        redirectAttributes.addAttribute("userType", userType.name());
-        return "redirect:/admin/users/{userId}";
-    }
-
-    /** 고객 정보 수정 API */
-    @PostMapping(value = "/{userId}/edit", params = "userType=CUSTOMER")
-    public String editCustomerInfo(@PathVariable Long userId, @RequestParam UserType userType,
-                                 CustomerInfoRequest request, RedirectAttributes redirectAttributes) {
-
-        adminService.updateCustomerInfo(userId, request);
-
+        // userDetailRequest는 커스텀 ArgumentResolver 에 의해 구체 DTO로 바인딩됨.
+        UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
+        strategy.updateDetail(userId, request);
         redirectAttributes.addAttribute("userType", userType.name());
         return "redirect:/admin/users/{userId}";
     }

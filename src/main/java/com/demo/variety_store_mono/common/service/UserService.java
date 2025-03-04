@@ -1,13 +1,12 @@
 package com.demo.variety_store_mono.common.service;
 
-import com.demo.variety_store_mono.admin.entity.AdminDetail;
 import com.demo.variety_store_mono.common.entity.Role;
 import com.demo.variety_store_mono.common.entity.User;
 import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.common.repository.RoleRepository;
 import com.demo.variety_store_mono.common.repository.UserRepository;
 import com.demo.variety_store_mono.common.request.SignUpRequest;
-import com.demo.variety_store_mono.common.request.UserInfoRequest;
+import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,7 +55,7 @@ public class UserService {
     }
 
     /** 사용자 기본 정보 수정 */
-    public void updateUserInfo(Long userId, UserInfoRequest request) {
+    public void updateUserBasicInfo(Long userId, UserBasicInfoRequest request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));

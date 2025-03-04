@@ -15,23 +15,23 @@
             <!-- 공통 사용자 기본 정보 -->
             <div class="mb-3">
                 <label for="id" class="form-label">ID</label>
-                <input type="text" th:field="*{userBasicInfo.id}" id="id" class="form-control" readonly>
+                <input type="text" th:field="*{id}" id="id" class="form-control" readonly>
             </div>
             <div class="mb-3">
                 <label for="userName" class="form-label">아이디</label>
-                <input type="text" th:field="*{userBasicInfo.userName}" id="userName" class="form-control" readonly>
+                <input type="text" th:field="*{userName}" id="userName" class="form-control" readonly>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">이메일</label>
-                <input type="email" th:field="*{userBasicInfo.email}" id="email" class="form-control">
+                <input type="email" th:field="*{email}" id="email" class="form-control">
             </div>
             <div class="mb-3">
                 <label for="firstName" class="form-label">이름</label>
-                <input type="text" th:field="*{userBasicInfo.firstName}" id="firstName" class="form-control">
+                <input type="text" th:field="*{firstName}" id="firstName" class="form-control">
             </div>
             <div class="mb-3">
                 <label for="lastName" class="form-label">성</label>
-                <input type="text" th:field="*{userBasicInfo.lastName}" id="lastName" class="form-control">
+                <input type="text" th:field="*{lastName}" id="lastName" class="form-control">
             </div>
             <!-- 판매자 상세 정보 -->
             <div class="mb-3">
@@ -49,7 +49,7 @@
                 </div>
                 <div class="col">
                     <button class="w-100 btn btn-secondary btn-lg"
-                            th:attr="data-href='/admin/users/' + ${userDetailInfo.userBasicInfo.id} + '?userType=' + ${userType}"
+                            th:attr="data-href='/admin/users/' + ${userDetailInfo.id} + '?userType=' + ${userType}"
                             type="button">
                         취소
                     </button>
