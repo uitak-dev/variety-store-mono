@@ -1,6 +1,8 @@
 package com.demo.variety_store_mono.admin.controller;
 
 import com.demo.variety_store_mono.admin.resolver.UserDetail;
+import com.demo.variety_store_mono.admin.service.RoleService;
+import com.demo.variety_store_mono.common.entity.Role;
 import com.demo.variety_store_mono.common.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -28,6 +31,7 @@ import java.util.List;
 public class UserManagementController {
 
     private final UserService userService;
+    private final RoleService roleService;
     private final UserDetailStrategyFactory strategyFactory;
 
     /** 사용자 목록 조회 페이지 */
@@ -36,7 +40,7 @@ public class UserManagementController {
             @RequestParam(defaultValue = "customer") UserType userType,
             @ModelAttribute UserSearch userSearch, Pageable pageable, Model model) {
 
-        // 메뉴 목록 생성 (예: 일반 사용자, 판매자, 관리자)
+        // 사이드바 메뉴 목록 생성 (예: 일반 사용자, 판매자, 관리자)
         List<SidebarMenu> menuItems = new ArrayList<>();
         menuItems.add(new SidebarMenu("/admin/users?userType=admin", "관리자", "admin".equalsIgnoreCase(userType.name())));
         menuItems.add(new SidebarMenu("/admin/users?userType=seller", "판매자", "seller".equalsIgnoreCase(userType.name())));
@@ -58,6 +62,7 @@ public class UserManagementController {
                               @RequestParam UserType userType, Model model) {
 
         model.addAttribute("userType", userType.name());
+        model.addAttribute("allRoles", roleService.getRoles());
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
         model.addAttribute("userDetailInfo", strategy.getDetail(userId));
@@ -71,6 +76,7 @@ public class UserManagementController {
                                @RequestParam UserType userType, Model model) {
 
         model.addAttribute("userType", userType.name());
+        model.addAttribute("allRoles", roleService.getRoles());
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
         model.addAttribute("userDetailInfo", strategy.getDetail(userId));

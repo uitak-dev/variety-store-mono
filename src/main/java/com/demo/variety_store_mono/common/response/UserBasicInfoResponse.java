@@ -1,8 +1,11 @@
 package com.demo.variety_store_mono.common.response;
 
+import com.demo.variety_store_mono.common.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -14,4 +17,6 @@ public class UserBasicInfoResponse {
     private String email;
     private String firstName;
     private String lastName;
+
+    private Set<Role> roles;
 }

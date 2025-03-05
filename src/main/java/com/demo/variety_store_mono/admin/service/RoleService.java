@@ -14,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -23,10 +26,28 @@ public class RoleService {
     private final ModelMapper modelMapper;
 
     /** 역할 생성 */
+    public RoleResponse createRole(RoleRequest request) {
 
+        Optional<Role> findRole = roleRepository.findByName(request.getName());
+        if (findRole.isPresent()) {
+            throw new RuntimeException("역할이 이미 존재합니다.");
+        }
 
-    /** 역할 목록 조회 */
-    public Page<RoleResponse> getRoleList(RoleSearch roleSearch, Pageable pageable) {
+        Role role = Role.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
+
+        return modelMapper.map(roleRepository.save(role), RoleResponse.class);
+    }
+
+    /** 역할 전체 조회 */
+    public List<Role> getRoles() {
+        return roleRepository.findAll();
+    }
+
+    /** 역할 목록 검색 조회 */
+    public Page<RoleResponse> getRoleSearchList(RoleSearch roleSearch, Pageable pageable) {
         return roleRepository.searchRoleList(roleSearch, pageable);
     }
 
@@ -46,5 +67,6 @@ public class RoleService {
         role.update(request.getName(), request.getDescription());
     }
 
-    /** 역할 등록, 수정, 삭제 */
+    /** 역할 삭제 */
+
 }

@@ -1,6 +1,8 @@
 package com.demo.variety_store_mono.admin.service.strategy;
 
+import com.demo.variety_store_mono.common.entity.Role;
 import com.demo.variety_store_mono.common.entity.User;
+import com.demo.variety_store_mono.common.repository.RoleRepository;
 import com.demo.variety_store_mono.common.repository.UserRepository;
 import com.demo.variety_store_mono.common.service.UserService;
 import com.demo.variety_store_mono.seller.request.SellerDetailRequest;
@@ -10,13 +12,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SellerDetailStrategy implements UserDetailStrategy {
 
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -44,8 +49,13 @@ public class SellerDetailStrategy implements UserDetailStrategy {
 
         SellerDetailRequest request = (SellerDetailRequest) sellerDetailRequest;
 
+        // 사용자에게 할당된 역할 변경.
+        Set<Long> roleIds = request.getRoles();
+        Set<Role> newRoles = new HashSet<>(roleRepository.findAllById(roleIds));
+        user.updateRoles(newRoles);
+
         // 사용자 기본 정보 변경.
-        userService.updateUserBasicInfo(userId, request);
+        user.updateBasicInfo(request.getEmail(), request.getFirstName(), request.getLastName());
 
         // 판매자 상세 정보 변경.
         user.updateSellerDetail(request.getCompanyName(), request.getBusinessLicenseNumber());

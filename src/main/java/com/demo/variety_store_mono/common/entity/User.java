@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,16 +70,62 @@ public class User extends Audit {
         this.userType = userType;
     }
 
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
+
+    /** 사용자 기본 정보 수정 */
+    public void updateBasicInfo(String email, String firstName, String lastName) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    /** 사용자에게 할당된 역할 조회 */
     public Set<Role> getRoles() {
         return userRoles.stream()
                 .map(UserRole::getRole)
                 .collect(Collectors.toSet());
     }
 
-    public void updateBasicInfo(String email, String firstName, String lastName) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    /** 사용자 역할 수정 */
+    public void updateRoles(Set<Role> newRoles) {
+        // 현재 UserRole에서 Role 목록 추출
+        Set<Role> existingRoles = userRoles.stream()
+                .map(UserRole::getRole)
+                .collect(Collectors.toSet());
+
+        // 삭제할 역할: 기존 역할 목록 중에서 인자로 받은 역할 목록에 없는 역할.
+        Set<Role> rolesToRemove = new HashSet<>(existingRoles);
+        rolesToRemove.removeAll(newRoles);
+
+        // 추가할 역할: 인자로 받은 역할 목록 중에서 기존 역할 목록에 없는 역할.
+        Set<Role> rolesToAdd = new HashSet<>(newRoles);
+        rolesToAdd.removeAll(existingRoles);
+
+        // 역할 삭제 (Iterator 사용)
+        Iterator<UserRole> iterator = userRoles.iterator();
+        while (iterator.hasNext()) {
+            UserRole userRole = iterator.next();
+            if (rolesToRemove.contains(userRole.getRole())) {
+                iterator.remove();
+            }
+        }
+
+        // 역할 추가
+        rolesToAdd.forEach(this::addRole);
+    }
+
+    /** 사용자에게 역할 추가 */
+    public void addRole(Role role) {
+        if (userRoles.stream().noneMatch(userRole -> userRole.getRole().equals(role))) {
+            userRoles.add(new UserRole(this, role));
+        }
+    }
+
+    /** 사용자에게 역할 제거 */
+    public void removeRole(Long roleId) {
+        userRoles.removeIf(userRole -> userRole.getRole().getId().equals(roleId));
     }
 
     public void createAdminDetail() {
@@ -103,13 +150,5 @@ public class User extends Audit {
 
     public void updateCustomerDetail(Address address) {
         this.getCustomerDetail().updateInfo(address);
-    }
-
-    public void addRole(Role role) {
-        userRoles.add(new UserRole(this, role));
-    }
-
-    public void deleteRefreshToken() {
-        this.refreshToken = null;
     }
 }

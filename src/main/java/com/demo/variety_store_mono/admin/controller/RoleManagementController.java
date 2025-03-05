@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/roles")
@@ -27,7 +28,7 @@ public class RoleManagementController {
     public String roleList(@ModelAttribute RoleSearch roleSearch,
                            Pageable pageable, Model model) {
 
-        Page<RoleResponse> roleList = roleService.getRoleList(roleSearch, pageable);
+        Page<RoleResponse> roleList = roleService.getRoleSearchList(roleSearch, pageable);
         model.addAttribute("roleList", roleList);
 
         return "admin/content/roles/role-list";
@@ -44,9 +45,18 @@ public class RoleManagementController {
     }
 
     /** 역할 등록 페이지 */
-    @GetMapping("/{roleId}/new")
-    public String roleNew(@PathVariable Long roleId) {
-        return null;
+    @GetMapping("/new")
+    public String roleNew(Model model) {
+        model.addAttribute("role", new RoleRequest());
+        return "admin/content/roles/role-new";
+    }
+
+    /** 역할 등록 API */
+    @PostMapping("/new")
+    public String newRole(RoleRequest request, RedirectAttributes redirectAttributes) {
+        RoleResponse role = roleService.createRole(request);
+        redirectAttributes.addAttribute("roleId", role.getId());
+        return "redirect:/admin/roles/{roleId}";
     }
 
     /** 역할 수정 페이지 */

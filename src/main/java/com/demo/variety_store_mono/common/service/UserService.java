@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -70,5 +73,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         user.updateBasicInfo(request.getEmail(), request.getFirstName(), request.getLastName());
+
     }
+
 }

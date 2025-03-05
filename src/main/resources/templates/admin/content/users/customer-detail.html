@@ -29,6 +29,7 @@
             <label for="lastName" class="form-label">성</label>
             <input type="text" id="lastName" class="form-control" th:value="${userDetailInfo.lastName}" readonly>
         </div>
+
         <!-- 고객 상세 정보 -->
         <div class="mb-3">
             <label for="state" class="form-label">특별시/광역시/도</label>
@@ -58,6 +59,23 @@
             <label for="zipCode" class="form-label">우편 번호</label>
             <input type="text" id="zipCode" class="form-control" th:value="${userDetailInfo.address?.zipCode}" readonly>
         </div>
+
+        <!-- 역할 multi checkbox -->
+        <div class="mb-3">
+            <label class="form-label">역할</label>
+            <div class="row">
+                <div class="col-md-4" th:each="role : ${allRoles}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled
+                               th:id="'role_' + ${role.id}"
+                               th:name="roles" th:value="${role.id}"
+                               th:checked="${#lists.contains(userDetailInfo.roles, role)}">
+                        <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}">Role Name</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
         <div class="row">
             <div class="col">

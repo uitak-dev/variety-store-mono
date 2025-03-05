@@ -21,6 +21,7 @@ public class UserToAdminInfoResponse implements Converter<User, AdminDetailRespo
         // 기본 사용자 정보 자동 매핑 (필드명이 동일하면 기본 매핑이 작동)
         AdminDetailResponse destination = modelMapper.map(source, AdminDetailResponse.class);
 
+
         // 관리자 상세 정보 설정.
         if (source.getAdminDetail() != null) {
             destination.setDepartment(source.getAdminDetail().getDepartment());

@@ -14,10 +14,12 @@ public interface UserRepository extends JpaRepository<User, Long>, CustomUserRep
     Optional<User> findByUserName(String userName);
 
     /** 사용자 상세 정보 조회. */
-    @Query("SELECT u FROM User u " +
-            "LEFT JOIN FETCH u.adminDetail " +
-            "LEFT JOIN FETCH u.customerDetail " +
-            "LEFT JOIN FETCH u.sellerDetail " +
-            "WHERE u.id = :userId")
+    @Query("select u from User u " +
+            "left join fetch u.adminDetail " +
+            "left join fetch u.customerDetail " +
+            "left join fetch u.sellerDetail " +
+            "left join fetch u.userRoles ur " +
+            "left join fetch ur.role " +
+            "where u.id = :userId")
     Optional<User> findByIdWithDetails(@Param("userId") Long userId);
 }
