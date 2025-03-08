@@ -2,8 +2,7 @@ package com.demo.variety_store_mono.admin.controller;
 
 import com.demo.variety_store_mono.admin.resolver.UserDetail;
 import com.demo.variety_store_mono.admin.service.RoleService;
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.UserType;
+import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
@@ -23,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/users")

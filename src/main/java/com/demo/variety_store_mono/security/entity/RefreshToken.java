@@ -1,5 +1,7 @@
-package com.demo.variety_store_mono.common.entity;
+package com.demo.variety_store_mono.security.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
+import com.demo.variety_store_mono.security.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +13,7 @@ import java.time.Instant;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RefreshToken extends Audit{
+public class RefreshToken extends Audit {
 
     @Id
     @GeneratedValue

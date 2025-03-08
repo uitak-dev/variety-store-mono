@@ -1,10 +1,10 @@
 package com.demo.variety_store_mono.listener;
 
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.entity.UserType;
-import com.demo.variety_store_mono.common.repository.RoleRepository;
-import com.demo.variety_store_mono.common.repository.UserRepository;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.security.entity.UserType;
+import com.demo.variety_store_mono.admin.repository.RoleRepository;
+import com.demo.variety_store_mono.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

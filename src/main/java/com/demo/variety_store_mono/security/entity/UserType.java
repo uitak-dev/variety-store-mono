@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.common.entity;
+package com.demo.variety_store_mono.security.entity;
 
 public enum UserType {
     ADMIN("ROLE_ADMIN"), SELLER("ROLE_SELLER"), CUSTOMER("ROLE_CUSTOMER");

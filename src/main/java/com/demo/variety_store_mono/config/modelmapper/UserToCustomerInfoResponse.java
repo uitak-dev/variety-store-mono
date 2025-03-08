@@ -1,7 +1,6 @@
 package com.demo.variety_store_mono.config.modelmapper;
 
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.customer.response.CustomerDetailResponse;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -22,8 +21,8 @@ public class UserToCustomerInfoResponse implements Converter<User, CustomerDetai
         CustomerDetailResponse destination = modelMapper.map(source, CustomerDetailResponse.class);
 
         // 일반 사용자 상세 정보 설정.
-        if (source.getCustomerDetail() != null) {
-            destination.setAddress(source.getCustomerDetail().getAddress());
+        if (source.getCustomer() != null) {
+            destination.setAddress(source.getCustomer().getAddress());
         }
 
         return destination;

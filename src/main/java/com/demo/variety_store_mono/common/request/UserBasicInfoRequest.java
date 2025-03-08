@@ -1,6 +1,5 @@
 package com.demo.variety_store_mono.common.request;
 
-import com.demo.variety_store_mono.common.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

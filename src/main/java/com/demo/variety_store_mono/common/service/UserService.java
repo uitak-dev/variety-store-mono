@@ -1,11 +1,11 @@
 package com.demo.variety_store_mono.common.service;
 
 import com.demo.variety_store_mono.admin.request.UserSearch;
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.entity.UserType;
-import com.demo.variety_store_mono.common.repository.RoleRepository;
-import com.demo.variety_store_mono.common.repository.UserRepository;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.security.entity.UserType;
+import com.demo.variety_store_mono.admin.repository.RoleRepository;
+import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.common.request.SignUpRequest;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
@@ -15,9 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional

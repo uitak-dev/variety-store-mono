@@ -1,6 +1,6 @@
-package com.demo.variety_store_mono.common.repository.custom;
+package com.demo.variety_store_mono.security.repository.custom;
 
-import com.demo.variety_store_mono.common.entity.UserType;
+import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import org.springframework.data.domain.Page;

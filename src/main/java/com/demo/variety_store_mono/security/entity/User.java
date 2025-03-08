@@ -1,8 +1,11 @@
-package com.demo.variety_store_mono.common.entity;
+package com.demo.variety_store_mono.security.entity;
 
-import com.demo.variety_store_mono.admin.entity.AdminDetail;
-import com.demo.variety_store_mono.customer.entity.CustomerDetail;
-import com.demo.variety_store_mono.seller.entity.SellerDetail;
+import com.demo.variety_store_mono.admin.entity.Admin;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.common.entity.Address;
+import com.demo.variety_store_mono.common.entity.Audit;
+import com.demo.variety_store_mono.customer.entity.Customer;
+import com.demo.variety_store_mono.seller.entity.Seller;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,15 +48,17 @@ public class User extends Audit {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private RefreshToken refreshToken;
 
-
+    // 고객 상세 정보
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private CustomerDetail customerDetail;
+    private Customer customer;
 
+    // 판매자 상세 정보
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private SellerDetail sellerDetail;
+    private Seller seller;
 
+    // 관리자 상세 정보
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private AdminDetail adminDetail;
+    private Admin admin;
 
     @Builder
     public User(Long id, String userName, String password,
@@ -129,26 +134,26 @@ public class User extends Audit {
     }
 
     public void createAdminDetail() {
-        this.adminDetail = AdminDetail.builder().user(this).build();
+        this.admin = Admin.builder().user(this).build();
     }
 
     public void updateAdminDetail(String department) {
-        this.getAdminDetail().updateInfo(department);
+        this.getAdmin().updateInfo(department);
     }
 
     public void createSellerDetail() {
-        this.sellerDetail = SellerDetail.builder().user(this).build();
+        this.seller = Seller.builder().user(this).build();
     }
 
     public void updateSellerDetail(String companyName, String businessLicenseNumber) {
-        this.getSellerDetail().updateInfo(companyName, businessLicenseNumber);
+        this.getSeller().updateInfo(companyName, businessLicenseNumber);
     }
 
     public void createCustomerDetail() {
-        this.customerDetail = CustomerDetail.builder().user(this).build();
+        this.customer = Customer.builder().user(this).build();
     }
 
     public void updateCustomerDetail(Address address) {
-        this.getCustomerDetail().updateInfo(address);
+        this.getCustomer().updateInfo(address);
     }
 }

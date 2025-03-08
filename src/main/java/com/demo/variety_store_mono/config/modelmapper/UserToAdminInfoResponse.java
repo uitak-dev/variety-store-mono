@@ -1,8 +1,7 @@
 package com.demo.variety_store_mono.config.modelmapper;
 
 import com.demo.variety_store_mono.admin.response.AdminDetailResponse;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.security.entity.User;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -23,8 +22,8 @@ public class UserToAdminInfoResponse implements Converter<User, AdminDetailRespo
 
 
         // 관리자 상세 정보 설정.
-        if (source.getAdminDetail() != null) {
-            destination.setDepartment(source.getAdminDetail().getDepartment());
+        if (source.getAdmin() != null) {
+            destination.setDepartment(source.getAdmin().getDepartment());
         }
 
         return destination;

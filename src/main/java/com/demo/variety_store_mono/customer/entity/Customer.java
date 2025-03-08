@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.customer.entity;
 
 import com.demo.variety_store_mono.common.entity.Address;
-import com.demo.variety_store_mono.common.entity.User;
+import com.demo.variety_store_mono.security.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CustomerDetail {
+public class Customer {
 
     @Id
     private Long id; // User와 동일한 ID 사용 (Foreign Key)
@@ -25,7 +25,7 @@ public class CustomerDetail {
     private Address address;
 
     @Builder
-    public CustomerDetail(User user, Address address) {
+    public Customer(User user, Address address) {
         this.user = user;
         this.address = address;
     }

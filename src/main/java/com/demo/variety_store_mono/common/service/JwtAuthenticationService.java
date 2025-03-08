@@ -1,10 +1,10 @@
 package com.demo.variety_store_mono.common.service;
 
-import com.demo.variety_store_mono.common.entity.RefreshToken;
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.repository.RefreshTokenRepository;
-import com.demo.variety_store_mono.common.repository.UserRepository;
+import com.demo.variety_store_mono.security.entity.RefreshToken;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.security.repository.RefreshTokenRepository;
+import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.common.request.LoginRequest;
 import com.demo.variety_store_mono.common.response.TokenResponse;
 import com.demo.variety_store_mono.security.jwt.JwtProperties;

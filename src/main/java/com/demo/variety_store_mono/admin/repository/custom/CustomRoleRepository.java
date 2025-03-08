@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.common.repository.custom;
+package com.demo.variety_store_mono.admin.repository.custom;
 
 import com.demo.variety_store_mono.admin.request.RoleSearch;
 import com.demo.variety_store_mono.admin.response.RoleResponse;

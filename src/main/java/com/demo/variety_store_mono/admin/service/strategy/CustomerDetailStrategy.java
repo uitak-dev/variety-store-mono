@@ -1,10 +1,9 @@
 package com.demo.variety_store_mono.admin.service.strategy;
 
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.repository.RoleRepository;
-import com.demo.variety_store_mono.common.repository.UserRepository;
-import com.demo.variety_store_mono.common.service.UserService;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.admin.repository.RoleRepository;
+import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.customer.request.CustomerDetailRequest;
 import com.demo.variety_store_mono.customer.response.CustomerDetailResponse;
 import lombok.RequiredArgsConstructor;

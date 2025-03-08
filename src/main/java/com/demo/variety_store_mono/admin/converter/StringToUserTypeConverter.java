@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.admin.converter;
 
-import com.demo.variety_store_mono.common.entity.UserType;
+import com.demo.variety_store_mono.security.entity.UserType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

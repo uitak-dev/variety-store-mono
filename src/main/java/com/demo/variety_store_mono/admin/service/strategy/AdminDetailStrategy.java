@@ -2,20 +2,17 @@ package com.demo.variety_store_mono.admin.service.strategy;
 
 import com.demo.variety_store_mono.admin.request.AdminDetailRequest;
 import com.demo.variety_store_mono.admin.response.AdminDetailResponse;
-import com.demo.variety_store_mono.common.entity.Role;
-import com.demo.variety_store_mono.common.entity.User;
-import com.demo.variety_store_mono.common.repository.RoleRepository;
-import com.demo.variety_store_mono.common.repository.UserRepository;
-import com.demo.variety_store_mono.common.service.UserService;
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.admin.repository.RoleRepository;
+import com.demo.variety_store_mono.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

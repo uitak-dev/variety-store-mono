@@ -1,12 +1,12 @@
-package com.demo.variety_store_mono.common.entity;
+package com.demo.variety_store_mono.security.entity;
 
+import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Entity
 @Getter

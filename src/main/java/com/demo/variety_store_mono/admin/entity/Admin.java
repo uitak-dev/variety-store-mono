@@ -1,13 +1,13 @@
 package com.demo.variety_store_mono.admin.entity;
 
-import com.demo.variety_store_mono.common.entity.User;
+import com.demo.variety_store_mono.security.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AdminDetail {
+public class Admin {
 
     @Id
     private Long id; // User와 동일한 ID 사용 (Foreign Key)
@@ -20,7 +20,7 @@ public class AdminDetail {
     private String department;
 
     @Builder
-    public AdminDetail(User user, String department) {
+    public Admin(User user, String department) {
         this.user = user;
         this.department = department;
     }

@@ -1,5 +1,6 @@
-package com.demo.variety_store_mono.common.entity;
+package com.demo.variety_store_mono.admin.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
