@@ -1,5 +1,7 @@
 package com.demo.variety_store_mono.security.entity;
 
+import lombok.Data;
+
 public enum UserType {
     ADMIN("ROLE_ADMIN"), SELLER("ROLE_SELLER"), CUSTOMER("ROLE_CUSTOMER");
 
