@@ -1,9 +1,9 @@
 package com.demo.variety_store_mono.admin.controller;
 
+import com.demo.variety_store_mono.admin.request.SearchUser;
 import com.demo.variety_store_mono.admin.resolver.UserDetail;
 import com.demo.variety_store_mono.admin.service.RoleService;
 import com.demo.variety_store_mono.security.entity.UserType;
-import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategy;
@@ -36,7 +36,7 @@ public class UserManagementController {
     @GetMapping
     public String userList(
             @RequestParam(defaultValue = "customer") UserType userType,
-            @ModelAttribute UserSearch userSearch, Pageable pageable, Model model) {
+            @ModelAttribute SearchUser searchUser, Pageable pageable, Model model) {
 
         // 사이드바 메뉴 목록 생성 (예: 일반 사용자, 판매자, 관리자)
         List<SidebarMenu> menuItems = new ArrayList<>();
@@ -48,7 +48,7 @@ public class UserManagementController {
         // 페이지 네비게이션 링크 등에 사용하기 위해, userType 도 모델에 담습니다.
         model.addAttribute("userType", userType.name());
 
-        Page<UserBasicInfoResponse> userList = userService.getUserList(userType, userSearch, pageable);
+        Page<UserBasicInfoResponse> userList = userService.getUserList(userType, searchUser, pageable);
         model.addAttribute("userList", userList);
 
         return "admin/content/users/user-list";

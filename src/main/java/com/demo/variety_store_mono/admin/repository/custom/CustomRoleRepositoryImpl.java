@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.admin.repository.custom;
 
 import com.demo.variety_store_mono.admin.entity.QRole;
-import com.demo.variety_store_mono.admin.request.RoleSearch;
+import com.demo.variety_store_mono.admin.request.SearchRole;
 import com.demo.variety_store_mono.admin.response.RoleResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
@@ -29,12 +29,12 @@ public class CustomRoleRepositoryImpl implements CustomRoleRepository {
     private QRole role = QRole.role;
 
     @Override
-    public Page<RoleResponse> searchRoleList(RoleSearch roleSearch, Pageable pageable) {
+    public Page<RoleResponse> searchRoleList(SearchRole searchRole, Pageable pageable) {
 
         List<RoleResponse> content = queryFactory
                 .selectFrom(role)
                 .where(
-                        roleNameEq(roleSearch.getName())
+                        roleNameEq(searchRole.getName())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -47,7 +47,7 @@ public class CustomRoleRepositoryImpl implements CustomRoleRepository {
         JPAQuery<Long> countQuery = queryFactory.select(role.count())
                 .from(role)
                 .where(
-                        roleNameEq(roleSearch.getName())
+                        roleNameEq(searchRole.getName())
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

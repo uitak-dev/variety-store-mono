@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.security.repository.custom;
 
+import com.demo.variety_store_mono.admin.request.SearchUser;
 import com.demo.variety_store_mono.security.entity.UserType;
-import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +9,6 @@ import org.springframework.data.domain.Pageable;
 public interface CustomUserRepository {
 
     /** 사용자 목록 조회 */
-    Page<UserBasicInfoResponse> searchUserListByUserType(UserType userType, UserSearch userSearch, Pageable pageable);
+    Page<UserBasicInfoResponse> searchUserListByUserType(UserType userType, SearchUser searchUser, Pageable pageable);
 
 }

@@ -18,7 +18,7 @@
                 <h2>사용자 목록</h2>
 
                 <!-- 검색 폼 -->
-                <form th:object="${userSearch}" method="get" action="/admin/users" class="mb-3">
+                <form th:object="${searchUser}" method="get" action="/admin/users" class="mb-3">
                     <div class="row g-2">
                         <div class="col-md-4">
                             <input type="text" th:field="*{userName}" class="form-control" placeholder="아이디 검색">

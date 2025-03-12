@@ -133,26 +133,32 @@ public class User extends Audit {
         userRoles.removeIf(userRole -> userRole.getRole().getId().equals(roleId));
     }
 
+    /** 관리자 정보 생성 */
     public void createAdminDetail() {
         this.admin = Admin.builder().user(this).build();
     }
 
+    /** 관리자 정보 수정 */
     public void updateAdminDetail(String department) {
         this.getAdmin().updateInfo(department);
     }
 
+    /** 판매자 정보 생성 */
     public void createSellerDetail() {
         this.seller = Seller.builder().user(this).build();
     }
 
+    /** 판매자 정보 수정 */
     public void updateSellerDetail(String companyName, String businessLicenseNumber) {
         this.getSeller().updateInfo(companyName, businessLicenseNumber);
     }
 
+    /** 소비자 정보 생성 */
     public void createCustomerDetail() {
         this.customer = Customer.builder().user(this).build();
     }
 
+    /** 소비자 정보 수정 */
     public void updateCustomerDetail(Address address) {
         this.getCustomer().updateInfo(address);
     }

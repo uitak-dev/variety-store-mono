@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.common.service;
 
-import com.demo.variety_store_mono.admin.request.UserSearch;
+import com.demo.variety_store_mono.admin.request.SearchUser;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.entity.UserType;
@@ -59,8 +59,8 @@ public class UserService {
     }
 
     /** 사용자 목록 조회 */
-    public Page<UserBasicInfoResponse> getUserList(UserType userType, UserSearch userSearch, Pageable pageable) {
-        return userRepository.searchUserListByUserType(userType, userSearch, pageable);
+    public Page<UserBasicInfoResponse> getUserList(UserType userType, SearchUser searchUser, Pageable pageable) {
+        return userRepository.searchUserListByUserType(userType, searchUser, pageable);
     }
 
     /** 사용자 기본 정보 수정 */

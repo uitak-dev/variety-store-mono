@@ -1,13 +1,9 @@
 package com.demo.variety_store_mono.admin.controller;
 
 import com.demo.variety_store_mono.admin.request.RoleRequest;
-import com.demo.variety_store_mono.admin.request.RoleSearch;
-import com.demo.variety_store_mono.admin.request.UserSearch;
+import com.demo.variety_store_mono.admin.request.SearchRole;
 import com.demo.variety_store_mono.admin.response.RoleResponse;
 import com.demo.variety_store_mono.admin.service.RoleService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +21,10 @@ public class RoleManagementController {
 
     /** 역할 목록 조회 페이지 */
     @GetMapping
-    public String roleList(@ModelAttribute RoleSearch roleSearch,
+    public String roleList(@ModelAttribute SearchRole searchRole,
                            Pageable pageable, Model model) {
 
-        Page<RoleResponse> roleList = roleService.getRoleSearchList(roleSearch, pageable);
+        Page<RoleResponse> roleList = roleService.getRoleSearchList(searchRole, pageable);
         model.addAttribute("roleList", roleList);
 
         return "admin/content/roles/role-list";

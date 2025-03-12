@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/head :: head}">
+    <title>카테고리 생성</title>
+    <style>
+        /* 모달 내 트리 뷰 스타일 */
+        .category-tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        .category-tree li {
+            cursor: pointer;
+            padding: 6px 10px;
+        }
+        .category-tree li:hover {
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+
+        /* breadcrumb 스타일 */
+        #breadcrumbContainer {
+            margin-bottom: 15px;
+        }
+        #breadcrumbContainer .breadcrumb-item {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+
+<main class="flex-fill">
+    <div class="container my-4">
+        <h1>카테고리 생성</h1>
+        <form th:action th:object="${category}" method="post">
+            <!-- 상위 카테고리 선택 영역 -->
+            <div class="mb-3">
+                <label for="selectedParent" class="form-label">상위 카테고리 선택:</label>
+                <div class="input-group">
+                    <input type="text" id="selectedParent" class="form-control" placeholder="상위 카테고리 선택" readonly>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                        선택
+                    </button>
+                </div>
+                <!-- 선택된 상위 카테고리 id를 저장 -->
+                <input type="hidden" id="parentId" name="parentId" value="">
+            </div>
+
+            <!-- 카테고리 정보 -->
+            <div class="mb-3">
+                <label for="name" class="form-label">카테고리 이름</label>
+                <input type="text" th:field="*{name}" id="name" class="form-control" required />
+            </div>
+
+            <!-- 버튼 -->
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="w-100 btn btn-primary">저장</button>
+                </div>
+                <div class="col">
+                    <button class="w-100 btn btn-secondary"
+                            th:onclick="|location.href='@{/admin/categories}'|"
+                            type="button">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 모달 팝업: 동적으로 카테고리 선택 -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">상위 카테고리 선택</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Breadcrumb 영역 -->
+                <nav aria-label="breadcrumb">
+                    <ol id="breadcrumbContainer" class="breadcrumb">
+                        <!-- 동적으로 breadcrumb 항목이 추가됩니다 -->
+                    </ol>
+                </nav>
+                <!-- 동적으로 로드될 카테고리 목록 -->
+                <div id="categoryListContainer" class="category-tree">
+                    <!-- AJAX로 카테고리 목록이 로드됩니다 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">이전</button>
+                <button type="button" class="btn btn-primary" onclick="confirmSelection()">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+<script>
+    // 현재 선택한 카테고리 id 및 브레드크럼을 저장할 스택
+    let currentParentId = null;
+    let breadcrumbStack = [];
+
+    // 최상위 카테고리를 비동기로 로드하는 함수
+    async function loadCategories(parentId) {
+        const container = document.getElementById("categoryListContainer");
+        container.innerHTML = ""; // 기존 내용 제거
+
+        let url = "";
+        if (!parentId) {
+            url = "/admin/categories/children";
+        } else {
+            url = `/admin/categories/children?categoryId=${parentId}`;
+        }
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("네트워크 오류");
+            const categories = await response.json();
+
+            if (categories.length === 0) {
+                container.innerHTML = "<p>더 이상 하위 카테고리가 없습니다.</p>";
+            } else {
+                const ul = document.createElement("ul");
+                ul.classList.add("list-group");
+                categories.forEach(cat => {
+                    const li = document.createElement("li");
+                    li.classList.add("list-group-item", "list-group-item-action");
+                    li.style.cursor = "pointer";
+                    li.textContent = cat.name;
+                    li.onclick = function() {
+                        // 카테고리 선택 시: 현재 선택한 카테고리 업데이트 및 브레드크럼에 추가
+                        currentParentId = cat.id;
+                        breadcrumbStack.push({ id: cat.id, name: cat.name });
+                        updateBreadcrumb();
+                        loadCategories(cat.id);
+                    };
+                    ul.appendChild(li);
+                });
+                container.appendChild(ul);
+            }
+        } catch (error) {
+            console.error("카테고리 로드 실패:", error);
+        }
+    }
+
+    // 브레드크럼 업데이트 함수
+    function updateBreadcrumb() {
+        const breadcrumbContainer = document.getElementById("breadcrumbContainer");
+        breadcrumbContainer.innerHTML = "";
+        breadcrumbStack.forEach((item, index) => {
+            const span = document.createElement("span");
+            span.textContent = item.name;
+            span.style.cursor = "pointer";
+            span.onclick = function() {
+                // 해당 브레드크럼 항목 클릭 시 해당 레벨로 돌아가기
+                breadcrumbStack = breadcrumbStack.slice(0, index + 1);
+                currentParentId = item.id;
+                updateBreadcrumb();
+                loadCategories(item.id);
+            };
+            breadcrumbContainer.appendChild(span);
+            if (index < breadcrumbStack.length - 1) {
+                const sep = document.createElement("span");
+                sep.textContent = " > ";
+                breadcrumbContainer.appendChild(sep);
+            }
+        });
+    }
+
+    // 이전 버튼: 브레드크럼에서 마지막 항목 제거하고 이전 레벨로 이동
+    function goBack() {
+        if (breadcrumbStack.length > 0) {
+            breadcrumbStack.pop();
+            currentParentId = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1].id : null;
+            updateBreadcrumb();
+            loadCategories(currentParentId);
+        } else {
+            // 이미 최상위이면 다시 최상위 로드
+            loadCategories(null);
+        }
+    }
+
+    // 선택 완료 버튼: 최종 선택된 카테고리(브레드크럼의 마지막 항목)를 폼에 반영
+    function confirmSelection() {
+        let selectedCategory = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1] : null;
+        if (selectedCategory) {
+            document.getElementById("selectedParent").value = breadcrumbStack.map(item => item.name).join(" > ");
+            document.getElementById("parentId").value = selectedCategory.id;
+        } else {
+            document.getElementById("selectedParent").value = "";
+            document.getElementById("parentId").value = "";
+        }
+        // 모달 닫기
+        const modalEl = document.getElementById("categoryModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+    }
+
+    // 모달이 열릴 때 초기 상태 설정: 최상위 카테고리 로드 및 브레드크럼 초기화
+    document.getElementById("categoryModal").addEventListener('shown.bs.modal', function() {
+        breadcrumbStack = [];
+        currentParentId = null;
+        updateBreadcrumb();
+        loadCategories(null);
+    });
+</script>
+</body>
+</html>

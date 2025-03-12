@@ -1,8 +1,8 @@
 package com.demo.variety_store_mono.security.repository.custom;
 
+import com.demo.variety_store_mono.admin.request.SearchUser;
 import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.security.entity.UserType;
-import com.demo.variety_store_mono.admin.request.UserSearch;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
@@ -30,14 +30,14 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     private QUser user = QUser.user;
 
     @Override
-    public Page<UserBasicInfoResponse> searchUserListByUserType(UserType userType, UserSearch userSearch, Pageable pageable) {
+    public Page<UserBasicInfoResponse> searchUserListByUserType(UserType userType, SearchUser searchUser, Pageable pageable) {
 
         List<UserBasicInfoResponse> content = queryFactory
                 .selectFrom(user)
                 .where(
                         user.userType.eq(userType),
-                        usernameEq(userSearch.getUserName()),
-                        emailEq(userSearch.getEmail())
+                        usernameEq(searchUser.getUserName()),
+                        emailEq(searchUser.getEmail())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -53,8 +53,8 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .from(user)
                 .where(
                         user.userType.eq(userType),
-                        usernameEq(userSearch.getUserName()),
-                        emailEq(userSearch.getEmail())
+                        usernameEq(searchUser.getUserName()),
+                        emailEq(searchUser.getEmail())
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

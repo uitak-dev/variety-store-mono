@@ -18,7 +18,7 @@ public class ProductOptionValue {
     private Long id;
 
     @Column(nullable = false)
-    private String value;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
+    private String optionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
 
     @ManyToOne
     @JoinColumn(name = "product_option_id", nullable = false)

@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.admin.service;
 
 import com.demo.variety_store_mono.admin.request.RoleRequest;
-import com.demo.variety_store_mono.admin.request.RoleSearch;
+import com.demo.variety_store_mono.admin.request.SearchRole;
 import com.demo.variety_store_mono.admin.response.RoleResponse;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
@@ -45,11 +45,13 @@ public class RoleService {
     }
 
     /** 역할 목록 검색 조회 */
-    public Page<RoleResponse> getRoleSearchList(RoleSearch roleSearch, Pageable pageable) {
-        return roleRepository.searchRoleList(roleSearch, pageable);
+    @Transactional(readOnly = true)
+    public Page<RoleResponse> getRoleSearchList(SearchRole searchRole, Pageable pageable) {
+        return roleRepository.searchRoleList(searchRole, pageable);
     }
 
     /** 역할 상세 조회 */
+    @Transactional(readOnly = true)
     public RoleResponse getRole(Long roleId) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new RuntimeException("역할이 존재하지 않습니다."));

@@ -21,5 +21,5 @@ public class GlobalOptionValue {
     private GlobalOption globalOption; // 시스템에 등록된 옵션
 
     @Column(nullable = false)
-    private String value;   // 옵션 값
+    private String optionValue;   // 옵션 값
 }

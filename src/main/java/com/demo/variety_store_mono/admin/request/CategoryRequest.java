@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSearch {
+public class CategoryRequest {
 
-    private String userName;
-    private String email;
+    private Long parentId;
+    private String name;
 }
