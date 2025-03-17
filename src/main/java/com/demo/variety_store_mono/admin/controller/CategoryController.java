@@ -4,6 +4,7 @@ import com.demo.variety_store_mono.admin.request.CategoryRequest;
 import com.demo.variety_store_mono.admin.request.SearchCategory;
 import com.demo.variety_store_mono.admin.response.CategoryResponse;
 import com.demo.variety_store_mono.admin.service.CategoryService;
+import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final GlobalOptionService globalOptionService;
 
     /** 카테고리 목록 조회 페이지 */
     @GetMapping
@@ -63,6 +65,7 @@ public class CategoryController {
     @GetMapping("/new")
     public String categoryNew(Model model) {
 
+        model.addAttribute("options", globalOptionService.getAllOption());
         model.addAttribute("category", new CategoryRequest());
 
         return "admin/content/category/category-new";

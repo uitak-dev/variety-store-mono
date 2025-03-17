@@ -22,4 +22,9 @@ public class CategoryGlobalOption {
     @ManyToOne
     @JoinColumn(name = "global_option_id")
     private GlobalOption globalOption;
+
+    public CategoryGlobalOption(Category category, GlobalOption globalOption) {
+        this.category = category;
+        this.globalOption = globalOption;
+    }
 }

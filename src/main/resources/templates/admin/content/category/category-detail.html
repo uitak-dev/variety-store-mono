@@ -32,6 +32,28 @@
             <input type="text" id="parent" class="form-control" th:value="${category.parent != null ? category.parent.name : '없음'}" readonly>
         </div>
 
+        <!-- 선택된 옵션 템플릿 목록 (읽기 전용) -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h6>선택된 옵션 템플릿</h6>
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"
+                                th:each="option : ${category.globalOptions}"
+                                th:text="${option.name}">
+                            </li>
+                            <!-- 만약 옵션이 하나도 없을 경우 메시지 표시 -->
+                            <li class="list-group-item text-muted text-center"
+                                th:if="${#lists.isEmpty(category.globalOptions)}">
+                                선택된 옵션 템플릿이 없습니다.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
         <div class="row">
             <div class="col">

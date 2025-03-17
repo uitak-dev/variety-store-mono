@@ -1,17 +1,17 @@
 package com.demo.variety_store_mono.seller.entity;
 
+import com.demo.variety_store_mono.admin.entity.Category;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.seller.converter.ProductAttributeConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Getter
@@ -33,20 +33,20 @@ public class Product {
     private BigDecimal basePrice;   // 기본 가격
 
     @Column(nullable = false)
-    LocalDate manufactureDate; // 제조일자
+    private LocalDate manufactureDate; // 제조일자
 
     @Column
     private int stockQuantity; // 기본 재고 (옵션이 없을 경우 사용)
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User seller;    // 판매자
+    private Seller seller;    // 판매자
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductCategory> productCategories = new ArrayList<>();    // 상품 카테고리
+    private Set<ProductCategory> productCategories = new LinkedHashSet<>();    // 상품 카테고리
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOption> productOptions = new ArrayList<>(); // 상품 옵션
+    private Set<ProductOption> productOptions = new LinkedHashSet<>();    // 상품 옵션
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -55,4 +55,65 @@ public class Product {
     @Convert(converter = ProductAttributeConverter.class)
     @Column(columnDefinition = "TEXT")
     private Map<String, Object> attributes; // 상품별 특화 속성
+
+    @Builder
+    public Product(Long id, String name, String description, BigDecimal basePrice,
+                   LocalDate manufactureDate, int stockQuantity, Seller seller,
+                   Map<String, Object> attributes) {
+
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.basePrice = basePrice;
+        this.manufactureDate = manufactureDate;
+        this.stockQuantity = stockQuantity;
+        this.attributes = attributes;
+
+        setSeller(seller);
+    }
+
+    /** * * * * * * * * * * * * * * * *
+     * association convenience method *
+     * * * * * * * * * * * * * * * * */
+
+    // 카테고리에 상품 등록.
+    public void addCategory(Category category) {
+        ProductCategory productCategory = new ProductCategory(this, category);
+        productCategories.add(productCategory);
+    }
+
+    // 상품-판매자 양방향 연관관계
+    private void setSeller(Seller seller) {
+        this.seller = seller;
+        seller.getProducts().add(this);
+    }
+
+    // 상품 승인: 등록 대기 상태(PENDING)인 경우, 승인(APPROVED) 상태로 전환 가능.
+    public void approve() {
+        if (this.status != ProductStatus.PENDING) {
+            throw new IllegalStateException("Only pending products can be approved.");
+        }
+        this.status = ProductStatus.APPROVED;
+    }
+
+    // 상품 반려: 등록 대기 상태(PENDING)인 경우, 반려(REJECTED) 상태로 전환 가능.
+    public void reject() {
+        if (this.status != ProductStatus.PENDING) {
+            throw new IllegalStateException("Only pending products can be rejected.");
+        }
+        this.status = ProductStatus.REJECTED;
+    }
+
+    // 판매 중단: 상품이 승인(APPROVED) 상태일 때만 중단(DISCONTINUED) 가능
+    public void discontinue() {
+        if (this.status != ProductStatus.APPROVED) {
+            throw new IllegalStateException("상품이 승인 상태여야 중단할 수 있습니다.");
+        }
+        this.status = ProductStatus.DISCONTINUED;
+    }
+
+    // 품절: 재고 수량과 상관없이, 판매자가 제품 손상/불량 등의 이유로 품절 상태로 전환 가능.
+    public void markOutOfStock() {
+        this.status = ProductStatus.OUT_OF_STOCK;
+    }
 }

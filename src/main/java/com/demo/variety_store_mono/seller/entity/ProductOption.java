@@ -6,8 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -31,5 +30,8 @@ public class ProductOption {
     private Product product;
 
     @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOptionValue> productOptionValues = new ArrayList<>();
+    private Set<ProductOptionValue> productOptionValues = new LinkedHashSet<>();
+
+    // association convenience method
+    // 옵션에 상품 등록.
 }

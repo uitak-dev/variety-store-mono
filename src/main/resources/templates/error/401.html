@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>401 - 인증 필요</title>
+    <style>
+        :root {
+          --primary-color: #2980B9; /* 파란 계열: 인증 관련 오류를 표현 */
+          --hover-color: #2471A3;
+          --background-color: #F4F4F4;
+          --text-color: #333;
+        }
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: var(--background-color);
+          color: var(--text-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+        }
+        .container {
+          text-align: center;
+          background: #fff;
+          padding: 40px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+          width: 90%;
+        }
+        h1 {
+          font-size: 6rem;
+          margin-bottom: 10px;
+        }
+        p {
+          font-size: 1.2rem;
+          margin-bottom: 20px;
+        }
+        a {
+          text-decoration: none;
+          color: #fff;
+          background-color: var(--primary-color);
+          padding: 12px 24px;
+          border-radius: 4px;
+          transition: background-color 0.3s;
+          display: inline-block;
+        }
+        a:hover {
+          background-color: var(--hover-color);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>401</h1>
+    <p>인증이 필요합니다.</p>
+    <p>로그인 또는 적절한 권한이 없는 접근입니다.</p>
+    <a href="#" onclick="window.history.back(); return false;">이전 페이지로 돌아가기</a>
+</div>
+</body>
+</html>

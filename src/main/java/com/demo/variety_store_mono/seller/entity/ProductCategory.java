@@ -30,4 +30,9 @@ public class ProductCategory {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public ProductCategory(Product product, Category category) {
+        this.product = product;
+        this.category = category;
+    }
 }

@@ -39,3 +39,40 @@ tr.clickable {
 input[readonly] {
     background-color: #e9ecef;
 }
+
+/* 모달 내 트리 뷰 스타일 */
+.category-tree ul {
+    list-style: none;
+    padding-left: 20px;
+}
+.category-tree li {
+    cursor: pointer;
+    padding: 6px 10px;
+}
+.category-tree li:hover {
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+/* breadcrumb 스타일 */
+#breadcrumbContainer {
+    margin-bottom: 15px;
+}
+#breadcrumbContainer .breadcrumb-item {
+    cursor: pointer;
+}
+
+/* 카테고리 생성/수정 페이지 옵션 선택 스타일 */
+.dual-panel-card {
+    min-height: 400px;
+    overflow-y: auto;
+}
+
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #f1f1f1;
+}

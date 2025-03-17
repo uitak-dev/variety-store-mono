@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +25,9 @@ public class Seller {
 
     private String companyName;
     private String businessLicenseNumber;
+
+    @OneToMany(mappedBy = "seller")
+    private Set<Product> products = new LinkedHashSet<>();
 
     @Builder
     public Seller(User user, String companyName, String businessLicenseNumber) {

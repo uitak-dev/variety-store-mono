@@ -1,10 +1,13 @@
 package com.demo.variety_store_mono.admin.service;
 
 import com.demo.variety_store_mono.admin.entity.Category;
+import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.repository.CategoryRepository;
+import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
 import com.demo.variety_store_mono.admin.request.CategoryRequest;
 import com.demo.variety_store_mono.admin.request.SearchCategory;
 import com.demo.variety_store_mono.admin.response.CategoryResponse;
+import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,6 +27,7 @@ import java.util.Optional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final GlobalOptionRepository globalOptionRepository;
     private final ModelMapper modelMapper;
 
     /** 카테고리 생성 */
@@ -38,10 +44,18 @@ public class CategoryService {
             throw new RuntimeException("중복된 카테고리 이름입니다.");
         }
 
+        Set<GlobalOption> globalOptions = request.getOptionIds().stream().map(optionId ->
+                globalOptionRepository.findById(optionId)
+                        .orElseThrow(() -> new EntityNotFoundException("해당 옵션 템플릿을 찾을 수 없습니다.")))
+                .collect(Collectors.toSet());
+
         Category category = Category.builder()
                 .name(request.getName())
                 .parent(parent)
                 .build();
+
+        category.updateGlobalOption(globalOptions);
+//        globalOptions.forEach(category::addOption);
 
         return modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
     }
@@ -55,7 +69,6 @@ public class CategoryService {
     // 최상위 카테고리 목록 조회
     @Transactional(readOnly = true)
     public List<CategoryResponse> getTopCategories() {
-
         return categoryRepository.findTopCategories().stream()
                 .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
     }
@@ -77,10 +90,17 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponse getCategory(Long categoryId) {
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
-        return modelMapper.map(category, CategoryResponse.class);
+        CategoryResponse ret = modelMapper.map(category, CategoryResponse.class);
+        ret.setGlobalOptions(category.getGlobalOptions()
+                .stream()
+                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
+                .toList()
+        );
+
+        return ret;
     }
 
     /** 카테고리 수정 */
@@ -91,11 +111,29 @@ public class CategoryService {
                     .orElseThrow(() -> new RuntimeException("상위 카테고리를 찾을 수 없습니다. id: " + request.getParentId()));
         }
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
+        // 카테고리 기본 정보 수정.
         category.update(request.getName(), parent);
-        return modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
+
+        // 카테고리-옵션 연관관계 수정.
+        Set<GlobalOption> collect = request.getOptionIds().stream()
+                .map(optionId -> globalOptionRepository.findById(optionId)
+                        .orElseThrow(() -> new EntityNotFoundException("해당 옵션 템플릿을 찾을 수 없습니다.")))
+                .collect(Collectors.toSet());
+
+        category.updateGlobalOption(collect);
+
+        // 엔티티 -> dto 변환.
+        CategoryResponse ret = modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
+        ret.setGlobalOptions(category.getGlobalOptions()
+                .stream()
+                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
+                .toList()
+        );
+
+        return ret;
     }
 
     /** 카테고리 삭제 */

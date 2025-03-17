@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.seller.entity;
 
+import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,10 @@ public class ProductOptionValue {
     @Column(name = "product_option_value_id")
     private Long id;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "global_option_value_id", nullable = true)
+    private GlobalOptionValue globalOptionValue;
+
     private String optionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
 
     @ManyToOne
@@ -34,4 +38,7 @@ public class ProductOptionValue {
     // 특별한 상황(품질 문제, 판매 중단)에서 품절 상태를 표시할 필요가 있는 경우.
     @Column(nullable = false)
     private boolean isOutOfStock = false; // 옵션 품절 여부
+
+    // association convenience method
+    // 옵션 값에 옵션 등록
 }

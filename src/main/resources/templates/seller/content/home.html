@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{seller/layout/head :: head}">
+    <title>판매자 홈</title>
+</head>
+
+<body>
+<!-- 헤더 (네비게이션 바 등) -->
+<header th:replace="~{seller/layout/header :: header}"></header>
+
+<!-- 히어로 섹션 -->
+<section class="hero-section">
+    <div class="hero-content container">
+        <h1>안녕하세요, 판매자님!</h1>
+        <p class="lead">최신 데이터와 도구로 비즈니스를 성장시키세요.</p>
+        <a href="#dashboard" class="btn btn-primary btn-lg mt-3">대시보드 바로가기</a>
+    </div>
+</section>
+
+<!-- 주요 콘텐츠 -->
+<div class="container">
+    <!-- 대시보드 카드 -->
+    <div id="dashboard" class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">대시보드</h2>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">총 상품 수</h5>
+                    <p class="card-text fs-4">120 개</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">더 보기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">이번 달 판매</h5>
+                    <p class="card-text fs-4">1500만원</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">더 보기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">미처리 주문</h5>
+                    <p class="card-text fs-4">15 건</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">더 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 빠른 작업 및 최근 활동 -->
+    <div class="row mb-5">
+        <!-- 빠른 작업 -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-primary text-white">
+                    빠른 작업
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn btn-outline-primary mb-2">상품 등록</a>
+                    <a href="#" class="btn btn-outline-primary mb-2">상품 수정</a>
+                    <a href="#" class="btn btn-outline-primary mb-2">주문 확인</a>
+                </div>
+            </div>
+        </div>
+        <!-- 최근 활동 -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-secondary text-white">
+                    최근 활동
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">신규 주문: #12345</li>
+                    <li class="list-group-item">상품 업데이트: "신상품 ABC"</li>
+                    <li class="list-group-item">판매 통계 보고서 확인</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<footer th:replace="~{seller/layout/footer :: footer}"></footer>
+</body>
+</html>

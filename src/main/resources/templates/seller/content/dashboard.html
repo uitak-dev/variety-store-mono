@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{seller/layout/head :: head}">
+    <title>판매자 홈</title>
+</head>
+
+<body>
+<!-- 헤더 (네비게이션 바 등) -->
+<header th:replace="~{seller/layout/header :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<div class="container">
+    <!-- 제목 -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">판매자 대시보드</h1>
+            <p class="lead">비즈니스 성장을 위한 실시간 통계를 확인하세요.</p>
+        </div>
+    </div>
+
+    <!-- 주요 지표 카드 -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header">총 판매액</div>
+                <div class="card-body">
+                    <h3 class="card-title">25,000,000원</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header">총 주문 수</div>
+                <div class="card-body">
+                    <h3 class="card-title">150건</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header">총 상품 수</div>
+                <div class="card-body">
+                    <h3 class="card-title">120개</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-header">미처리 주문</div>
+                <div class="card-body">
+                    <h3 class="card-title">15건</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 판매 추세 (플레이스홀더 차트) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">최근 판매 추세</div>
+                <div class="card-body">
+                    <!-- 실제 차트 라이브러리(Chart.js, Google Charts 등)로 대체 가능 -->
+                    <img src="https://via.placeholder.com/1200x400?text=Sales+Chart" alt="최근 판매 추세" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 주문 내역 테이블 -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">최근 주문 내역</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>주문번호</th>
+                                <th>고객명</th>
+                                <th>주문일자</th>
+                                <th>총 금액</th>
+                                <th>상태</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>#12345</td>
+                                <td>홍길동</td>
+                                <td>2023-04-01</td>
+                                <td>50,000원</td>
+                                <td><span class="badge bg-warning text-dark">처리중</span></td>
+                            </tr>
+                            <tr>
+                                <td>#12346</td>
+                                <td>김철수</td>
+                                <td>2023-04-02</td>
+                                <td>75,000원</td>
+                                <td><span class="badge bg-success">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>#12347</td>
+                                <td>이영희</td>
+                                <td>2023-04-03</td>
+                                <td>120,000원</td>
+                                <td><span class="badge bg-danger">취소</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="#" class="btn btn-outline-primary btn-sm mt-3">전체 주문 내역 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<footer th:replace="~{seller/layout/footer :: footer}"></footer>
+</body>
+</html>

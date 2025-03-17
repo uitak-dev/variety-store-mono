@@ -1,0 +1,116 @@
+header {
+    background-color: #343a40;
+    color: #fff;
+    padding: 1rem 0;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+footer {
+    margin-top: 2rem;
+}
+
+/* 네비게이션 바에 살짝 그림자 추가 */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 히어로 섹션 스타일 */
+.hero-section {
+    position: relative;
+    height: 400px;
+    background: url('https://source.unsplash.com/random/1600x400/?store') no-repeat center center;
+    background-size: cover;
+    margin-bottom: 2rem;
+}
+
+.hero-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-section .hero-content {
+    position: relative;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #fff;
+}
+
+.hero-section .hero-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s;
+}
+
+/* 네비게이션 바 그림자 */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 카드 호버 효과 */
+.card:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s;
+}
+
+/* 페이지 상단 여백 */
+.container {
+    margin-top: 2rem;
+}
+
+/* 사이드바 네비게이션 스타일 */
+aside nav .nav-link {
+    color: #343a40;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+aside nav .nav-link.active,
+aside nav .nav-link:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+main section {
+    margin-bottom: 2rem;
+}
+
+footer {
+    background-color: #343a40;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
+
+/* 옵션 값 입력 필드와 삭제 버튼의 스타일 */
+.option-value-row {
+    position: relative;
+}
+.remove-option-value {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #dc3545;
+}

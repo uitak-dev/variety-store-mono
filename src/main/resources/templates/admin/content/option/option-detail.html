@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/head :: head}">
+    <title>템플릿 옵션 상세 정보</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{admin/layout/header :: header}"></header>
+<main class="flex-fill">
+    <div class="container mt-5">
+        <h2 class="mb-4">템플릿 옵션 상세 정보</h2>
+
+        <!-- 옵션 기본 정보 -->
+        <div class="mb-3">
+            <label for="id" class="form-label">ID</label>
+            <input type="text" id="id" class="form-control" th:value="${option.id}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="optionName" class="form-label">옵션 이름</label>
+            <input type="text" id="optionName" class="form-control" th:value="${option.name}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">옵션 값</label>
+            <div class="d-flex flex-wrap gap-2">
+                <div th:each="value, iterStat : ${option.globalOptionValues}">
+                    <input type="text" th:id="'optionValue_' + ${iterStat.index}" class="form-control"
+                           th:value="${value.optionValue}" readonly style="width: 200px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-secondary"
+                        th:onclick="|location.href='@{/admin/options}'|"
+                        type="button">
+                    목록
+                </button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-primary"
+                        th:onclick="|location.href='@{/admin/options/{id}/edit(id=${option.id})}'|"
+                        type="button">
+                    정보 수정
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,5 +1,7 @@
 package com.demo.variety_store_mono.security.config;
 
+import com.demo.variety_store_mono.security.handler.CustomAccessDeniedHandler;
+import com.demo.variety_store_mono.security.handler.CustomAuthenticationEntryPoint;
 import com.demo.variety_store_mono.security.jwt.CustomBearerTokenResolver;
 import com.demo.variety_store_mono.security.jwt.CustomJwtAuthenticationConverter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomBearerTokenResolver customBearerTokenResolver;
+    private final CustomBearerTokenResolver bearerTokenResolver;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,10 +37,15 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                // 예외 처리 핸들러 등록 (JWT 인증 실패 시 401,403 처리 등)
+//                .exceptionHandling(exception -> exception
+//                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+//                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+//                )
                 // JWT 기반 인증 활성화
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new CustomJwtAuthenticationConverter()))
-                        .bearerTokenResolver(customBearerTokenResolver)
+                        .bearerTokenResolver(bearerTokenResolver)
                 )
         ;
 

@@ -2,29 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{admin/layout/head :: head}">
     <title>카테고리 수정</title>
-    <style>
-        /* 모달 내 트리 뷰 스타일 */
-        .category-tree ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-        .category-tree li {
-            cursor: pointer;
-            padding: 6px 10px;
-        }
-        .category-tree li:hover {
-            background-color: #e9ecef;
-            border-radius: 4px;
-        }
-
-        /* breadcrumb 스타일 */
-        #breadcrumbContainer {
-            margin-bottom: 15px;
-        }
-        #breadcrumbContainer .breadcrumb-item {
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 <header th:replace="~{admin/layout/header :: header}"></header>
@@ -32,7 +9,7 @@
     <div class="container my-4">
         <h1>카테고리 수정</h1>
         <!-- 수정 폼: 수정 대상 카테고리를 모델에 바인딩 -->
-        <form th:action th:object="${category}" method="post">
+        <form id="categoryForm" th:action th:object="${category}" method="post">
             <!-- 상위 카테고리 선택 영역 -->
             <div class="mb-3">
                 <label for="selectedParent" class="form-label">상위 카테고리 선택:</label>
@@ -53,6 +30,42 @@
                 <label for="name" class="form-label">카테고리 이름</label>
                 <input type="text" th:field="*{name}" id="name" class="form-control" required />
             </div>
+
+            <!-- 카테고리에 포함시킬 옵션 템플릿 선택 영역 -->
+            <div class="row mb-5">
+                <!-- 왼쪽 패널: 선택 가능한 아이템 -->
+                <div class="col-md-6">
+                    <h6>옵션 템플릿 선택</h6>
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="템플릿 이름 검색...">
+                    <div class="card dual-panel-card">
+                        <div class="card-body">
+                            <ul id="availableItemsList" class="list-group">
+                                <!-- 아직 선택되지 않은 옵션들만 표시 -->
+                                <li class="list-group-item" th:each="opt : ${options}"
+                                    th:if="${!#lists.contains(category.globalOptions, opt)}"
+                                    th:text="${opt.name}" th:attr="value=${opt.id}">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- 오른쪽 패널: 선택한 옵션 템플릿 -->
+                <div class="col-md-6">
+                    <h6>선택한 옵션 템플릿</h6>
+                    <div class="card dual-panel-card">
+                        <div class="card-body">
+                            <ul id="selectedItemsList" class="list-group">
+                                <!-- 사용자가 선택한 아이템들이 여기에 추가됨 -->
+                                <li class="list-group-item" th:each="option : ${category.globalOptions}"
+                                    th:text="${option.name}" th:attr="value=${option.id}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- hidden input에 선택된 아이템 id들을 설정 -->
+            <input type="hidden" name="optionIds" id="optionIds">
 
             <!-- 버튼 -->
             <div class="row">
@@ -206,6 +219,37 @@
         currentParentId = null;
         updateBreadcrumb();
         loadCategories(null);
+    });
+
+    // 옵션 템플릿 선택
+    $(document).ready(function () {
+        // 1. 검색 인풋: 왼쪽 목록 필터링
+        $("#searchInput").on("input", function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $("#availableItemsList li").each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(searchTerm) > -1);
+            });
+        });
+
+        // 2. 왼쪽 목록의 아이템 클릭 시 오른쪽 패널로 이동 (애니메이션 없이 즉시 이동)
+        $("#availableItemsList").on("click", "li", function () {
+            $(this).detach().appendTo("#selectedItemsList");
+        });
+
+        // 3. 오른쪽 목록의 아이템 클릭 시 왼쪽 패널로 이동
+        $("#selectedItemsList").on("click", "li", function () {
+            $(this).detach().appendTo("#availableItemsList");
+        });
+
+        // 4. 폼 제출 시, 각 li의 value 속성을 수집하여 hidden input에 설정
+        $("#categoryForm").on("submit", function () {
+            var selectedOptionIds = [];
+            $("#selectedItemsList li").each(function () {
+                selectedOptionIds.push($(this).attr("value"));
+            });
+            $("#optionIds").val(selectedOptionIds.join(","));
+        });
     });
 </script>
 </body>
