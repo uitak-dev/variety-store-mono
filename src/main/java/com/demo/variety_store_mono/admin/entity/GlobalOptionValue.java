@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "optionValue")
 public class GlobalOptionValue {
 
     @Id
@@ -15,7 +14,7 @@ public class GlobalOptionValue {
     @Column(name = "global_option_value_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String optionValue;   // 옵션 값
 
     public GlobalOptionValue(String optionValue) {

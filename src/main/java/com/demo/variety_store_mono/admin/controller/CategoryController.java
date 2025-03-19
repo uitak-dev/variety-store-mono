@@ -103,6 +103,8 @@ public class CategoryController {
         }
 
         model.addAttribute("category", category);
+        model.addAttribute("options", globalOptionService.getAllOption());
+
         return "admin/content/category/category-edit";
     }
 

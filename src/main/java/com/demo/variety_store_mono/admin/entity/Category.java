@@ -59,7 +59,7 @@ public class Category {
     }
 
     /** 부모-자식 연관관계 형성 */
-    public void setParent(Category parent) {
+    private void setParent(Category parent) {
         if (this.parent == parent) return;
 
         if (this.parent != null) {
@@ -72,19 +72,12 @@ public class Category {
         }
     }
 
-    /** 카테고리-옵션 연관관계 형성 */
-    private void addOption(GlobalOption newOption) {
-        for (CategoryGlobalOption categoryOption : categoryGlobalOptions) {
-            GlobalOption option = categoryOption.getGlobalOption();
-            if (option == newOption) return;
-        }
-
-        CategoryGlobalOption categoryGlobalOption = new CategoryGlobalOption(this, newOption);
-        categoryGlobalOptions.add(categoryGlobalOption);
-    }
-
     /** 카테고리-옵션 연관관계 편의 메서드 */
     public void updateGlobalOption(Set<GlobalOption> newGlobalOptions) {
+
+        if (newGlobalOptions == null) {
+            throw new IllegalArgumentException("매개변수가 null 값이면 안됩니다.");
+        }
 
         // 현재 categoryGlobalOptions 에서 GlobalOption 목록 추출
         Set<GlobalOption> existingOptions = categoryGlobalOptions.stream()
@@ -109,7 +102,9 @@ public class Category {
         }
 
         // 옵션 추가
-        optionsToAdd.forEach(this::addOption);
+        optionsToAdd.forEach(globalOption ->
+            categoryGlobalOptions.add(new CategoryGlobalOption(this, globalOption))
+        );
     }
 
     /** 카테고리에 등록된 옵션 템플릿 조회 */
