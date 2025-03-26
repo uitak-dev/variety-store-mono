@@ -75,12 +75,12 @@ public class Product {
     /**
      * association convenience method
      */
-    // 카테고리-상품 연관관계 편의 메서드.
-    public void addCategory(Category category) {
-        ProductCategory productCategory = new ProductCategory(this, category);
-        productCategories.add(productCategory);
-        category.getProductCategories().add(productCategory);
-    }
+//    // 카테고리-상품 연관관계 편의 메서드.
+//    public void addCategory(Category category) {
+//        ProductCategory productCategory = new ProductCategory(this, category);
+//        productCategories.add(productCategory);
+//        category.getProductCategories().add(productCategory);
+//    }
 
     // 상품-옵션 연관관계 편의 메서드.
     public void addProductOption(ProductOption productOption) {

@@ -59,8 +59,6 @@ public class ProductService {
                 .seller(user.getSeller())
                 .build();
 
-        product.addCategory(category);
-
         // 옵션 상품인 경우, 옵션 등록.
         if (!request.isSingle() && request.getProductOptions() != null) {
             request.getProductOptions().forEach(optionRequest -> {
@@ -70,6 +68,8 @@ public class ProductService {
         }
 
         Product savedProduct = productRepository.save(product);
+        category.addProduct(product);
+
         return modelMapper.map(savedProduct, ProductResponse.class);
     }
 
@@ -109,6 +109,8 @@ public class ProductService {
             GlobalOption globalOption = globalOptionRepository.findByIdWithValues(request.getGlobalOptionId())
                     .orElseThrow(() -> new EntityNotFoundException("해당 옵션 템플릿이 존재하지 않습니다."));
 
+            productOption.assignGlobalOption(globalOption);
+
             Set<GlobalOptionValue> globalOptionValues = globalOption.getGlobalOptionValues();
             request.getOptionValues().forEach(optionValueRequest -> {
                 ProductOptionValue productOptionValue = generateProductOptionValue(optionValueRequest, globalOptionValues);
@@ -137,7 +139,7 @@ public class ProductService {
         if (request.isGlobal() && request.getGlobalOptionValueId() != null) {
             for (GlobalOptionValue value : globalOptionValues) {
                 if (value.getId() == request.getGlobalOptionValueId()) {
-                    ret.relateGlobalOptionValue(value);
+                    ret.assignGlobalOptionValue(value);
                     break;
                 }
             }

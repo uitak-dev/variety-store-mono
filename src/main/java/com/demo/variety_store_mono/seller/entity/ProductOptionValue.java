@@ -1,6 +1,5 @@
 package com.demo.variety_store_mono.seller.entity;
 
-import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -59,7 +58,7 @@ public class ProductOptionValue {
         this.productOption = productOption;
     }
 
-    public void relateGlobalOptionValue(GlobalOptionValue globalOptionValue) {
+    public void assignGlobalOptionValue(GlobalOptionValue globalOptionValue) {
         this.globalOptionValue = globalOptionValue;
     }
 }

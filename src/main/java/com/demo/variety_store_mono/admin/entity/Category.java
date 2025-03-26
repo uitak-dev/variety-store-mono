@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.admin.entity;
 
 import com.demo.variety_store_mono.security.entity.UserRole;
+import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -51,6 +52,13 @@ public class Category {
     /** * * * * * * * * * * * * * * * *
      * association convenience method *
      * * * * * * * * * * * * * * * * */
+
+    // 카테고리-상품 연관관계 편의 메서드.
+    public void addProduct(Product product) {
+        ProductCategory productCategory = new ProductCategory(product, this);
+        productCategories.add(productCategory);
+        product.getProductCategories().add(productCategory);
+    }
 
     /** 카테고리 정보 수정 */
     public void update(String name, Category parent) {

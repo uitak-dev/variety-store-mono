@@ -248,8 +248,6 @@ class ProductForm {
     handleSubmit(e) {
         e.preventDefault();
         const data = this.gatherData();
-        // hidden input에 JSON 문자열로 설정
-        document.getElementById('dynamicOptions').value = JSON.stringify(data.productOptions);  // ##
         console.log("전송 데이터:", JSON.stringify(data, null, 2));
         fetch('/seller/products/new', {
             method: 'POST',
@@ -263,7 +261,7 @@ class ProductForm {
             .then(result => {
                 console.log('전송 성공:', result);
                 // 성공 시, 리다이렉트 처리(뒤로가기 히스토리를 남기지 않음)
-//                window.location.replace(`/seller/products/${result.id}`);
+                window.location.replace(`/seller/products/${result.id}`);
             })
             .catch(error => {
                 console.error('전송 중 오류 발생:', error);

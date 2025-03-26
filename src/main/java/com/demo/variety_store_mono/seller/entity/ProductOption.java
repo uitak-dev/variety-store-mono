@@ -50,6 +50,10 @@ public class ProductOption {
         this.product = product;
     }
 
+    public void assignGlobalOption(GlobalOption globalOption) {
+        this.globalOption = globalOption;
+    }
+
     public void addProductOptionValue(ProductOptionValue productOptionValue) {
         productOptionValues.add(productOptionValue);
         productOptionValue.assignProductOption(this);
