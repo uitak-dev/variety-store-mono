@@ -8,6 +8,7 @@ import com.demo.variety_store_mono.admin.request.CategoryRequest;
 import com.demo.variety_store_mono.admin.request.SearchCategory;
 import com.demo.variety_store_mono.admin.response.CategoryResponse;
 import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
+import com.demo.variety_store_mono.admin.response.GlobalOptionValueResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -55,7 +57,6 @@ public class CategoryService {
                 .build();
 
         category.updateGlobalOption(globalOptions);
-//        globalOptions.forEach(category::addOption);
 
         return modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
     }
@@ -142,5 +143,27 @@ public class CategoryService {
             throw new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId);
         }
         categoryRepository.deleteById(categoryId);
+    }
+
+    /** 카테고리에 포함되어 있는 옵션 템플릿 조회 */
+    public List<GlobalOptionResponse> getGlobalOptionsInCategory(Long categoryId) {
+
+        List<GlobalOptionResponse> ret = new ArrayList<>();
+
+        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
+
+        Set<GlobalOption> globalOptions = category.getGlobalOptions();
+        globalOptions.forEach(option -> {
+            Set<GlobalOptionValueResponse> collect = option.getGlobalOptionValues().stream()
+                    .map(optionValue -> modelMapper.map(optionValue, GlobalOptionValueResponse.class))
+                    .collect(Collectors.toSet());
+
+            GlobalOptionResponse globalOptionResponse = modelMapper.map(option, GlobalOptionResponse.class);
+            globalOptionResponse.setGlobalOptionValues(collect);
+            ret.add(globalOptionResponse);
+        });
+
+        return ret;
     }
 }

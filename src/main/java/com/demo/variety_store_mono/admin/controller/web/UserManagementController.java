@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.admin.controller;
+package com.demo.variety_store_mono.admin.controller.web;
 
 import com.demo.variety_store_mono.admin.request.SearchUser;
 import com.demo.variety_store_mono.admin.resolver.UserDetail;

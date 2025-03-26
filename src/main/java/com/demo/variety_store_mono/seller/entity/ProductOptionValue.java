@@ -1,8 +1,10 @@
 package com.demo.variety_store_mono.seller.entity;
 
+import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,11 +24,12 @@ public class ProductOptionValue {
     @JoinColumn(name = "global_option_value_id", nullable = true)
     private GlobalOptionValue globalOptionValue;
 
-    private String optionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_option_id", nullable = false)
-    private ProductOption productOption;    // 판매자 정의 옵션과 연결
+    private ProductOption productOption;
+
+    private String optionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
+    private boolean global;       // true: 글로벌 옵션 값, false: 사용자 정의 옵션 값
 
     @Column(nullable = false)
     private BigDecimal additionalPrice; // 옵션 선택 시 추가 가격
@@ -39,6 +42,24 @@ public class ProductOptionValue {
     @Column(nullable = false)
     private boolean isOutOfStock = false; // 옵션 품절 여부
 
-    // association convenience method
-    // 옵션 값에 옵션 등록
+    @Builder
+    public ProductOptionValue(Long id, String optionValue, boolean global,
+                              BigDecimal additionalPrice, int stockQuantity) {
+        this.id = id;
+        this.global = global;
+        this.optionValue = optionValue;
+        this.additionalPrice = additionalPrice;
+        this.stockQuantity = stockQuantity;
+    }
+
+    /** * * * * * * * * * * * * * * * *
+     * association convenience method *
+     * * * * * * * * * * * * * * * * */
+    void assignProductOption(ProductOption productOption) {
+        this.productOption = productOption;
+    }
+
+    public void relateGlobalOptionValue(GlobalOptionValue globalOptionValue) {
+        this.globalOptionValue = globalOptionValue;
+    }
 }

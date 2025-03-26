@@ -16,8 +16,9 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
     // 공개 엔드포인트 목록.
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
             PathRequest.toStaticResources().atCommonLocations(),
+            new AntPathRequestMatcher("/public/**"),
             new AntPathRequestMatcher("/auth/**"),
-            new AntPathRequestMatcher("/public/**")
+            new AntPathRequestMatcher("/api/**")
     );
 
     @Override

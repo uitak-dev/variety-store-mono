@@ -78,6 +78,7 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
 
         // 카테고리 생성.
         Category clothes = createCategoryIfNotFound("의류", null, new HashSet<>());
+        Category electronics = createCategoryIfNotFound("전자제품", null, Set.of(colorOption, materialOption));
         Category mensClothing = createCategoryIfNotFound("남성패션", clothes, new HashSet<>());
         Category womensClothing = createCategoryIfNotFound("여성패션", clothes, new HashSet<>());
         createCategoryIfNotFound("셔츠(남성)", mensClothing, Set.of(colorOption, sizeOption1, materialOption));

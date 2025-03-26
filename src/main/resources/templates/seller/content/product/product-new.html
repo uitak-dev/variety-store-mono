@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{seller/layout/head :: head}">
+    <title>상품 등록</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<!-- 헤더 -->
+<header th:replace="~{seller/layout/header :: header}"></header>
+
+<!-- 메인 컨텐츠 -->
+<main class="flex-fill">
+    <div class="container my-4">
+        <h1 class="mb-4">상품 등록</h1>
+
+        <!-- 상품 등록 폼: 기본 정보와 옵션 정보를 JSON으로 전송 -->
+        <form id="productForm" method="post" th:action="@{/seller/products/register}">
+            <!-- 기본 정보 섹션 -->
+            <section class="card card-section">
+                <div class="card-header">기본 정보</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="categoryId" class="form-label">카테고리</label>
+                        <select id="categoryId" class="form-select" required>
+                            <option value="" disabled selected>최하위 카테고리를 선택하세요</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">상품명</label>
+                        <input type="text" id="name" class="form-control" placeholder="상품명을 입력하세요" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">상품 설명</label>
+                        <textarea id="description" class="form-control" rows="4" placeholder="상품 설명을 입력하세요"
+                                  required></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="basePrice" class="form-label">가격</label>
+                            <input type="number" id="basePrice" class="form-control" placeholder="가격 입력" required
+                                   step="0.01">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="manufactureDate" class="form-label">제조일자</label>
+                            <input type="date" id="manufactureDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="stockQuantity" class="form-label">재고 수량</label>
+                            <input type="number" id="stockQuantity" class="form-control" placeholder="재고 수량 입력"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">상품 타입</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="singleProduct" name="single"
+                                   value="true" required>
+                            <label class="form-check-label" for="singleProduct">단일 상품</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="optionProduct" name="single"
+                                   value="false" required>
+                            <label class="form-check-label" for="optionProduct">옵션 상품</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 옵션 정보 섹션: 옵션 상품일 경우만 노출 -->
+            <section class="card card-section" id="optionSection" style="display: none;">
+                <div class="card-header">옵션 정보 등록</div>
+                <div class="card-body">
+                    <button type="button" id="loadTemplateButton" class="btn btn-outline-info mb-3">옵션 템플릿 불러오기</button>
+                    <button type="button" id="addManualOptionButton" class="btn btn-outline-primary mb-3">옵션 추가</button>
+                    <div id="productOptionsContainer"></div>
+                </div>
+            </section>
+
+            <!-- 옵션 정보 JSON을 담을 hidden input ## -->
+            <input type="hidden" name="dynamicOptions" id="dynamicOptions">
+
+            <!-- 제출 및 취소 버튼 -->
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="w-100 btn btn-primary">상품 등록</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="w-100 btn btn-secondary"
+                            th:onclick="|location.href='@{/seller/products}'|">취소</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 옵션 템플릿 모달 -->
+<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="templateModalLabel">옵션 템플릿 선택</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <div id="templateModalContainer" class="row row-cols-1 row-cols-md-2 g-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<footer th:replace="~{seller/layout/footer :: footer}"></footer>
+
+<!-- JavaScript: jQuery, Bootstrap, 그리고 폼 관리 스크립트 -->
+<script src="/seller/js/productForm.js"></script>
+</body>
+
+</html>

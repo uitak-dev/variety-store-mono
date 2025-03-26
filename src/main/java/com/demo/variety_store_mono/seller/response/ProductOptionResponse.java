@@ -1,12 +1,11 @@
 package com.demo.variety_store_mono.seller.response;
 
-import com.demo.variety_store_mono.seller.request.ProductOptionValueRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -24,5 +23,5 @@ public class ProductOptionResponse {
     private String productOptionName;
 
     // 해당 옵션에 대한 값들을 담은 리스트.
-    private Set<ProductOptionValueResponse> optionValues;
+    private List<ProductOptionValueResponse> productOptionValues;
 }

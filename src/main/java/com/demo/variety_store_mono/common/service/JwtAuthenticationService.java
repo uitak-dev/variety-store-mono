@@ -45,11 +45,13 @@ public class JwtAuthenticationService {
         // 추가 클레임으로 역할 정보 등을 포함할 수 있습니다.
         String accessToken = jwtTokenProvider.generateAccessToken(
                 user.getUserName(),
-                Map.of("roles", user.getRoles().stream().map(Role::getName).toList())
+                Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
+                        "id", user.getId())
         );
         String refreshToken = jwtTokenProvider.generateRefreshToken(
                 user.getUserName(),
-                Map.of("roles", user.getRoles().stream().map(Role::getName).toList())
+                Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
+                        "id", user.getId())
         );
 
         // DB에 리프레시 토큰 저장
@@ -73,6 +75,7 @@ public class JwtAuthenticationService {
         // JwtTokenProvider를 이용한 토큰 검증
         Jwt jwt = jwtTokenProvider.validateRefreshToken(refreshToken.getToken());
         String userName = jwt.getSubject();
+        Long userId = jwt.getClaim("id");
 
         if (refreshToken.getExpiryDate().isBefore(Instant.now())) {
             // 만료된 토큰은 DB에서 삭제 후 예외 처리
@@ -81,7 +84,11 @@ public class JwtAuthenticationService {
         }
 
         // 새로운 Access Token 발급.
-        return jwtTokenProvider.generateAccessToken(userName, Map.of("roles", refreshToken.getUser().getRoles()));
+        return jwtTokenProvider.generateAccessToken(
+                userName,
+                Map.of("roles", refreshToken.getUser().getRoles(),
+                        "id", userId)
+        );
     }
 
     /**
@@ -100,6 +107,5 @@ public class JwtAuthenticationService {
 
         // refreshToken 삭제
         refreshTokenRepository.delete(refreshToken);
-//        refreshTokenRepository.flush();
     }
 }

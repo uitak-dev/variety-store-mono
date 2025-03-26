@@ -22,13 +22,12 @@ public class ProductRequest {
     private String description;
     private BigDecimal basePrice;
     private LocalDate manufactureDate;
-    private int stockQuantity;
 
-    // 판매자 id (인증된 사용자나 별도 값으로 처리)
-    private Long sellerId;
+    private boolean single;   // true: 단일 상품, false: 옵션이 있는 상품.
+    private int stockQuantity;  // 재고량 (단일 상품인 경우 사용.)
 
     // 상품이 속할 카테고리 id
-    private Long productCategoryId;
+    private Long categoryId;
 
     // 상품 옵션 정보 (상품 옵션 및 옵션 값에 대한 요청 DTO를 별도로 정의)
     private List<ProductOptionRequest> productOptions;

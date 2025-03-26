@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.admin.controller;
+package com.demo.variety_store_mono.admin.controller.web;
 
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.common.request.LoginRequest;

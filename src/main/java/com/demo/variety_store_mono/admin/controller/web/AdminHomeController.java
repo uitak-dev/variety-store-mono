@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.admin.controller;
+package com.demo.variety_store_mono.admin.controller.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

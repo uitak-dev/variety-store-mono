@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -23,5 +24,5 @@ public class ProductResponse {
     private LocalDate manufactureDate;
     private int stockQuantity;
 
-
+    private List<ProductOptionResponse> productOptions;
 }

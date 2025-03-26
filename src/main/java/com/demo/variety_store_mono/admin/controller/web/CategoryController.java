@@ -1,8 +1,9 @@
-package com.demo.variety_store_mono.admin.controller;
+package com.demo.variety_store_mono.admin.controller.web;
 
 import com.demo.variety_store_mono.admin.request.CategoryRequest;
 import com.demo.variety_store_mono.admin.request.SearchCategory;
 import com.demo.variety_store_mono.admin.response.CategoryResponse;
+import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
 import com.demo.variety_store_mono.admin.service.CategoryService;
 import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import lombok.RequiredArgsConstructor;

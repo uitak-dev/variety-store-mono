@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.seller.controller;
+package com.demo.variety_store_mono.seller.controller.web;
 
 import com.demo.variety_store_mono.common.request.LoginRequest;
 import com.demo.variety_store_mono.common.request.SignUpRequest;

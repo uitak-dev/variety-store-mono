@@ -3,6 +3,7 @@ package com.demo.variety_store_mono.seller.entity;
 import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,19 +20,38 @@ public class ProductOption {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    private boolean global;     // true: 글로벌 옵션, false: 사용자 정의 옵션.
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "global_option_id", nullable = true)
     private GlobalOption globalOption;
 
-    @Column
-    private String name; // 판매자 정의 옵션 이름 (예: "색상", "RAM", "저장 용량")
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false) // 상품과 연결
-    private Product product;
+    private String name;        // 판매자 정의 옵션 이름 (예: "색상", "RAM", "저장 용량")
 
     @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductOptionValue> productOptionValues = new LinkedHashSet<>();
 
-    // association convenience method
-    // 옵션에 상품 등록.
+    @Builder
+    public ProductOption(Long id, GlobalOption globalOption, boolean global,
+                         String name) {
+        this.id = id;
+        this.globalOption = globalOption;
+        this.global = global;
+        this.name = name;
+    }
+
+    /** * * * * * * * * * * * * * * * *
+     * association convenience method *
+     * * * * * * * * * * * * * * * * */
+    void assignProduct(Product product) {
+        this.product = product;
+    }
+
+    public void addProductOptionValue(ProductOptionValue productOptionValue) {
+        productOptionValues.add(productOptionValue);
+        productOptionValue.assignProductOption(this);
+    }
 }

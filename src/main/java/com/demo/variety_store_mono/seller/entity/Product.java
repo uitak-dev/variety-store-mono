@@ -35,8 +35,8 @@ public class Product {
     @Column(nullable = false)
     private LocalDate manufactureDate; // 제조일자
 
-    @Column
-    private int stockQuantity; // 기본 재고 (옵션이 없을 경우 사용)
+    private int stockQuantity;  // 기본 재고 (옵션이 없을 경우 사용)
+    private boolean single;   // true: 단일 상품, false: 옵션이 있는 상품.
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -45,7 +45,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductCategory> productCategories = new LinkedHashSet<>();    // 상품 카테고리
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy ="product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductOption> productOptions = new LinkedHashSet<>();    // 상품 옵션
 
     @Enumerated(EnumType.STRING)
@@ -57,29 +57,35 @@ public class Product {
     private Map<String, Object> attributes; // 상품별 특화 속성
 
     @Builder
-    public Product(Long id, String name, String description, BigDecimal basePrice,
+    public Product(Long id, String name, String description, Boolean single, BigDecimal basePrice,
                    LocalDate manufactureDate, int stockQuantity, Seller seller,
                    Map<String, Object> attributes) {
 
         this.id = id;
         this.name = name;
         this.description = description;
+        this.single = single;
         this.basePrice = basePrice;
         this.manufactureDate = manufactureDate;
         this.stockQuantity = stockQuantity;
         this.attributes = attributes;
-
         setSeller(seller);
     }
 
-    /** * * * * * * * * * * * * * * * *
-     * association convenience method *
-     * * * * * * * * * * * * * * * * */
-
-    // 카테고리에 상품 등록.
+    /**
+     * association convenience method
+     */
+    // 카테고리-상품 연관관계 편의 메서드.
     public void addCategory(Category category) {
         ProductCategory productCategory = new ProductCategory(this, category);
         productCategories.add(productCategory);
+        category.getProductCategories().add(productCategory);
+    }
+
+    // 상품-옵션 연관관계 편의 메서드.
+    public void addProductOption(ProductOption productOption) {
+        productOptions.add(productOption);
+        productOption.assignProduct(this);
     }
 
     // 상품-판매자 양방향 연관관계
@@ -88,6 +94,9 @@ public class Product {
         seller.getProducts().add(this);
     }
 
+    /**
+     * 상품 상태 변경 메서드
+     */
     // 상품 승인: 등록 대기 상태(PENDING)인 경우, 승인(APPROVED) 상태로 전환 가능.
     public void approve() {
         if (this.status != ProductStatus.PENDING) {
@@ -115,5 +124,17 @@ public class Product {
     // 품절: 재고 수량과 상관없이, 판매자가 제품 손상/불량 등의 이유로 품절 상태로 전환 가능.
     public void markOutOfStock() {
         this.status = ProductStatus.OUT_OF_STOCK;
+    }
+
+    /** 상품 재고 관리 메서드 */
+    public void increaseInventory(int count) {
+        this.stockQuantity += count;
+    }
+
+    public void decreaseInventory(int count) {
+        if (stockQuantity < count) {
+            throw new IllegalStateException("재고량 부족.");
+        }
+        this.stockQuantity -= count;
     }
 }

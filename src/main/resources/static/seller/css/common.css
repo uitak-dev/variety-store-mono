@@ -114,3 +114,22 @@ footer {
     cursor: pointer;
     color: #dc3545;
 }
+
+/* 상품 등록 페이지 */
+.dual-panel-card {
+    height: 300px;
+    overflow-y: auto;
+}
+
+.option-template-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.option-template-card:hover {
+    transform: scale(1.02);
+}
+
+.loaded-template-card {
+    margin-bottom: 1rem;
+}
