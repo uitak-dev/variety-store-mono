@@ -4,17 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryResponse {
-
+public class CategoryParentResponse {
     private Long id;
     private String name;
-    private CategoryParentResponse parent;
-
-    private List<GlobalOptionResponse> globalOptions = new ArrayList<>();
 }

@@ -17,6 +17,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Custo
     @Query("select c from Category c where c.parent is null")
     List<Category> findTopCategories();
 
+    /** 최하위 카테고리(children 컬렉션이 비어 있는 카테고리) 목록 조회. */
+    @Query("select c from Category c where c.children is empty")
+    List<Category> findBottomCategories();
+
     /** 특정 카테고리의 하위 카테고리 목록 조회. */
     @Query("select c from Category c where c.parent.id = :parentId")
     List<Category> findChildCategories(@Param("parentId") Long parentId);
@@ -24,7 +28,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Custo
     /** 카테고리-옵션 정보 조회 */
     @Query("select distinct c from Category c " +
             "left join fetch c.categoryGlobalOptions cgo " +
-            "left join fetch cgo.globalOption " +
+            "left join fetch cgo.globalOption go " +
+            "left join fetch go.globalOptionValues gov " +
             "where c.id = :categoryId")
     Optional<Category> findCategoryByIdWithOption(@Param("categoryId") Long categoryId);
 }

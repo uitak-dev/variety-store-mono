@@ -5,8 +5,6 @@ import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import com.demo.variety_store_mono.admin.repository.CategoryRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
-import com.demo.variety_store_mono.admin.request.SearchCategory;
-import com.demo.variety_store_mono.admin.response.CategoryResponse;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.seller.entity.Product;
@@ -16,6 +14,8 @@ import com.demo.variety_store_mono.seller.repository.ProductRepository;
 import com.demo.variety_store_mono.seller.request.ProductOptionRequest;
 import com.demo.variety_store_mono.seller.request.ProductOptionValueRequest;
 import com.demo.variety_store_mono.seller.request.ProductRequest;
+import com.demo.variety_store_mono.seller.request.SearchProduct;
+import com.demo.variety_store_mono.seller.response.ProductListResponse;
 import com.demo.variety_store_mono.seller.response.ProductResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -75,20 +75,22 @@ public class ProductService {
 
     /** 상품 목록 조회 */
     @Transactional(readOnly = true)
-    public Page<ProductResponse> getProductSearchList(SearchCategory searchCategory, Pageable pageable) {
-
-        return null;
+    public Page<ProductListResponse> getProductSearchList(Long sellerId, SearchProduct searchProduct, Pageable pageable) {
+        return productRepository.searchProductList(sellerId, searchProduct, pageable);
     }
 
     /** 상품 상세 조회 */
     @Transactional(readOnly = true)
-    public CategoryResponse getProduct(Long productId) {
+    public ProductResponse getProductDetail(Long sellerId, Long productId) {
 
-        return null;
+        Product product = productRepository.findProductDetailByIdAndSellerId(sellerId, productId)
+                .orElseThrow(() -> new EntityNotFoundException("관련 상품을 찾을 수 없습니다."));
+
+        return modelMapper.map(product, ProductResponse.class);
     }
 
     /** 상품 수정 */
-    public CategoryResponse updateProduct(Long productId, ProductRequest request) {
+    public ProductResponse updateProduct(Long productId, ProductRequest request) {
 
         return null;
     }
@@ -131,7 +133,7 @@ public class ProductService {
 
         ProductOptionValue ret = ProductOptionValue.builder()
                 .global(request.isGlobal())
-                .optionValue(request.getOptionValue())
+                .productOptionValue(request.getOptionValue())
                 .additionalPrice(request.getAdditionalPrice())
                 .stockQuantity(request.getStockQuantity())
                 .build();

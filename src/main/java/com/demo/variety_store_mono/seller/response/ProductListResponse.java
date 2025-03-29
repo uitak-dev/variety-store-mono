@@ -15,19 +15,14 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductResponse {
+public class ProductListResponse {
 
     private Long id;
 
     // 상품 기본 정보
     private List<CategoryResponse> categories;
     private String name;
-    private String description;
     private BigDecimal basePrice;
-    private LocalDate manufactureDate;
     private int stockQuantity;
-    private boolean single;
     private ProductStatus status;
-
-    private List<ProductOptionResponse> productOptions;
 }

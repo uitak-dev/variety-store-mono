@@ -2,10 +2,15 @@ package com.demo.variety_store_mono.seller.controller.web;
 
 import com.demo.variety_store_mono.admin.service.CategoryService;
 import com.demo.variety_store_mono.admin.service.GlobalOptionService;
+import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import com.demo.variety_store_mono.seller.request.ProductRequest;
+import com.demo.variety_store_mono.seller.request.SearchProduct;
+import com.demo.variety_store_mono.seller.response.ProductListResponse;
 import com.demo.variety_store_mono.seller.response.ProductResponse;
 import com.demo.variety_store_mono.seller.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,12 +25,11 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final GlobalOptionService globalOptionService;
 
     /** 상품 등록 페이지 */
     @GetMapping("/new")
     public String productNew(Model model) {
-        model.addAttribute("categories", categoryService.getTopCategories());
+        model.addAttribute("categories", categoryService.getBottomCategories());
         return "/seller/content/product/product-new";
     }
 
@@ -36,5 +40,33 @@ public class ProductController {
         Long userId = jwt.getClaim("id");
         return ResponseEntity.ok(productService.createProduct(userId, request));
     }
+
+    /** 상품 목록 페이지 */
+    @GetMapping
+    public String productList(@AuthenticationPrincipal Jwt jwt,
+                              @ModelAttribute SearchProduct searchProduct,
+                              Pageable pageable, Model model) {
+
+        model.addAttribute("productStatusList", ProductStatus.values());
+        Page<ProductListResponse> productList = productService.getProductSearchList(jwt.getClaim("id"), searchProduct, pageable);
+        model.addAttribute("productList", productList);
+
+        return "seller/content/product/product-list";
+    }
+
+    /** 상품 상세 조회 페이지 */
+    @GetMapping("/{productId}")
+    public String productDetails(@AuthenticationPrincipal Jwt jwt,
+                                 @PathVariable Long productId, Model model) {
+
+        ProductResponse product = productService.getProductDetail(jwt.getClaim("id"), productId);
+        model.addAttribute("product", product);
+
+        return "seller/content/product/product-detail";
+    }
+
+    /** 상품 수정 페이지 */
+
+    /** 상품 수정 API */
 
 }

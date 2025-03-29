@@ -1,7 +1,6 @@
 package com.demo.variety_store_mono.seller.entity;
 
 import com.demo.variety_store_mono.admin.entity.Category;
-import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.seller.converter.ProductAttributeConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -36,7 +35,7 @@ public class Product {
     private LocalDate manufactureDate; // 제조일자
 
     private int stockQuantity;  // 기본 재고 (옵션이 없을 경우 사용)
-    private boolean single;   // true: 단일 상품, false: 옵션이 있는 상품.
+    private boolean single;     // true: 단일 상품, false: 옵션이 있는 상품.
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -75,13 +74,6 @@ public class Product {
     /**
      * association convenience method
      */
-//    // 카테고리-상품 연관관계 편의 메서드.
-//    public void addCategory(Category category) {
-//        ProductCategory productCategory = new ProductCategory(this, category);
-//        productCategories.add(productCategory);
-//        category.getProductCategories().add(productCategory);
-//    }
-
     // 상품-옵션 연관관계 편의 메서드.
     public void addProductOption(ProductOption productOption) {
         productOptions.add(productOption);
@@ -92,6 +84,13 @@ public class Product {
     private void setSeller(Seller seller) {
         this.seller = seller;
         seller.getProducts().add(this);
+    }
+
+    // 해당 상품이 포함된 카테고리 목록
+    public List<Category> getCategories() {
+        return productCategories.stream()
+                .map(ProductCategory::getCategory)
+                .toList();
     }
 
     /**

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{seller/layout/head :: head}">
+    <title>상품 상세 정보</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header th:replace="~{seller/layout/header :: header}"></header>
+
+<main class="flex-fill">
+    <div class="container my-4">
+        <h2>상품 상세 정보</h2>
+
+        <!-- 카테고리 -->
+        <div class="mb-3">
+            <label for="breadcrumb" class="form-label">카테고리</label>
+            <input type="text" id="breadcrumb" class="form-control" th:value="${#strings.listJoin(product.categories.![name], ', ')}" readonly>
+        </div>
+
+        <!-- 상품 기본 정보 -->
+        <div class="mb-3">
+            <label for="name" class="form-label">상품 이름</label>
+            <input type="text" id="name" class="form-control" th:value="${product.name}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">설명</label>
+            <textarea id="description" class="form-control" th:text="${product.description}" readonly></textarea>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="basePrice" class="form-label">가격</label>
+                <input type="text" id="basePrice" th:value="${product.basePrice}" class="form-control" readonly>
+            </div>
+            <div class="col-md-4">
+                <label for="manufactureDate" class="form-label">제조일자</label>
+                <input type="text" id="manufactureDate" th:value="${product.manufactureDate}" class="form-control" readonly>
+            </div>
+            <div class="col-md-4">
+                <label for="stockQuantity" class="form-label">재고 수량</label>
+                <input type="text" id="stockQuantity" th:value="${product.stockQuantity}" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">등록 상태</label>
+            <input type="text" id="status" class="form-control" th:value="${product.status.displayName}" readonly>
+        </div>
+
+        <!-- 옵션 상품인 경우 옵션 정보 카드 (단일 상품이면 표시 안함) -->
+        <div class="card mb-4" th:if="${!product.single}">
+            <div class="card-header">
+                상품 옵션 정보
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(product.productOptions)}">
+                    <p>옵션이 없습니다.</p>
+                </div>
+                <div th:each="option : ${product.productOptions}">
+                    <h5 th:text="${option.name}">옵션 이름</h5>
+                    <table class="table table-sm mb-3">
+                        <thead>
+                        <tr>
+                            <th>옵션 값</th>
+                            <th>추가 가격</th>
+                            <th>재고 수량</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="optionValue : ${option.productOptionValues}">
+                            <td th:text="${optionValue.productOptionValue}">옵션 값</td>
+                            <td th:text="${optionValue.additionalPrice}">추가 가격</td>
+                            <td th:text="${optionValue.stockQuantity}">재고 수량</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-secondary"
+                        th:onclick="|location.href='@{/seller/products}'|"
+                        type="button">
+                    목록
+                </button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-primary"
+                        th:onclick="|location.href='@{/seller/products/{id}/edit(id=${product.id})}'|"
+                        type="button">
+                    정보 수정
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{seller/layout/footer :: footer}"></footer>
+</body>
+</html>

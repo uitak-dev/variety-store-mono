@@ -13,7 +13,7 @@
                         <a class="nav-link active" href="#">홈</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">내 상품</a>
+                        <a class="nav-link" href="/seller/products">내 상품</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">판매 통계</a>
@@ -21,8 +21,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">설정</a>
                     </li>
+                    <!-- 로그아웃 버튼 추가 -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/auth/seller/logout">로그아웃</a>
+                        <form th:action="@{/auth/seller/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-light logout-btn">로그아웃</button>
+                        </form>
                     </li>
                 </ul>
             </div>

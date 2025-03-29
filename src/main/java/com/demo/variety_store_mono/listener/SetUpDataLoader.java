@@ -74,11 +74,10 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
         GlobalOption colorOption = createOptionIfNotFound("색상", Set.of("레드", "블루", "블랙", "화이트"));
         GlobalOption sizeOption1 = createOptionIfNotFound("사이즈(바지, 셔츠)", Set.of("S", "M", "L", "XL"));
         GlobalOption sizeOption2 = createOptionIfNotFound("사이즈(신발)", Set.of("250", "255", "260", "265", "270"));
-        GlobalOption materialOption = createOptionIfNotFound("소재", Set.of("면", "폴리에스터", "니트", "울"));
+        GlobalOption materialOption = createOptionIfNotFound("소재", Set.of("면", "실크", "폴리", "스웨이드"));
 
         // 카테고리 생성.
         Category clothes = createCategoryIfNotFound("의류", null, new HashSet<>());
-        Category electronics = createCategoryIfNotFound("전자제품", null, Set.of(colorOption, materialOption));
         Category mensClothing = createCategoryIfNotFound("남성패션", clothes, new HashSet<>());
         Category womensClothing = createCategoryIfNotFound("여성패션", clothes, new HashSet<>());
         createCategoryIfNotFound("셔츠(남성)", mensClothing, Set.of(colorOption, sizeOption1, materialOption));

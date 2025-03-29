@@ -74,6 +74,13 @@ public class CategoryService {
                 .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
     }
 
+    // 최하위 카테고리 목록 조회
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getBottomCategories() {
+        return categoryRepository.findBottomCategories().stream()
+                .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
+    }
+
     // 특정 카테고리의 모든 하위 카테고리 조회
     @Transactional(readOnly = true)
     public List<CategoryResponse> getChildCategories(Long parentId) {
@@ -94,14 +101,7 @@ public class CategoryService {
         Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
-        CategoryResponse ret = modelMapper.map(category, CategoryResponse.class);
-        ret.setGlobalOptions(category.getGlobalOptions()
-                .stream()
-                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
-                .toList()
-        );
-
-        return ret;
+        return modelMapper.map(category, CategoryResponse.class);
     }
 
     /** 카테고리 수정 */
@@ -127,14 +127,7 @@ public class CategoryService {
         category.updateGlobalOption(collect);
 
         // 엔티티 -> dto 변환.
-        CategoryResponse ret = modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
-        ret.setGlobalOptions(category.getGlobalOptions()
-                .stream()
-                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
-                .toList()
-        );
-
-        return ret;
+        return modelMapper.map(categoryRepository.save(category), CategoryResponse.class);
     }
 
     /** 카테고리 삭제 */
@@ -153,17 +146,6 @@ public class CategoryService {
         Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
-        Set<GlobalOption> globalOptions = category.getGlobalOptions();
-        globalOptions.forEach(option -> {
-            Set<GlobalOptionValueResponse> collect = option.getGlobalOptionValues().stream()
-                    .map(optionValue -> modelMapper.map(optionValue, GlobalOptionValueResponse.class))
-                    .collect(Collectors.toSet());
-
-            GlobalOptionResponse globalOptionResponse = modelMapper.map(option, GlobalOptionResponse.class);
-            globalOptionResponse.setGlobalOptionValues(collect);
-            ret.add(globalOptionResponse);
-        });
-
-        return ret;
+        return modelMapper.map(category, CategoryResponse.class).getGlobalOptions();
     }
 }

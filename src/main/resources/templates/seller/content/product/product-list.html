@@ -4,88 +4,102 @@
     <title>상품 관리 - 목록</title>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 <!-- 헤더 (네비게이션 바 등) -->
 <header th:replace="~{seller/layout/header :: header}"></header>
 
-<!-- 메인 컨텐츠 -->
-<div class="container my-4">
-    <div class="row">
-        <!-- 좌측 사이드바: 상품 관리 하위 메뉴 네비게이션 -->
-        <aside th:replace="~{admin/layout/sidebar :: sidebar}"></aside>
+<main class="flex-fill">
+    <div class="container my-4">
+        <div class="row">
 
-        <!-- 우측 메인 콘텐츠 영역 -->
-        <main class="col-md-9">
-            <!-- 상품 목록 섹션 -->
-            <section id="productList">
-                <header>
-                    <h2 class="h4">상품 목록</h2>
-                </header>
-                <!-- 간단한 테이블 예제 -->
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>상품명</th>
-                            <th>카테고리</th>
-                            <th>가격</th>
-                            <th>재고</th>
-                            <th>상태</th>
-                            <th>액션</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>스마트폰</td>
-                            <td>전자제품</td>
-                            <td>₩900,000</td>
-                            <td>50</td>
-                            <td>판매중</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-primary">수정</a>
-                                <a href="#" class="btn btn-sm btn-danger">삭제</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>청바지</td>
-                            <td>의류</td>
-                            <td>₩60,000</td>
-                            <td>120</td>
-                            <td>판매중</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-primary">수정</a>
-                                <a href="#" class="btn btn-sm btn-danger">삭제</a>
-                            </td>
-                        </tr>
-                        <!-- 추가 데이터 행들 -->
-                        </tbody>
-                    </table>
+            <!-- 메인 컨텐츠 -->
+            <section class="col-md-9">
+                <!-- 제목 -->
+                <h2>상품 목록</h2>
+
+                <!-- 검색 폼 -->
+                <form th:object="${searchProduct}" method="get" action="/seller/products" class="mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <input type="text" th:field="*{name}" class="form-control" placeholder="상품 이름 검색">
+                        </div>
+                        <div class="col-md-4">
+                            <select>
+                                <option value="" selected>상태</option>
+                                <option th:each="status : ${productStatusList}" th:value="${status.systemValue}" th:text="${status.displayName}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">검색</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 상품 등록 버튼 -->
+                <div class="d-flex justify-content-end mb-3">
+                    <a th:href="@{/seller/products/new}" class="btn btn-success">
+                        상품 등록
+                    </a>
+                </div>
+
+                <!-- 상품 목록 테이블 -->
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>카테고리</th>
+                        <th>상품명</th>
+                        <th>가격</th>
+                        <th>재고</th>
+                        <th>상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${productList.content}"
+                        th:onclick="|location.href='@{/seller/products/{id}(id=${product.id})}'|"
+                        style="cursor:pointer;">
+                        <td th:text="${#strings.listJoin(product.categories.![name], ', ')}"></td>
+                        <td th:text="${product.name}"></td>
+                        <td th:text="${product.basePrice}"></td>
+                        <td th:text="${product.stockQuantity}"></td>
+                        <td th:text="${product.status.displayName}"></td>
+                    </tr>
+                    <!-- 데이터가 없으면 표시 -->
+                    <tr th:if="${#lists.isEmpty(productList.content)}">
+                        <td colspan="3" class="text-center">등록된 상품이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
+                <div th:if="${productList.totalElements > 0}">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- 이전 페이지 -->
+                            <li class="page-item" th:classappend="${productList.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/seller/products(page=${productList.number - 1})}">&laquo;</a>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, productList.totalPages - 1)}"
+                                th:classappend="${productList.number} == ${i} ? 'active'">
+                                <a class="page-link" th:href="@{/seller/products(page=${i})}"
+                                   th:text="${i + 1}">1</a>
+                            </li>
+
+                            <!-- 다음 페이지 -->
+                            <li class="page-item" th:classappend="${productList.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/seller/products(page=${productList.number + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </section>
-
-
-            <!-- 카테고리 관리 섹션 -->
-            <section id="categoryManagement">
-                <header>
-                    <h2 class="h4">카테고리 관리</h2>
-                </header>
-                <p>카테고리 생성, 수정, 삭제 기능 등을 제공할 수 있습니다.</p>
-            </section>
-
-            <!-- 재고 관리 섹션 -->
-            <section id="inventoryManagement">
-                <header>
-                    <h2 class="h4">재고 관리</h2>
-                </header>
-                <p>상품별 재고 상태 및 입출고 관리 기능 등을 제공할 수 있습니다.</p>
-            </section>
-
-        </main>
+        </div>
     </div>
-</div>
+</main>
 
 <!-- 푸터 -->
 <footer th:replace="~{seller/layout/footer :: footer}"></footer>
