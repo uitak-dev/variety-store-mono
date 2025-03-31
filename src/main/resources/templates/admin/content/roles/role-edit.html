@@ -32,7 +32,7 @@
                 </div>
                 <div class="col">
                     <button class="w-100 btn btn-secondary"
-                            th:onclick="|location.href='@{/admin/roles/${role.id}}'|"
+                            th:onclick="|location.href='@{/admin/roles/{id}(id=${role.id})}'|"
                             type="button">
                         취소
                     </button>

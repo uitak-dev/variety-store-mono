@@ -31,5 +31,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Custo
             "left join fetch cgo.globalOption go " +
             "left join fetch go.globalOptionValues gov " +
             "where c.id = :categoryId")
-    Optional<Category> findCategoryByIdWithOption(@Param("categoryId") Long categoryId);
+    Optional<Category> findCategoryDetailsById(@Param("categoryId") Long categoryId);
 }

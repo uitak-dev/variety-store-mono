@@ -1,10 +1,10 @@
 package com.demo.variety_store_mono.admin.repository.custom;
 
+import com.demo.variety_store_mono.admin.dto.summary.CategorySummary;
 import com.demo.variety_store_mono.admin.entity.Category;
 import com.demo.variety_store_mono.admin.entity.QCategory;
-import com.demo.variety_store_mono.admin.request.SearchCategory;
-import com.demo.variety_store_mono.admin.response.CategoryResponse;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.search.SearchCategory;
+import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -33,9 +33,9 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
 
     /** 검색 조건이 포함된 카테고리 목록 조회. */
     @Override
-    public Page<CategoryResponse> searchCategoryList(SearchCategory searchCategory, Pageable pageable) {
+    public Page<CategorySummary> searchCategoryList(SearchCategory searchCategory, Pageable pageable) {
 
-        List<CategoryResponse> content = queryFactory
+        List<CategorySummary> content = queryFactory
                 .selectFrom(category)
                 .where(
                         categoryNameEq(searchCategory.getName())
@@ -45,7 +45,7 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
                 .distinct()
                 .fetch()
                 .stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class))
+                .map(category -> modelMapper.map(category, CategorySummary.class))
                 .toList();
 
         JPAQuery<Long> countQuery = queryFactory.select(category.count())
@@ -67,7 +67,7 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
      * - 인덱스가 클수록 상위 카테고리
      */
     @Override
-    public List<CategoryResponse> findAllAncestors(Long categoryId) {
+    public List<CategorySummary> findAllAncestors(Long categoryId) {
 
         List<Category> ret = new ArrayList<>();
         Category current = queryFactory.selectFrom(category)
@@ -86,7 +86,7 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
         }
 
         return ret.stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class))
+                .map(category -> modelMapper.map(category, CategorySummary.class))
                 .toList();
     }
 }

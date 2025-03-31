@@ -1,14 +1,12 @@
 package com.demo.variety_store_mono.admin.service;
 
+import com.demo.variety_store_mono.admin.dto.summary.GlobalOptionSummary;
 import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
-import com.demo.variety_store_mono.admin.request.GlobalOptionRequest;
-import com.demo.variety_store_mono.admin.request.SearchCategory;
-import com.demo.variety_store_mono.admin.request.SearchOption;
-import com.demo.variety_store_mono.admin.response.CategoryResponse;
-import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
-import com.demo.variety_store_mono.admin.response.GlobalOptionValueResponse;
+import com.demo.variety_store_mono.admin.dto.request.GlobalOptionRequest;
+import com.demo.variety_store_mono.admin.dto.search.SearchOption;
+import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -46,22 +44,22 @@ public class GlobalOptionService {
     }
 
     // 글로벌 옵션 전체 조회
-    public List<GlobalOptionResponse> getAllOption() {
+    public List<GlobalOptionSummary> getAllOption() {
         return optionRepository.findAll().stream()
-                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
+                .map(option -> modelMapper.map(option, GlobalOptionSummary.class))
                 .toList();
     }
 
     // 글로벌 옵션 목록 조회
     @Transactional(readOnly = true)
-    public Page<GlobalOptionResponse> getOptionSearchList(SearchOption searchOption, Pageable pageable) {
+    public Page<GlobalOptionSummary> getOptionSearchList(SearchOption searchOption, Pageable pageable) {
         return optionRepository.searchOptionList(searchOption, pageable);
     }
 
     /** 옵션 템플릿 상세 조회 */
     @Transactional(readOnly = true)
     public GlobalOptionResponse getGlobalOption(Long globalOptionId) {
-        GlobalOption globalOption = optionRepository.findByIdWithValues(globalOptionId)
+        GlobalOption globalOption = optionRepository.findOptionAndValuesById(globalOptionId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 옵션은 존재하지 않습니다."));
 
         return modelMapper.map(globalOption, GlobalOptionResponse.class);
@@ -69,7 +67,7 @@ public class GlobalOptionService {
 
     /** 옵션 템플릿 수정 */
     public GlobalOptionResponse updateGlobalOption(Long globalOptionId, GlobalOptionRequest request) {
-        GlobalOption globalOption = optionRepository.findByIdWithValues(globalOptionId)
+        GlobalOption globalOption = optionRepository.findOptionAndValuesById(globalOptionId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 옵션은 존재하지 않습니다."));
 
         Set<GlobalOptionValue> optionValues = request.getGlobalOptionValues().stream()

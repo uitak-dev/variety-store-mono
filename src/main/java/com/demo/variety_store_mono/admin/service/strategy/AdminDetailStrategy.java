@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.admin.service.strategy;
 
-import com.demo.variety_store_mono.admin.request.AdminDetailRequest;
-import com.demo.variety_store_mono.admin.response.AdminDetailResponse;
+import com.demo.variety_store_mono.admin.dto.request.AdminDetailRequest;
+import com.demo.variety_store_mono.admin.dto.response.AdminDetailResponse;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
@@ -34,8 +34,8 @@ public class AdminDetailStrategy implements UserDetailStrategy {
     }
 
     @Override
-    public Object getDetail(Long userId) {
-        User user = userRepository.findByIdWithDetails(userId)
+    public AdminDetailResponse getDetail(Long userId) {
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         return modelMapper.map(user, AdminDetailResponse.class);
@@ -43,7 +43,7 @@ public class AdminDetailStrategy implements UserDetailStrategy {
 
     @Override
     public void updateDetail(Long userId, Object adminDetailRequest) {
-        User user = userRepository.findByIdWithDetails(userId)
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         AdminDetailRequest request = (AdminDetailRequest) adminDetailRequest;

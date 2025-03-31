@@ -1,6 +1,5 @@
 package com.demo.variety_store_mono.common.response;
 
-import com.demo.variety_store_mono.admin.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +16,7 @@ public class UserBasicInfoResponse {
     private String email;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
 
-    private Set<Role> roles;
+    private Set<RoleResponse> roles;
 }

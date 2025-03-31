@@ -1,8 +1,8 @@
 package com.demo.variety_store_mono.admin.controller.web;
 
-import com.demo.variety_store_mono.admin.request.RoleRequest;
-import com.demo.variety_store_mono.admin.request.SearchRole;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.request.RoleRequest;
+import com.demo.variety_store_mono.admin.dto.search.SearchRole;
+import com.demo.variety_store_mono.admin.dto.response.RoleResponse;
 import com.demo.variety_store_mono.admin.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,9 @@
 package com.demo.variety_store_mono.admin.controller.web;
 
-import com.demo.variety_store_mono.admin.request.GlobalOptionRequest;
-import com.demo.variety_store_mono.admin.request.SearchOption;
-import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
+import com.demo.variety_store_mono.admin.dto.request.GlobalOptionRequest;
+import com.demo.variety_store_mono.admin.dto.search.SearchOption;
+import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
+import com.demo.variety_store_mono.admin.dto.summary.GlobalOptionSummary;
 import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class GlobalOptionController {
     public String optionList(@ModelAttribute SearchOption searchOption,
                                Pageable pageable, Model model) {
 
-        Page<GlobalOptionResponse> optionList = globalOptionService.getOptionSearchList(searchOption, pageable);
+        Page<GlobalOptionSummary> optionList = globalOptionService.getOptionSearchList(searchOption, pageable);
         model.addAttribute("optionList", optionList);
 
         return "admin/content/option/option-list";

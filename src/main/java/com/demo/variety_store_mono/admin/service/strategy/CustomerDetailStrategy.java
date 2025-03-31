@@ -34,8 +34,8 @@ public class CustomerDetailStrategy implements UserDetailStrategy {
     }
 
     @Override
-    public Object getDetail(Long userId) {
-        User user = userRepository.findByIdWithDetails(userId)
+    public CustomerDetailResponse getDetail(Long userId) {
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         return modelMapper.map(user, CustomerDetailResponse.class);
@@ -43,7 +43,7 @@ public class CustomerDetailStrategy implements UserDetailStrategy {
 
     @Override
     public void updateDetail(Long userId, Object customerDetailRequest) {
-        User user = userRepository.findByIdWithDetails(userId)
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         CustomerDetailRequest request = (CustomerDetailRequest) customerDetailRequest;

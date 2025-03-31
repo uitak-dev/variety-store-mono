@@ -12,9 +12,11 @@ import java.util.Optional;
 
 public interface GlobalOptionRepository extends JpaRepository<GlobalOption, Long>, CustomOptionRepository {
 
-    @Query("select go from GlobalOption go join fetch go.globalOptionValues where go.name = :optionName")
+    @Query("select go from GlobalOption go where go.name = :optionName")
     Optional<GlobalOption> findByName(String optionName);
 
-    @Query("select go from GlobalOption go join fetch go.globalOptionValues where go.id = :id")
-    Optional<GlobalOption> findByIdWithValues(@Param("id") Long id);
+    @Query("select go from GlobalOption go " +
+            "join fetch go.globalOptionValues " +
+            "where go.id = :id")
+    Optional<GlobalOption> findOptionAndValuesById(@Param("id") Long id);
 }

@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.security.repository;
 
+import com.demo.variety_store_mono.admin.dto.response.AdminDetailResponse;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.repository.custom.CustomUserRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, CustomUserRepository {
 
     boolean existsByUserName(String userName);
+
     Optional<User> findByUserName(String userName);
 
     /** 사용자 상세 정보 조회. */
@@ -21,5 +23,5 @@ public interface UserRepository extends JpaRepository<User, Long>, CustomUserRep
             "left join fetch u.userRoles ur " +
             "left join fetch ur.role " +
             "where u.id = :userId")
-    Optional<User> findByIdWithDetails(@Param("userId") Long userId);
+    Optional<User> findUserDetailsById(@Param("userId") Long userId);
 }

@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.admin.controller.web;
 
-import com.demo.variety_store_mono.admin.request.SearchUser;
+import com.demo.variety_store_mono.admin.dto.search.SearchUser;
 import com.demo.variety_store_mono.admin.resolver.UserDetail;
 import com.demo.variety_store_mono.admin.service.RoleService;
 import com.demo.variety_store_mono.security.entity.UserType;

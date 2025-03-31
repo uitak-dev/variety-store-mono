@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.security.repository.custom;
 
-import com.demo.variety_store_mono.admin.request.SearchUser;
+import com.demo.variety_store_mono.admin.dto.search.SearchUser;
 import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;

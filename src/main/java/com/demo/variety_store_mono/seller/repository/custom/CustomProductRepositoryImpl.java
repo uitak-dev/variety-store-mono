@@ -1,13 +1,11 @@
 package com.demo.variety_store_mono.seller.repository.custom;
 
 import com.demo.variety_store_mono.admin.entity.QCategory;
-import com.demo.variety_store_mono.admin.response.CategoryResponse;
 import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import com.demo.variety_store_mono.seller.entity.QProduct;
 import com.demo.variety_store_mono.seller.entity.QProductCategory;
-import com.demo.variety_store_mono.seller.request.SearchProduct;
-import com.demo.variety_store_mono.seller.response.ProductListResponse;
-import com.demo.variety_store_mono.seller.response.ProductResponse;
+import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
+import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;

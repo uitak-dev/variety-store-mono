@@ -1,8 +1,8 @@
 package com.demo.variety_store_mono.admin.service;
 
-import com.demo.variety_store_mono.admin.request.RoleRequest;
-import com.demo.variety_store_mono.admin.request.SearchRole;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.request.RoleRequest;
+import com.demo.variety_store_mono.admin.dto.search.SearchRole;
+import com.demo.variety_store_mono.admin.dto.response.RoleResponse;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,8 +41,10 @@ public class RoleService {
     }
 
     /** 역할 전체 조회 */
-    public List<Role> getRoles() {
-        return roleRepository.findAll();
+    public List<RoleResponse> getRoles() {
+        return roleRepository.findAll().stream()
+                .map(role -> modelMapper.map(role, RoleResponse.class))
+                .collect(Collectors.toList());
     }
 
     /** 역할 목록 검색 조회 */

@@ -11,12 +11,12 @@ import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductOption;
 import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
-import com.demo.variety_store_mono.seller.request.ProductOptionRequest;
-import com.demo.variety_store_mono.seller.request.ProductOptionValueRequest;
-import com.demo.variety_store_mono.seller.request.ProductRequest;
-import com.demo.variety_store_mono.seller.request.SearchProduct;
-import com.demo.variety_store_mono.seller.response.ProductListResponse;
-import com.demo.variety_store_mono.seller.response.ProductResponse;
+import com.demo.variety_store_mono.seller.dto.request.ProductOptionRequest;
+import com.demo.variety_store_mono.seller.dto.request.ProductOptionValueRequest;
+import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
+import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
+import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
+import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -42,7 +42,7 @@ public class ProductService {
     /** 상품 등록 */
     public ProductResponse createProduct(Long sellerId, ProductRequest request) {
 
-        User user = userRepository.findByIdWithDetails(sellerId).orElseThrow(() ->
+        User user = userRepository.findUserDetailsById(sellerId).orElseThrow(() ->
                 new EntityNotFoundException("등록된 판매자가 아닙니다."));
 
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
@@ -108,7 +108,7 @@ public class ProductService {
                 .build();
 
         if (request.isGlobal() && request.getGlobalOptionId() != null) {
-            GlobalOption globalOption = globalOptionRepository.findByIdWithValues(request.getGlobalOptionId())
+            GlobalOption globalOption = globalOptionRepository.findOptionAndValuesById(request.getGlobalOptionId())
                     .orElseThrow(() -> new EntityNotFoundException("해당 옵션 템플릿이 존재하지 않습니다."));
 
             productOption.assignGlobalOption(globalOption);

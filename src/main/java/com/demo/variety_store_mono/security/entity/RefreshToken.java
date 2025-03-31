@@ -29,18 +29,18 @@ public class RefreshToken extends Audit {
 
     // 토큰 만료 시각
     @Column(nullable = false)
-    private Instant expiryDate;
+    private Instant expireDate;
 
     @Builder
-    public RefreshToken(Long id, String token, User user, Instant expiryDate) {
+    public RefreshToken(Long id, String token, User user, Instant expireDate) {
         this.id = id;
         this.token = token;
         this.user = user;
-        this.expiryDate = expiryDate;
+        this.expireDate = expireDate;
     }
 
-    public void update(String token, Instant expiryDate) {
+    public void update(String token, Instant expireDate) {
         this.token = token;
-        this.expiryDate = expiryDate;
+        this.expireDate = expireDate;
     }
 }

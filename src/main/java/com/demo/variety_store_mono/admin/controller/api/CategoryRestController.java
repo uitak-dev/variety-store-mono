@@ -1,6 +1,8 @@
 package com.demo.variety_store_mono.admin.controller.api;
 
-import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
+import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
+import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
+import com.demo.variety_store_mono.admin.dto.summary.CategorySummary;
 import com.demo.variety_store_mono.admin.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,5 +21,16 @@ public class CategoryRestController {
     @GetMapping("/{categoryId}/options")
     public ResponseEntity<List<GlobalOptionResponse>> getGlobalOptions(@PathVariable Long categoryId) {
         return ResponseEntity.ok(categoryService.getGlobalOptionsInCategory(categoryId));
+    }
+
+    /** 특정 카테고리의 하위 카테고리 목록 조회 */
+    @GetMapping("/children")
+    @ResponseBody
+    public ResponseEntity<List<CategorySummary>> subCategories(@RequestParam(required = false) Long categoryId) {
+
+        if (categoryId == null || categoryId == 0L) {
+            return ResponseEntity.ok(categoryService.getTopCategories());
+        }
+        return ResponseEntity.ok(categoryService.getChildCategories(categoryId));
     }
 }

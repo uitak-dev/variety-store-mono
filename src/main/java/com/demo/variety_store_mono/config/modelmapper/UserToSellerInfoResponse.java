@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.config.modelmapper;
 
 import com.demo.variety_store_mono.security.entity.User;
-import com.demo.variety_store_mono.seller.response.SellerDetailResponse;
+import com.demo.variety_store_mono.seller.dto.response.SellerDetailResponse;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;

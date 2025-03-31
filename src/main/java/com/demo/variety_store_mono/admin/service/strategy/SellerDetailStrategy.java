@@ -4,8 +4,8 @@ import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
-import com.demo.variety_store_mono.seller.request.SellerDetailRequest;
-import com.demo.variety_store_mono.seller.response.SellerDetailResponse;
+import com.demo.variety_store_mono.seller.dto.request.SellerDetailRequest;
+import com.demo.variety_store_mono.seller.dto.response.SellerDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -34,8 +34,8 @@ public class SellerDetailStrategy implements UserDetailStrategy {
     }
 
     @Override
-    public Object getDetail(Long userId) {
-        User user = userRepository.findByIdWithDetails(userId)
+    public SellerDetailResponse getDetail(Long userId) {
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         return modelMapper.map(user, SellerDetailResponse.class);
@@ -43,7 +43,7 @@ public class SellerDetailStrategy implements UserDetailStrategy {
 
     @Override
     public void updateDetail(Long userId, Object sellerDetailRequest) {
-        User user = userRepository.findByIdWithDetails(userId)
+        User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
         SellerDetailRequest request = (SellerDetailRequest) sellerDetailRequest;

@@ -1,12 +1,11 @@
 package com.demo.variety_store_mono.seller.controller.web;
 
 import com.demo.variety_store_mono.admin.service.CategoryService;
-import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import com.demo.variety_store_mono.seller.entity.ProductStatus;
-import com.demo.variety_store_mono.seller.request.ProductRequest;
-import com.demo.variety_store_mono.seller.request.SearchProduct;
-import com.demo.variety_store_mono.seller.response.ProductListResponse;
-import com.demo.variety_store_mono.seller.response.ProductResponse;
+import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
+import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
+import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
+import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
 import com.demo.variety_store_mono.seller.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

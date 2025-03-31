@@ -2,7 +2,6 @@ package com.demo.variety_store_mono.seller.repository;
 
 import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.repository.custom.CustomProductRepository;
-import com.demo.variety_store_mono.seller.response.ProductResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

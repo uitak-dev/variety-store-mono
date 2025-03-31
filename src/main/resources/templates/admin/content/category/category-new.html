@@ -120,9 +120,9 @@
 
         let url = "";
         if (!parentId) {
-            url = "/admin/categories/children"; // 최상위 카테고리 로드
+            url = "/api/categories/children"; // 최상위 카테고리 로드
         } else {
-            url = `/admin/categories/children?categoryId=${parentId}`;
+            url = `/api/categories/children?categoryId=${parentId}`;
         }
 
         try {

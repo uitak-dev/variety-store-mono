@@ -42,7 +42,7 @@
                             <ul id="availableItemsList" class="list-group">
                                 <!-- 아직 선택되지 않은 옵션들만 표시 -->
                                 <li class="list-group-item" th:each="opt : ${options}"
-                                    th:if="${!#lists.contains(category.globalOptions, opt)}"
+                                    th:if="${!#lists.contains(category.globalOptions.![id], opt.id)}"
                                     th:text="${opt.name}" th:attr="value=${opt.id}">
                                 </li>
                             </ul>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="col">
                     <button type="button" class="w-100 btn btn-secondary"
-                            th:onclick="|location.href='@{/admin/categories}'|">
+                            th:onclick="|location.href='@{/admin/categories/{id}(id=${category.id})}'|">
                         취소
                     </button>
                 </div>
@@ -126,9 +126,9 @@
 
         let url = "";
         if (!parentId) {
-            url = "/admin/categories/children"; // 최상위 카테고리 로드
+            url = "/api/categories/children"; // 최상위 카테고리 로드
         } else {
-            url = `/admin/categories/children?categoryId=${parentId}`;
+            url = `/api/categories/children?categoryId=${parentId}`;
         }
 
         try {

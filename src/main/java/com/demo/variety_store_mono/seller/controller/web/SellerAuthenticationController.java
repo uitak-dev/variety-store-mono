@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/auth/seller")
@@ -33,20 +34,27 @@ public class SellerAuthenticationController {
 
     /** 판매자 로그인 API */
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest request, HttpServletResponse response) {
+    public String login(@ModelAttribute LoginRequest request, HttpServletResponse response,
+                        RedirectAttributes redirectAttributes) {
 
-        // Access/Refresh 토큰 생성 및 저장.
-        TokenResponse tokenResponse = jwtAuthenticationService.login(request);
+        try {
+            // Access/Refresh 토큰 생성 및 저장.
+            TokenResponse tokenResponse = jwtAuthenticationService.login(request);
 
-        // Access Token 쿠키에 저장.
-        CookieUtil.addCookie(response, "accessToken",
-                tokenResponse.getAccessToken(), jwtProperties.getAccessTokenValidityMillis().intValue());
+            // Access Token 쿠키에 저장.
+            CookieUtil.addCookie(response, "accessToken",
+                    tokenResponse.getAccessToken(), -1);
 
-        // Refresh Token 의 UUID를 세션 쿠키에 저장.( 클라이언트에서 직접 접근 불가 )
-        CookieUtil.addCookie(response, "refreshTokenId",
-                tokenResponse.getRefreshTokenId().toString(), -1);
+            // Refresh Token 을 영속 쿠키에 저장.( 클라이언트에서 직접 접근 불가 )
+            CookieUtil.addCookie(response, "refreshToken",
+                    tokenResponse.getRefreshToken(), jwtProperties.getRefreshTokenValidityMillis().intValue());
 
-        return "redirect:/seller/home";
+            return "redirect:/seller/home";
+        }
+        catch(RuntimeException ex) {
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/auth/admin/login";
+        }
     }
 
     /** 판매자 회원가입 페이지 */
@@ -68,15 +76,17 @@ public class SellerAuthenticationController {
     public ResponseEntity<?> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
 
         // 세션에서 Refresh Token ID 확인
-        String refreshTokenId = CookieUtil.getCookieValue(request, "refreshTokenId").orElse(null);
-        if (refreshTokenId == null) {
+        String refreshToken = CookieUtil.getCookieValue(request, "refreshToken").orElse(null);
+        if (refreshToken == null) {
             return ResponseEntity.status(401).body("Missing refresh token");
         }
 
         // 새로운 Access Token 발급.
-        String newAccessToken = jwtAuthenticationService.refreshAccessToken(Long.parseLong(refreshTokenId));
+        String newAccessToken = jwtAuthenticationService.refreshAccessToken(refreshToken);
+
         // 발급받은 Access Token을 쿠키에 저장.
-        CookieUtil.addCookie(response, "accessToken", newAccessToken, jwtProperties.getAccessTokenValidityMillis().intValue());
+        CookieUtil.addCookie(response, "accessToken",
+                newAccessToken, -1);
 
         return ResponseEntity.ok("New access token issued");
     }
@@ -86,14 +96,14 @@ public class SellerAuthenticationController {
     public String logout(HttpServletRequest request, HttpServletResponse response) {
 
         // DB에서 Refresh Token 삭제
-        String refreshTokenId = CookieUtil.getCookieValue(request, "refreshTokenId").orElse(null);
-        if (refreshTokenId != null) {
-            jwtAuthenticationService.logout(Long.parseLong(refreshTokenId));
+        String refreshToken = CookieUtil.getCookieValue(request, "refreshToken").orElse(null);
+        if (refreshToken != null) {
+            jwtAuthenticationService.logout(refreshToken);
         }
 
         // 세션 및 쿠키에서 Access Token & Refresh Token 삭제
         CookieUtil.deleteCookie(response, "accessToken");
-        CookieUtil.deleteCookie(response, "refreshTokenId");
+        CookieUtil.deleteCookie(response, "refreshToken");
 
         return "redirect:/auth/seller/login";
     }

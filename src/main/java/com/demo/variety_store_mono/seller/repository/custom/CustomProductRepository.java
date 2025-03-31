@@ -1,8 +1,7 @@
 package com.demo.variety_store_mono.seller.repository.custom;
 
-import com.demo.variety_store_mono.seller.request.SearchProduct;
-import com.demo.variety_store_mono.seller.response.ProductListResponse;
-import com.demo.variety_store_mono.seller.response.ProductResponse;
+import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
+import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

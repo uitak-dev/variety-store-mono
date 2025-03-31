@@ -1,14 +1,14 @@
 package com.demo.variety_store_mono.admin.service;
 
+import com.demo.variety_store_mono.admin.dto.summary.CategorySummary;
 import com.demo.variety_store_mono.admin.entity.Category;
 import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.repository.CategoryRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
-import com.demo.variety_store_mono.admin.request.CategoryRequest;
-import com.demo.variety_store_mono.admin.request.SearchCategory;
-import com.demo.variety_store_mono.admin.response.CategoryResponse;
-import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
-import com.demo.variety_store_mono.admin.response.GlobalOptionValueResponse;
+import com.demo.variety_store_mono.admin.dto.request.CategoryRequest;
+import com.demo.variety_store_mono.admin.dto.search.SearchCategory;
+import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
+import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -63,34 +63,34 @@ public class CategoryService {
 
     // 카테고리 목록 조회
     @Transactional(readOnly = true)
-    public Page<CategoryResponse> getCategorySearchList(SearchCategory searchCategory, Pageable pageable) {
+    public Page<CategorySummary> getCategorySearchList(SearchCategory searchCategory, Pageable pageable) {
         return categoryRepository.searchCategoryList(searchCategory, pageable);
     }
 
     // 최상위 카테고리 목록 조회
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getTopCategories() {
+    public List<CategorySummary> getTopCategories() {
         return categoryRepository.findTopCategories().stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
+                .map(category -> modelMapper.map(category, CategorySummary.class)).toList();
     }
 
     // 최하위 카테고리 목록 조회
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getBottomCategories() {
+    public List<CategorySummary> getBottomCategories() {
         return categoryRepository.findBottomCategories().stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
+                .map(category -> modelMapper.map(category, CategorySummary.class)).toList();
     }
 
     // 특정 카테고리의 모든 하위 카테고리 조회
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getChildCategories(Long parentId) {
+    public List<CategorySummary> getChildCategories(Long parentId) {
         return categoryRepository.findChildCategories(parentId).stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class)).toList();
+                .map(category -> modelMapper.map(category, CategorySummary.class)).toList();
     }
 
     // 특정 카테고리의 모든 상위 카테고리 조회
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getAllAncestors(Long categoryId) {
+    public List<CategorySummary> getAllAncestors(Long categoryId) {
         return categoryRepository.findAllAncestors(categoryId);
     }
 
@@ -98,7 +98,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponse getCategory(Long categoryId) {
 
-        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
+        Category category = categoryRepository.findCategoryDetailsById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
         return modelMapper.map(category, CategoryResponse.class);
@@ -112,7 +112,7 @@ public class CategoryService {
                     .orElseThrow(() -> new RuntimeException("상위 카테고리를 찾을 수 없습니다. id: " + request.getParentId()));
         }
 
-        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
+        Category category = categoryRepository.findCategoryDetailsById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
         // 카테고리 기본 정보 수정.
@@ -143,7 +143,7 @@ public class CategoryService {
 
         List<GlobalOptionResponse> ret = new ArrayList<>();
 
-        Category category = categoryRepository.findCategoryByIdWithOption(categoryId)
+        Category category = categoryRepository.findCategoryDetailsById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
         return modelMapper.map(category, CategoryResponse.class).getGlobalOptions();

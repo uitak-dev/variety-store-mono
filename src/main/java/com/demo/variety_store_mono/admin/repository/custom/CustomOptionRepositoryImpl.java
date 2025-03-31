@@ -1,11 +1,9 @@
 package com.demo.variety_store_mono.admin.repository.custom;
 
+import com.demo.variety_store_mono.admin.dto.summary.GlobalOptionSummary;
 import com.demo.variety_store_mono.admin.entity.QGlobalOption;
-import com.demo.variety_store_mono.admin.entity.QRole;
-import com.demo.variety_store_mono.admin.request.SearchOption;
-import com.demo.variety_store_mono.admin.request.SearchRole;
-import com.demo.variety_store_mono.admin.response.GlobalOptionResponse;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.search.SearchOption;
+import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -33,9 +31,9 @@ public class CustomOptionRepositoryImpl implements CustomOptionRepository {
     private QGlobalOption globalOption = QGlobalOption.globalOption;
 
     @Override
-    public Page<GlobalOptionResponse> searchOptionList(SearchOption searchOption, Pageable pageable) {
+    public Page<GlobalOptionSummary> searchOptionList(SearchOption searchOption, Pageable pageable) {
 
-        List<GlobalOptionResponse> content = queryFactory
+        List<GlobalOptionSummary> content = queryFactory
                 .selectFrom(globalOption)
                 .where(
                         optionNameEq(searchOption.getName())
@@ -45,7 +43,7 @@ public class CustomOptionRepositoryImpl implements CustomOptionRepository {
                 .distinct()
                 .fetch()
                 .stream()
-                .map(option -> modelMapper.map(option, GlobalOptionResponse.class))
+                .map(option -> modelMapper.map(option, GlobalOptionSummary.class))
                 .toList();
 
         JPAQuery<Long> countQuery = queryFactory.select(globalOption.count())

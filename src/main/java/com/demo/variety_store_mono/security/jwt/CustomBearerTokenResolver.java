@@ -18,7 +18,8 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
             PathRequest.toStaticResources().atCommonLocations(),
             new AntPathRequestMatcher("/public/**"),
             new AntPathRequestMatcher("/auth/**"),
-            new AntPathRequestMatcher("/api/**")
+            new AntPathRequestMatcher("/api/**"),
+            new AntPathRequestMatcher("/error/**")
     );
 
     @Override

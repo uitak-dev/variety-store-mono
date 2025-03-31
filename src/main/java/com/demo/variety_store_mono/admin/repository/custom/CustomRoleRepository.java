@@ -1,7 +1,7 @@
 package com.demo.variety_store_mono.admin.repository.custom;
 
-import com.demo.variety_store_mono.admin.request.SearchRole;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.search.SearchRole;
+import com.demo.variety_store_mono.admin.dto.response.RoleResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

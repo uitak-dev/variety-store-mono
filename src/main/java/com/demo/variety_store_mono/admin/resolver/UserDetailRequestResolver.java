@@ -1,13 +1,12 @@
 package com.demo.variety_store_mono.admin.resolver;
 
-import com.demo.variety_store_mono.admin.request.AdminDetailRequest;
+import com.demo.variety_store_mono.admin.dto.request.AdminDetailRequest;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
 import com.demo.variety_store_mono.customer.request.CustomerDetailRequest;
-import com.demo.variety_store_mono.seller.request.SellerDetailRequest;
+import com.demo.variety_store_mono.seller.dto.request.SellerDetailRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

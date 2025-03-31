@@ -1,8 +1,8 @@
 package com.demo.variety_store_mono.admin.repository.custom;
 
 import com.demo.variety_store_mono.admin.entity.QRole;
-import com.demo.variety_store_mono.admin.request.SearchRole;
-import com.demo.variety_store_mono.admin.response.RoleResponse;
+import com.demo.variety_store_mono.admin.dto.search.SearchRole;
+import com.demo.variety_store_mono.admin.dto.response.RoleResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
