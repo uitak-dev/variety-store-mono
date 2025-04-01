@@ -13,6 +13,7 @@ public class ModelMapperConfig {
         mapper.addConverter(new UserToAdminInfoResponse());
         mapper.addConverter(new UserToSellerInfoResponse());
         mapper.addConverter(new UserToCustomerInfoResponse());
+        mapper.addConverter(new SellerToSellerDetailResponse());
 
         return mapper;
     }

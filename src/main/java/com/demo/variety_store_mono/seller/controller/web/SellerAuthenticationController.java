@@ -41,7 +41,7 @@ public class SellerAuthenticationController {
             // Access/Refresh 토큰 생성 및 저장.
             TokenResponse tokenResponse = jwtAuthenticationService.login(request);
 
-            // Access Token 쿠키에 저장.
+            // Access Token 세션 쿠키에 저장.
             CookieUtil.addCookie(response, "accessToken",
                     tokenResponse.getAccessToken(), -1);
 
@@ -53,7 +53,7 @@ public class SellerAuthenticationController {
         }
         catch(RuntimeException ex) {
             redirectAttributes.addAttribute("error", ex.getMessage());
-            return "redirect:/auth/admin/login";
+            return "redirect:/auth/seller/login";
         }
     }
 

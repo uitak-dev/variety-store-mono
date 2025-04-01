@@ -7,6 +7,7 @@ import com.demo.variety_store_mono.admin.repository.CategoryRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.repository.UserRepository;
+import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductOption;
 import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
@@ -75,15 +76,15 @@ public class ProductService {
 
     /** 상품 목록 조회 */
     @Transactional(readOnly = true)
-    public Page<ProductListResponse> getProductSearchList(Long sellerId, SearchProduct searchProduct, Pageable pageable) {
+    public Page<ProductSummary> getProductSearchList(Long sellerId, SearchProduct searchProduct, Pageable pageable) {
         return productRepository.searchProductList(sellerId, searchProduct, pageable);
     }
 
     /** 상품 상세 조회 */
     @Transactional(readOnly = true)
-    public ProductResponse getProductDetail(Long sellerId, Long productId) {
+    public ProductResponse getProductDetails(Long sellerId, Long productId) {
 
-        Product product = productRepository.findProductDetailByIdAndSellerId(sellerId, productId)
+        Product product = productRepository.findProductDetails(sellerId, productId)
                 .orElseThrow(() -> new EntityNotFoundException("관련 상품을 찾을 수 없습니다."));
 
         return modelMapper.map(product, ProductResponse.class);

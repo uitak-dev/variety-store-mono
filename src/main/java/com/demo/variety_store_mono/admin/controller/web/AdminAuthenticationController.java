@@ -43,7 +43,7 @@ public class AdminAuthenticationController {
             // Access/Refresh 토큰 생성 및 저장.
             TokenResponse tokenResponse = jwtAuthenticationService.login(request);
 
-            // Access Token 쿠키에 저장.
+            // Access Token 세션 쿠키에 저장.
             CookieUtil.addCookie(response, "accessToken",
                     tokenResponse.getAccessToken(), -1);
 

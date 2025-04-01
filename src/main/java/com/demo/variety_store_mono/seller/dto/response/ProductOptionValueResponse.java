@@ -14,14 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProductOptionValueResponse {
 
-    // true: 시스템에 정의된 옵션 값 선택
-    // false: 사용자 정의 옵션 값 사용
-    private boolean global;
-
-    // 시스템에 등록된 옵션 값 선택 시
-    private GlobalOptionValueResponse  globalOptionValue;
-
-    // 사용자 정의 옵션 값 사용 시
+    // 옵션 값
     private String productOptionValue;
 
     // 해당 옵션 선택 시 추가되는 가격

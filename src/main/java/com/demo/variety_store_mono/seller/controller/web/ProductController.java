@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.seller.controller.web;
 
 import com.demo.variety_store_mono.admin.service.CategoryService;
+import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
@@ -47,7 +48,8 @@ public class ProductController {
                               Pageable pageable, Model model) {
 
         model.addAttribute("productStatusList", ProductStatus.values());
-        Page<ProductListResponse> productList = productService.getProductSearchList(jwt.getClaim("id"), searchProduct, pageable);
+
+        Page<ProductSummary> productList = productService.getProductSearchList(jwt.getClaim("id"), searchProduct, pageable);
         model.addAttribute("productList", productList);
 
         return "seller/content/product/product-list";
@@ -58,7 +60,7 @@ public class ProductController {
     public String productDetails(@AuthenticationPrincipal Jwt jwt,
                                  @PathVariable Long productId, Model model) {
 
-        ProductResponse product = productService.getProductDetail(jwt.getClaim("id"), productId);
+        ProductResponse product = productService.getProductDetails(jwt.getClaim("id"), productId);
         model.addAttribute("product", product);
 
         return "seller/content/product/product-detail";

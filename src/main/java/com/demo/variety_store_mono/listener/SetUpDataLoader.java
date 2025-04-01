@@ -10,6 +10,9 @@ import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
+import com.demo.variety_store_mono.seller.entity.Product;
+import com.demo.variety_store_mono.seller.entity.Seller;
+import com.demo.variety_store_mono.seller.repository.ProductRepository;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -18,9 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,7 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     private final RoleRepository roleRepository;
     private final CategoryRepository categoryRepository;
     private final GlobalOptionRepository globalOptionRepository;
+    private final ProductRepository productRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -49,25 +53,37 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     private void setupData() {
+
+        Map<String, List<User> > userMap = new HashMap<>();
+        userMap.put("admin", new ArrayList<>());
+        userMap.put("seller", new ArrayList<>());
+        userMap.put("user", new ArrayList<>());
+
         // 관리자 계정 생성.
         int cnt = 0;
         for (int i = 0; i < 2; i++) {
-            createUserIfNotFound("admin" + String.format("%03d", ++cnt), "qwer1234",
+            User admin = createUserIfNotFound("admin" + String.format("%03d", ++cnt), "qwer1234",
                     "admin" + String.format("%03d", cnt) + "@example.com", UserType.ADMIN);
+
+            userMap.get("admin").add(admin);
         }
 
         // 판매자 계정 생성.
         cnt = 0;
         for (int i = 0; i < 5; i++) {
-            createUserIfNotFound("seller" + String.format("%03d", ++cnt), "qwer1234",
+            User seller = createUserIfNotFound("seller" + String.format("%03d", ++cnt), "qwer1234",
                     "seller" + String.format("%03d", cnt) + "@example.com", UserType.SELLER);
+
+            userMap.get("seller").add(seller);
         }
 
         // 일반 사용자 계정 생성.
         cnt = 0;
-        for (int i = 0; i < 32; i++) {
-            createUserIfNotFound("user" + String.format("%03d", ++cnt), "qwer1234",
+        for (int i = 0; i < 23; i++) {
+            User user = createUserIfNotFound("user" + String.format("%03d", ++cnt), "qwer1234",
                     "user" + String.format("%03d", cnt) + "@example.com", UserType.CUSTOMER);
+
+            userMap.get("user").add(user);
         }
 
         // 옵션 템플릿 생성.
@@ -78,19 +94,27 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
 
         // 카테고리 생성.
         Category clothes = createCategoryIfNotFound("의류", null, new HashSet<>());
-        Category mensClothing = createCategoryIfNotFound("남성패션", clothes, new HashSet<>());
-        Category womensClothing = createCategoryIfNotFound("여성패션", clothes, new HashSet<>());
-        createCategoryIfNotFound("셔츠(남성)", mensClothing, Set.of(colorOption, sizeOption1, materialOption));
-        createCategoryIfNotFound("바지(남성)", mensClothing, Set.of(colorOption, sizeOption1, materialOption));
-        createCategoryIfNotFound("셔츠(여성)", womensClothing, Set.of(colorOption, sizeOption1, materialOption));
-        createCategoryIfNotFound("바지(여성)", womensClothing, Set.of(colorOption, sizeOption1, materialOption));
-        createCategoryIfNotFound("신발", clothes, Set.of(colorOption, sizeOption2));
+        Category mensClothes = createCategoryIfNotFound("남성패션", clothes, new HashSet<>());
+        Category womensClothes = createCategoryIfNotFound("여성패션", clothes, new HashSet<>());
+        createCategoryIfNotFound("셔츠(남성)", mensClothes, Set.of(colorOption, sizeOption1, materialOption));
+        createCategoryIfNotFound("바지(남성)", mensClothes, Set.of(colorOption, sizeOption1, materialOption));
+        createCategoryIfNotFound("셔츠(여성)", womensClothes, Set.of(colorOption, sizeOption1, materialOption));
+        createCategoryIfNotFound("바지(여성)", womensClothes, Set.of(colorOption, sizeOption1, materialOption));
+        Category shoes = createCategoryIfNotFound("신발", clothes, Set.of(colorOption, sizeOption2));
+
+        // 상품 등록.
+        Seller seller001 = userMap.get("seller").get(0).getSeller();
+        createProductIfNotFound(seller001, shoes, "척 70 데님 블랙", BigDecimal.valueOf(105000));
+        createProductIfNotFound(seller001, shoes, "척테일러 올스타 빈티지 카고", BigDecimal.valueOf(75000));
+        createProductIfNotFound(seller001, shoes, "나이키 에어 포스 1", BigDecimal.valueOf(149000));
     }
 
-    private void createUserIfNotFound(String userName, String password, String email, UserType userType) {
+    private User createUserIfNotFound(String userName, String password, String email, UserType userType) {
 
         Optional<User> existingMember = userRepository.findByUserName(userName);
-        if (existingMember.isPresent()) return;
+        if (existingMember.isPresent()) {
+            return existingMember.get();
+        }
 
         User newUser = User.builder()
                 .userName(userName)
@@ -115,7 +139,7 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
         Role role = createRoleIfNotFound(userType.getRoleName(), description);
         newUser.addRole(role);
 
-        userRepository.save(newUser);
+        return userRepository.save(newUser);
     }
 
     private Role createRoleIfNotFound(String roleName, String description) {
@@ -168,5 +192,23 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
                 .build();
 
         return globalOptionRepository.save(globalOption);
+    }
+
+    private Product createProductIfNotFound(Seller seller, Category category, String productName, BigDecimal price) {
+
+        Product product = Product.builder()
+                .name(productName)
+                .description("(TEST) 상품 데이터")
+                .single(true)
+                .basePrice(price)
+                .stockQuantity(10)
+                .manufactureDate(LocalDate.now())
+                .seller(seller)
+                .build();
+
+        Product savedProduct = productRepository.save(product);
+        category.addProduct(product);
+
+        return savedProduct;
     }
 }
