@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
@@ -44,6 +48,11 @@ public class ProductManagementController {
 
         ProductManagementResponse product = productManagementService.getProductDetails(productId);
         model.addAttribute("product", product);
+
+        List<ProductStatus> filteredStatuses = Arrays.stream(ProductStatus.values())
+                .filter(status -> status != ProductStatus.PENDING)
+                .toList();
+        model.addAttribute("productStatusList", filteredStatuses);
 
         return "admin/content/product/product-detail";
     }

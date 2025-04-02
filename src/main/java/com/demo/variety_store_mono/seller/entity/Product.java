@@ -99,7 +99,7 @@ public class Product {
     // 상품 승인: 등록 대기 상태(PENDING)인 경우, 승인(APPROVED) 상태로 전환 가능.
     public void approve() {
         if (this.status != ProductStatus.PENDING) {
-            throw new IllegalStateException("Only pending products can be approved.");
+            throw new IllegalStateException("등록 대기 상태인 경우에만, 승인 가능.");
         }
         this.status = ProductStatus.APPROVED;
     }
@@ -107,7 +107,7 @@ public class Product {
     // 상품 반려: 등록 대기 상태(PENDING)인 경우, 반려(REJECTED) 상태로 전환 가능.
     public void reject() {
         if (this.status != ProductStatus.PENDING) {
-            throw new IllegalStateException("Only pending products can be rejected.");
+            throw new IllegalStateException("등록 대기 상태인 경우에만, 반려 가능.");
         }
         this.status = ProductStatus.REJECTED;
     }
@@ -115,13 +115,16 @@ public class Product {
     // 판매 중단: 상품이 승인(APPROVED) 상태일 때만 중단(DISCONTINUED) 가능
     public void discontinue() {
         if (this.status != ProductStatus.APPROVED) {
-            throw new IllegalStateException("상품이 승인 상태여야 중단할 수 있습니다.");
+            throw new IllegalStateException("승인 상태인 경우에만, 중단 가능.");
         }
         this.status = ProductStatus.DISCONTINUED;
     }
 
     // 품절: 재고 수량과 상관없이, 판매자가 제품 손상/불량 등의 이유로 품절 상태로 전환 가능.
     public void markOutOfStock() {
+        if (this.status != ProductStatus.APPROVED) {
+            throw new IllegalStateException("승인 상태인 경우에만, 품절 가능.");
+        }
         this.status = ProductStatus.OUT_OF_STOCK;
     }
 

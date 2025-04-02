@@ -25,7 +25,6 @@ public class CategoryRestController {
 
     /** 특정 카테고리의 하위 카테고리 목록 조회 */
     @GetMapping("/children")
-    @ResponseBody
     public ResponseEntity<List<CategorySummary>> subCategories(@RequestParam(required = false) Long categoryId) {
 
         if (categoryId == null || categoryId == 0L) {
