@@ -8,6 +8,8 @@ import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,8 @@ public class GlobalOptionController {
 
     /** 옵션 목록 조회 페이지 */
     @GetMapping
-    public String optionList(@ModelAttribute SearchOption searchOption,
-                               Pageable pageable, Model model) {
+    public String optionList(@ModelAttribute SearchOption searchOption, Model model,
+                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<GlobalOptionSummary> optionList = globalOptionService.getOptionSearchList(searchOption, pageable);
         model.addAttribute("optionList", optionList);

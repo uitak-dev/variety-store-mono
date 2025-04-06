@@ -5,12 +5,13 @@ import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
-import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
 import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
 import com.demo.variety_store_mono.seller.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,8 +45,8 @@ public class ProductController {
     /** 상품 목록 페이지 */
     @GetMapping
     public String productList(@AuthenticationPrincipal Jwt jwt,
-                              @ModelAttribute SearchProduct searchProduct,
-                              Pageable pageable, Model model) {
+                              @ModelAttribute SearchProduct searchProduct, Model model,
+                              @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         model.addAttribute("productStatusList", ProductStatus.values());
 

@@ -70,7 +70,17 @@
                                     th:onclick="|location.href='@{/admin/products/{id}(id=${product.id})}'|">
                                     <td th:text="${#strings.listJoin(product.categories.![name], ', ')}"></td>
                                     <td th:text="${product.name}"></td>
-                                    <td th:text="${product.status.displayName}"></td>
+                                    <td>
+                                        <span class="badge"
+                                            th:with="badgeClass=${(product.status.systemValue=='PENDING') ? ' bg-warning text-dark' :
+                                                                 (product.status.systemValue=='APPROVED') ? ' bg-success' :
+                                                                 (product.status.systemValue=='REJECTED') ? ' bg-danger' :
+                                                                 (product.status.systemValue=='DISCONTINUED') ? ' bg-secondary' :
+                                                                 (product.status.systemValue=='OUT_OF_STOCK') ? ' bg-dark' : ''}"
+                                            th:text="${product.status.displayName}"
+                                            th:classappend="${badgeClass}">
+                                        </span>
+                                    </td>
                                     <td th:text="${product.userName}"></td>
                                 </tr>
                                 <!-- 데이터가 없으면 표시 -->

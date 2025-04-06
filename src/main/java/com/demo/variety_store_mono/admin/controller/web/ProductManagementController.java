@@ -9,6 +9,8 @@ import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,8 @@ public class ProductManagementController {
 
     /** 상품 목록 페이지 */
     @GetMapping
-    public String productList(@ModelAttribute SearchProductManagement searchProductManagement,
-                              Pageable pageable, Model model) {
+    public String productList(@ModelAttribute SearchProductManagement searchProductManagement, Model model,
+                              @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         model.addAttribute("productStatusList", ProductStatus.values());
         model.addAttribute("categoryList", categoryService.getBottomCategories());

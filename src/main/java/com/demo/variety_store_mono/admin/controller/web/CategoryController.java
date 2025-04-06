@@ -9,6 +9,8 @@ import com.demo.variety_store_mono.admin.service.GlobalOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +28,8 @@ public class CategoryController {
 
     /** 카테고리 목록 조회 페이지 */
     @GetMapping
-    public String categoryList(@ModelAttribute SearchCategory searchCategory,
-                               Pageable pageable, Model model) {
+    public String categoryList(@ModelAttribute SearchCategory searchCategory, Model model,
+                               @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<CategorySummary> categoryList = categoryService.getCategorySearchList(searchCategory, pageable);
         model.addAttribute("categoryList", categoryList);

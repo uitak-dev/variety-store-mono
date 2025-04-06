@@ -70,6 +70,15 @@
         const addOptionValueBtn = document.getElementById('addOptionValue');
         const optionValuesContainer = document.getElementById('optionValuesContainer');
 
+        // 기존에 렌더링된 삭제 버튼에 이벤트 리스너 추가
+        const existingDeleteButtons = optionValuesContainer.querySelectorAll('.remove-option-value');
+        existingDeleteButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                optionValuesContainer.removeChild(btn.parentElement);
+                toggleRemoveButtons();
+            });
+        });
+
         // 옵션 값 추가 버튼 클릭 이벤트
         addOptionValueBtn.addEventListener('click', function () {
             // 새로운 옵션 값 입력 행(div)을 생성합니다.

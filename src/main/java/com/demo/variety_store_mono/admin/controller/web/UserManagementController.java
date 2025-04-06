@@ -9,19 +9,15 @@ import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
 import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategy;
 import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategyFactory;
 import com.demo.variety_store_mono.common.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -36,7 +32,8 @@ public class UserManagementController {
     @GetMapping
     public String userList(
             @RequestParam(defaultValue = "customer") UserType userType,
-            @ModelAttribute SearchUser searchUser, Pageable pageable, Model model) {
+            @ModelAttribute SearchUser searchUser, Model model,
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         // 페이지 네비게이션 링크 등에 사용하기 위해, userType 도 모델에 담습니다.
         model.addAttribute("userType", userType.name().toLowerCase());

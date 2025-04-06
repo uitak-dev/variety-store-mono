@@ -33,8 +33,6 @@
                                 <div class="input-group mb-2 option-value-row">
                                     <input type="text" th:field="*{globalOptionValues}"
                                            class="form-control option-value-input" placeholder="옵션 값을 입력하세요" required>
-                                    <!-- 처음 하나만 있을 때는 삭제 버튼 숨김 -->
-                                    <button type="button" class="btn btn-outline-danger remove-option-value d-none">X</button>
                                 </div>
                             </div>
                             <button type="button" id="addOptionValue" class="btn btn-outline-primary">옵션 값 추가</button>
@@ -84,6 +82,7 @@
             btn.type = 'button';
             btn.className = 'btn btn-outline-danger remove-option-value';
             btn.textContent = 'X';
+
             // 삭제 버튼 클릭 시 해당 옵션 행을 제거
             btn.addEventListener('click', function () {
                 optionValuesContainer.removeChild(div);
