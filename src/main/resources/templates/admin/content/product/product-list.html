@@ -1,106 +1,118 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{admin/layout/head :: head}">
-    <title>제품 목록</title>
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>제품 관리 목록</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
-<main class="flex-fill">
-    <div class="container my-4">
-        <div class="row">
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-            <!-- 메인 컨텐츠 -->
-            <section class="col-md-9">
-                <!-- 제목 -->
-                <h2>제품 목록</h2>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
 
-                <!-- 검색 폼 -->
-                <form th:object="${searchProductManagement}" method="get" action="/admin/products" class="mb-3">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <input type="text" th:field="*{name}" class="form-control" placeholder="상품 이름 검색">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" th:field="*{userName}" class="form-control" placeholder="판매자 아이디 검색">
-                        </div>
-                        <div class="col-md-4">
-                            <select th:field="*{status}" class="form-select">
-                                <option value="" selected>--등록 상태--</option>
-                                <option th:each="status : ${productStatusList}" th:value="${status.systemValue}" th:text="${status.displayName}">
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select th:field="*{categoryId}" class="form-select">
-                                <option value="" selected>--카테고리 선택--</option>
-                                <option th:each="category : ${categoryList}" th:value="${category.id}" th:text="${category.name}">
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-primary">검색</button>
+                <!-- 검색 조건 영역 -->
+                <div class="search-bar mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3">검색 조건</h4>
+                            <form class="row g-3 align-items-center" role="search" th:object="${searchProductManagement}" method="get">
+                                <div class="col-md-3">
+                                    <input class="form-control" type="search" th:field="*{name}" placeholder="상품 이름 검색" aria-label="Search">
+                                </div>
+                                <div class="col-md-3">
+                                    <input class="form-control" type="search" th:field="*{userName}" placeholder="사용자 이름 검색" aria-label="Search">
+                                </div>
+                                <div class="col-md-2">
+                                    <select th:field="*{status}" class="form-select">
+                                        <option value="" selected>--등록 상태--</option>
+                                        <option th:each="status : ${productStatusList}" th:value="${status.systemValue}" th:text="${status.displayName}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select th:field="*{categoryId}" class="form-select">
+                                        <option value="" selected>--카테고리 선택--</option>
+                                        <option th:each="category : ${categoryList}" th:value="${category.id}" th:text="${category.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-outline-secondary w-100" type="submit">검색</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </form>
-
-                <!-- 상품 목록 테이블 -->
-                <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>카테고리</th>
-                        <th>상품 명</th>
-                        <th>등록 상태</th>
-                        <th>판매자 아이디</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="product : ${productList.content}"
-                        th:onclick="|location.href='@{/admin/products/{id}(id=${product.id})}'|"
-                        style="cursor:pointer;">
-                        <td th:text="${#strings.listJoin(product.categories.![name], ', ')}"></td>
-                        <td th:text="${product.name}"></td>
-                        <td th:text="${product.status.displayName}"></td>
-                        <td th:text="${product.userName}"></td>
-                    </tr>
-                    <!-- 데이터가 없으면 표시 -->
-                    <tr th:if="${#lists.isEmpty(productList.content)}">
-                        <td colspan="3" class="text-center">데이터가 없습니다.</td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
-                <div th:if="${productList.totalElements > 0}">
-                    <nav>
-                        <ul class="pagination">
-                            <!-- 이전 페이지 -->
-                            <li class="page-item" th:classappend="${productList.first} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/products(page=${productList.number - 1})}">&laquo;</a>
-                            </li>
-
-                            <!-- 페이지 번호 -->
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, productList.totalPages - 1)}"
-                                th:classappend="${productList.number} == ${i} ? 'active'">
-                                <a class="page-link" th:href="@{/admin/products(page=${i})}"
-                                   th:text="${i + 1}">1</a>
-                            </li>
-
-                            <!-- 다음 페이지 -->
-                            <li class="page-item" th:classappend="${productList.last} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/products(page=${productList.number + 1})}">&raquo;</a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
-            </section>
-        </div>
-    </div>
-</main>
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
-</body>
 
+                <!-- 카드 영역 -->
+                <div class="chart-card mb-3">
+                    <!-- 카드 제목 -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-3">제품 관리 목록</h4>
+                    </div>
+                    <!-- 목록 테이블 영역 -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">카테고리</th>
+                                    <th scope="col">상품 이름</th>
+                                    <th scope="col">등록 상태</th>
+                                    <th scope="col">판매자 아이디</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <tr th:each="product : ${productList.content}"
+                                    th:onclick="|location.href='@{/admin/products/{id}(id=${product.id})}'|">
+                                    <td th:text="${#strings.listJoin(product.categories.![name], ', ')}"></td>
+                                    <td th:text="${product.name}"></td>
+                                    <td th:text="${product.status.displayName}"></td>
+                                    <td th:text="${product.userName}"></td>
+                                </tr>
+                                <!-- 데이터가 없으면 표시 -->
+                                <tr th:if="${#lists.isEmpty(productList.content)}">
+                                    <td colspan="3" class="text-center">데이터가 없습니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
+                    <div class="d-flex justify-content-center" th:if="${productList.totalElements > 0}">
+                        <nav>
+                            <ul class="pagination">
+                                <!-- 이전 페이지 -->
+                                <li class="page-item" th:classappend="${productList.first} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/admin/products(page=${productList.number - 1})}">&laquo;</a>
+                                </li>
+
+                                <!-- 페이지 번호 -->
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, productList.totalPages - 1)}"
+                                    th:classappend="${productList.number} == ${i} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/products(page=${i})}"
+                                       th:text="${i + 1}">1</a>
+                                </li>
+
+                                <!-- 다음 페이지 -->
+                                <li class="page-item" th:classappend="${productList.last} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/admin/products(page=${productList.number + 1})}">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
+
+</body>
 </html>

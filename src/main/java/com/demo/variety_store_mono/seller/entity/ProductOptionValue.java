@@ -27,7 +27,7 @@ public class ProductOptionValue {
     @JoinColumn(name = "product_option_id", nullable = false)
     private ProductOption productOption;
 
-    private String productOptionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
+    private String optionValue;   // 판매자 정의 옵션 값 (예: "빨강", "16GB", "512GB")
     private boolean global;       // true: 글로벌 옵션 값, false: 사용자 정의 옵션 값
 
     @Column(nullable = false)
@@ -42,11 +42,11 @@ public class ProductOptionValue {
     private boolean isOutOfStock = false; // 옵션 품절 여부
 
     @Builder
-    public ProductOptionValue(Long id, String productOptionValue, boolean global,
+    public ProductOptionValue(Long id, String optionValue, boolean global,
                               BigDecimal additionalPrice, int stockQuantity) {
         this.id = id;
         this.global = global;
-        this.productOptionValue = productOptionValue;
+        this.optionValue = optionValue;
         this.additionalPrice = additionalPrice;
         this.stockQuantity = stockQuantity;
     }

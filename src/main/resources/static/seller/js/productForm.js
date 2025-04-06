@@ -6,47 +6,75 @@ class OptionValueField {
         this.readOnly = readOnly;
         this.data = data;
         this.element = document.createElement('div');
-        this.element.classList.add('option-value-field', 'mb-2');
+        this.element.classList.add('row', 'g-2', 'mb-3', 'align-items-end', 'option-value-field');   //##
         this.onRemoveCallback = onRemoveCallback; // 삭제 시 호출할 콜백
         this.build();
     }
     build() {
+        // 옵션 값 인풋 그룹
+        const valueGroup = document.createElement('div');
+        valueGroup.classList.add('col-md-4');
+
+        const valueLabel = document.createElement('label');
+        valueLabel.classList.add('form-label');
+        valueLabel.textContent = '옵션 값';
+
         this.optionValueInput = document.createElement('input');
         this.optionValueInput.type = 'text';
-        this.optionValueInput.placeholder = '옵션 값';
+        this.optionValueInput.classList.add('form-control');
+        this.optionValueInput.placeholder = '옵션 값...';
         this.optionValueInput.required = true;
         if (this.readOnly) {
             this.optionValueInput.readOnly = true;
             this.optionValueInput.classList.add('read-only');
         }
         this.optionValueInput.value = this.data.optionValue || '';
+        valueGroup.append(valueLabel, this.optionValueInput);
+
+        // 추가 가격 인풋 그룹
+        const priceGroup = document.createElement('div');
+        priceGroup.classList.add('col-md-4');
+
+        const priceLabel = document.createElement('label');
+        priceLabel.classList.add('form-label');
+        priceLabel.textContent = '추가 가격';
 
         this.additionalPriceInput = document.createElement('input');
         this.additionalPriceInput.type = 'number';
-        this.additionalPriceInput.step = '0.01';
-        this.additionalPriceInput.placeholder = '추가 가격';
+        this.additionalPriceInput.classList.add('form-control');
+        this.additionalPriceInput.placeholder = '추가 가격...';
         this.additionalPriceInput.required = true;
         this.additionalPriceInput.value = this.data.additionalPrice || '';
+        priceGroup.append(priceLabel, this.additionalPriceInput);
+
+        // 재고 수량 인풋 그룹
+        const stockGroup = document.createElement('div');
+        stockGroup.classList.add('col-md-3');
+
+        const stockLabel = document.createElement('label');
+        stockLabel.classList.add('form-label');
+        stockLabel.textContent = '재고 수량';
 
         this.stockQuantityInput = document.createElement('input');
         this.stockQuantityInput.type = 'number';
-        this.stockQuantityInput.placeholder = '재고 수량';
+        this.stockQuantityInput.classList.add('form-control');
+        this.stockQuantityInput.placeholder = '재고 수량...';
         this.stockQuantityInput.required = true;
         this.stockQuantityInput.value = this.data.stockQuantity || '';
+        stockGroup.append(stockLabel, this.stockQuantityInput);
 
         // 삭제 버튼
+        const deleteGroup = document.createElement('div');
+        deleteGroup.classList.add('col-md-1');
+
         this.deleteButton = document.createElement('button');
         this.deleteButton.type = 'button';
         this.deleteButton.textContent = '삭제';
-        this.deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+        this.deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'w-100');
         this.deleteButton.addEventListener('click', () => this.remove());
+        deleteGroup.append(this.deleteButton);
 
-        this.element.append(
-            this.optionValueInput,
-            this.additionalPriceInput,
-            this.stockQuantityInput,
-            this.deleteButton
-        );
+        this.element.append(valueGroup, priceGroup, stockGroup, deleteGroup);
     }
     getData() {
         return {
@@ -83,15 +111,16 @@ class OptionCard {
 
         // 옵션 이름 입력 필드
         const nameGroup = document.createElement('div');
-        nameGroup.classList.add('mb-2');
+        nameGroup.classList.add('mb-3');
 
         const nameLabel = document.createElement('label');
         nameLabel.classList.add('form-label');
         nameLabel.textContent = '옵션 이름';
 
         this.optionNameInput = document.createElement('input');
+        this.optionNameInput.classList.add('form-control'); //##
         this.optionNameInput.type = 'text';
-        this.optionNameInput.placeholder = '옵션 이름';
+        this.optionNameInput.placeholder = '옵션 이름...';
         this.optionNameInput.required = true;
         this.optionNameInput.value = this.data.name || '';
         if (this.isTemplate) {
@@ -118,21 +147,25 @@ class OptionCard {
             this.addOptionValueField();
         }
 
-        // 옵션 값 추가 버튼
+        // 옵션 값 추가/ 옵션 카드 삭제 버튼
+        const buttonGroup = document.createElement('div');
+        buttonGroup.classList.add('d-flex', 'gap-2');
+
         this.addValueBtn = document.createElement('button');
         this.addValueBtn.type = 'button';
         this.addValueBtn.textContent = '옵션 값 추가';
-        this.addValueBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'mt-2');
+        this.addValueBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
         this.addValueBtn.addEventListener('click', () => this.addOptionValueField());
 
-        // 옵션 카드 삭제 버튼
         this.deleteCardBtn = document.createElement('button');
         this.deleteCardBtn.type = 'button';
         this.deleteCardBtn.textContent = '옵션 카드 삭제';
-        this.deleteCardBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'mt-2');
+        this.deleteCardBtn.classList.add('btn', 'btn-danger', 'btn-sm');
         this.deleteCardBtn.addEventListener('click', () => this.remove());
 
-        cardBody.append(nameGroup, this.optionValuesContainer, this.addValueBtn, this.deleteCardBtn);
+        buttonGroup.append(this.addValueBtn, this.deleteCardBtn);
+
+        cardBody.append(nameGroup, this.optionValuesContainer, buttonGroup);
         this.element.appendChild(cardBody);
     }
     addOptionValueField() {
@@ -174,21 +207,25 @@ class ProductForm {
         document.getElementById('addManualOptionButton').addEventListener('click', () => {
             this.addOptionCard(false);
         });
+
         // 폼 제출 시 JSON 데이터 수집 및 전송
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+
         // 상품 타입 라디오 버튼 이벤트: 옵션 상품 선택 시 옵션 영역 표시
         $("input[name='single']").on("change", () => {
             if ($("#optionProduct").is(":checked")) {
                 const categoryId = $("#categoryId").val();
                 if (!categoryId) {
-                    alert("옵션 상품을 등록하려면 먼저 최하위 카테고리를 선택하세요.");
+                    alert("상품이 포함될 카테고리를 먼저 선택해주세요.");
                     $("#singleProduct").prop("checked", true);
                     $("#optionSection").hide();
                     return;
                 }
                 $("#optionSection").show();
+                $("#singleSection").hide();
             } else {
                 $("#optionSection").hide();
+                $("#singleSection").show();
             }
         });
         // 템플릿 불러오기 버튼 이벤트: AJAX로 템플릿 목록 로드 후 모달 표시

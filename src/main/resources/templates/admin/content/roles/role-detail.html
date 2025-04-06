@@ -1,47 +1,62 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin/layout/head :: head}">
-    <title>역할 상세 정보</title>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>역할 상세</title>
 </head>
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
-<main class="flex-fill">
-    <div class="container my-4">
-        <h2>역할 상세 정보</h2>
 
-        <!-- 역할 기본 정보 -->
-        <div class="mb-3">
-            <label for="id" class="form-label">ID</label>
-            <input type="text" id="id" class="form-control" th:value="${role.id}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="roleName" class="form-label">역할 이름</label>
-            <input type="text" id="roleName" class="form-control" th:value="${role.name}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">역할 설명</label>
-            <input type="text" id="description" class="form-control" th:value="${role.description}" readonly>
-        </div>
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-secondary"
-                        th:onclick="|location.href='@{/admin/roles}'|"
-                        type="button">
-                    목록
-                </button>
-            </div>
-            <div class="col">
-                <button class="w-100 btn btn-primary"
-                        th:onclick="|location.href='@{/admin/roles/{id}/edit(id=${role.id})}'|"
-                        type="button">
-                    정보 수정
-                </button>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
+
+                <!-- 카드 영역 -->
+                <div class="chart-card mb-3">
+                    <h4 class="mb-3">역할 상세</h4>
+                    <!-- 역할 기본 정보 -->
+                    <div class="mb-3">
+                        <label for="id" class="form-label">ID</label>
+                        <input type="text" id="id" class="form-control" th:value="${role.id}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roleName" class="form-label">역할 이름</label>
+                        <input type="text" id="roleName" class="form-control" th:value="${role.name}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">역할 설명</label>
+                        <input type="text" id="description" class="form-control" th:value="${role.description}" disabled>
+                    </div>
+                </div>
+                <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+                <div class="row">
+                    <div class="col">
+                        <button class="w-100 btn btn-secondary"
+                                th:onclick="|location.href='@{/admin/roles}'|"
+                                type="button">
+                            목록
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button class="w-100 btn btn-primary"
+                                th:onclick="|location.href='@{/admin/roles/{id}/edit(id=${role.id})}'|"
+                                type="button">
+                            정보 수정
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
-</main>
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+    </section>
+</div>
+
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
+
 </body>
 </html>

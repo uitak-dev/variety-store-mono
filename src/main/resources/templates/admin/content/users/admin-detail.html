@@ -1,85 +1,92 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin/layout/head :: head}">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
     <title>관리자 상세 정보</title>
 </head>
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
-<main class="flex-fill">
-    <div class="container my-4">
-        <h2>관리자 상세 정보</h2>
-        <!-- 공통 사용자 기본 정보 -->
-        <div class="mb-3">
-            <label for="id" class="form-label">ID</label>
-            <input type="text" id="id" class="form-control" th:value="${userDetailInfo.id}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="userName" class="form-label">아이디</label>
-            <input type="text" id="userName" class="form-control" th:value="${userDetailInfo.userName}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">이메일</label>
-            <input type="text" id="email" class="form-control" th:value="${userDetailInfo.email}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="firstName" class="form-label">이름</label>
-            <input type="text" id="firstName" class="form-control" th:value="${userDetailInfo.firstName}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="lastName" class="form-label">성</label>
-            <input type="text" id="lastName" class="form-control" th:value="${userDetailInfo.lastName}" readonly>
-        </div>
 
-        <!-- 관리자 상세 정보 -->
-        <div class="mb-3">
-            <label for="department" class="form-label">부서</label>
-            <input type="text" id="department" class="form-control" th:value="${userDetailInfo.department}" readonly>
-        </div>
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-        <!-- 역할 multi checkbox -->
-        <div class="mb-3">
-            <label class="form-label">역할</label>
-            <div class="row">
-                <div class="col-md-4" th:each="role : ${allRoles}">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" disabled
-                               th:id="'role_' + ${role.id}"
-                               th:name="roles" th:value="${role.id}"
-                               th:checked="${#lists.contains(userDetailInfo.roles.![id], role.id)}">
-                        <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}">Role Name</label>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
+
+                <!-- 관리자 상세 정보 카드 -->
+                <div class="chart-card mb-3">
+                    <h2>관리자 상세 정보</h2>
+                    <!-- 공통 사용자 기본 정보 -->
+                    <div class="mb-3">
+                        <label for="id" class="form-label">ID</label>
+                        <input type="text" id="id" class="form-control" th:value="${userDetailInfo.id}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">아이디</label>
+                        <input type="text" id="userName" class="form-control" th:value="${userDetailInfo.userName}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">이메일</label>
+                        <input type="text" id="email" class="form-control" th:value="${userDetailInfo.email}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">이름</label>
+                        <input type="text" id="firstName" class="form-control" th:value="${userDetailInfo.firstName}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">성</label>
+                        <input type="text" id="lastName" class="form-control" th:value="${userDetailInfo.lastName}" disabled>
+                    </div>
+
+                    <!-- 관리자 상세 정보 -->
+                    <div class="mb-3">
+                        <label for="department" class="form-label">부서</label>
+                        <input type="text" id="department" class="form-control" th:value="${userDetailInfo.department}" disabled>
+                    </div>
+
+                    <!-- 역할 multi checkbox -->
+                    <div class="mb-3">
+                        <label class="form-label">역할</label>
+                        <div class="row">
+                            <div class="col-md-4" th:each="role : ${allRoles}">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" disabled th:id="'role_' + ${role.id}"
+                                           th:name="roles" th:value="${role.id}"
+                                           th:checked="${#lists.contains(userDetailInfo.roles.![id], role.id)}">
+                                    <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}">Role
+                                        Name</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg"
-                        th:onclick="|location.href='@{/admin/users(userType=${userType})}'|"
-                        type="button">
-                    목록
-                </button>
+            <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+            <div class="row">
+                <div class="col">
+                    <button class="w-100 btn btn-secondary"
+                            th:onclick="|location.href='@{/admin/users(userType=${userType})}'|" type="button">
+                        목록
+                    </button>
+                </div>
+                <div class="col">
+                    <button class="w-100 btn btn-primary"
+                            th:onclick="|location.href='@{/admin/users/{userId}/edit(userId=${userDetailInfo.id}, userType=${userType})}'|"
+                            type="button">
+                        정보 수정
+                    </button>
+                </div>
             </div>
-            <div class="col">
-                <button class="w-100 btn btn-primary btn-lg"
-                        th:attr="data-href='/admin/users/' + ${userDetailInfo.id} + '/edit?userType=' + ${userType}"
-                        type="button">
-                    정보 수정
-                </button>
-            </div>
+
         </div>
-    </div>
-</main>
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('button[data-href]').forEach(function(row) {
-            row.addEventListener('click', function() {
-                window.location.href = row.getAttribute('data-href');
-            });
-        });
-    });
-</script>
+    </section>
+</div>
+
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
+
 </body>
 </html>

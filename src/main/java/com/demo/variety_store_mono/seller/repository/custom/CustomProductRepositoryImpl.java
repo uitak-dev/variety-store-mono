@@ -5,13 +5,14 @@ import com.demo.variety_store_mono.admin.dto.summary.ProductManagementSummary;
 import com.demo.variety_store_mono.admin.entity.QCategory;
 import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
-import com.demo.variety_store_mono.seller.entity.ProductStatus;
-import com.demo.variety_store_mono.seller.entity.QProduct;
-import com.demo.variety_store_mono.seller.entity.QProductCategory;
+import com.demo.variety_store_mono.seller.entity.*;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
 import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
-import com.demo.variety_store_mono.seller.entity.QSeller;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Coalesce;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -37,14 +38,42 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
     private QProduct product = QProduct.product;
     private QProductCategory productCategory = QProductCategory.productCategory;
     private QCategory category = QCategory.category;
+    private QProductOption productOption = QProductOption.productOption;
+    private QProductOptionValue productOptionValue = QProductOptionValue.productOptionValue;
     private QUser user = QUser.user;
     private QSeller seller = QSeller.seller;
 
-    /** 판매자 도메인: 검색 조건이 포함된 상품 목록 조회. */
+    /**
+     * [ 판매자 도메인: 검색 조건이 포함된 상품 목록 조회. ]
+     * 옵션 상품(Product.single = false) 인 경우,
+     * 총 재고량 = 해당 상품에 포함된 옵션 값의 재고량(ProductOptionValue.stockQuantity) 합.
+     *
+     * select
+     *     p.*,
+     *     case when p.single = true
+     *          then p.stock_quantity
+     *          else coalesce(sum(pov.stock_quantity), 0)
+     *     end as stock_quantity
+     * from
+     *     product p
+     * left join
+     *     product_option po on po.product_id = p.product_id
+     * left join
+     *     product_option_value pov on pov.product_option_id = po.product_option_id
+     * group by
+     *     p.product_id;
+     */
     @Override
     public Page<ProductSummary> searchProductList(Long sellerId, SearchProduct searchProduct, Pageable pageable) {
 
-        List<ProductSummary> content = queryFactory.selectFrom(product)
+        NumberExpression<Integer> totalStockQuantity = Expressions.cases()
+                .when(product.single.eq(true))
+                .then(product.stockQuantity)
+                .otherwise(productOptionValue.stockQuantity.sum().coalesce(0));
+
+        List<ProductSummary> content = queryFactory
+                .select(product, totalStockQuantity)
+                .from(product)
                 .where(
                         product.seller.id.eq(sellerId),
                         productNameEq(searchProduct.getName()),
@@ -52,12 +81,18 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                 )
                 .leftJoin(product.productCategories, productCategory).fetchJoin()
                 .leftJoin(productCategory.category, category).fetchJoin()
+                .leftJoin(product.productOptions, productOption)
+                .leftJoin(productOption.productOptionValues, productOptionValue)
+                .groupBy(product.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .distinct()
                 .fetch()
                 .stream()
-                .map(product -> modelMapper.map(product, ProductSummary.class))
+                .map(tuple -> {
+                    ProductSummary map = modelMapper.map(tuple.get(product), ProductSummary.class);
+                    map.setStockQuantity(tuple.get(totalStockQuantity));
+                    return map;
+                })
                 .toList();
 
         JPAQuery<Long> countQuery = queryFactory.select(product.count())

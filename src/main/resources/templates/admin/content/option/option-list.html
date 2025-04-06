@@ -1,92 +1,95 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{admin/layout/head :: head}">
-    <title>옵션 템플릿 목록</title>
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>페이지 제목</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
-<main class="flex-fill">
-    <div class="container my-4">
-        <div class="row">
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-            <!-- 메인 컨텐츠 -->
-            <section class="col-md-9">
-                <!-- 제목 -->
-                <h2>옵션 템플릿 목록</h2>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
 
-                <!-- 검색 폼 -->
-                <form th:object="${searchOption}" method="get" action="/admin/options" class="mb-3">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <input type="text" th:field="*{name}" class="form-control" placeholder="옵션 이름 검색">
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-primary">검색</button>
-                        </div>
+                <!-- 검색 조건 영역 -->
+                <div class="search-bar mb-4">
+                    <div class="card p-3 shadow-sm">
+                        <h5 class="mb-3">검색 조건</h5>
+                        <form class="d-flex" role="search" th:object="${searchOption}" method="get">
+                            <input class="form-control me-2 search-input" type="search" th:field="*{name}"
+                                   placeholder="옵션 이름 검색" aria-label="Search">
+                            <button class="btn btn-outline-secondary" type="submit">검색</button>
+                        </form>
                     </div>
-                </form>
-
-                <!-- 옵션 등록 버튼 -->
-                <div class="d-flex justify-content-end mb-3">
-                    <a th:href="@{/admin/options/new}" class="btn btn-success">
-                        옵션 템플릿 등록
-                    </a>
                 </div>
 
-                <!-- 옵션 목록 테이블 -->
-                <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>순서</th>
-                        <th>템플릿 옵션 이름</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="option, optionStat : ${optionList.content}"
-                        th:onclick="|location.href='@{/admin/options/{id}(id=${option.id})}'|"
-                        style="cursor:pointer;">
-                        <td th:text="${optionStat.count}"></td>
-                        <td th:text="${option.name}"></td>
-                    </tr>
-                    <!-- 데이터가 없으면 표시 -->
-                    <tr th:if="${#lists.isEmpty(optionList.content)}">
-                        <td colspan="3" class="text-center">데이터가 없습니다.</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <!-- 카드 영역 -->
+                <div class="chart-card mb-3">
+                    <!-- 카드 제목 -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">사용자 목록</h5>
+                        <a th:href="@{/admin/options/new}" class="btn btn-success">옵션 템플릿 생성</a>
+                    </div>
+                    <!-- 목록 테이블 영역 -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">순서</th>
+                                    <th scope="col">템플릿 옵션 이름</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <tr th:each="option, optionStat : ${optionList.content}"
+                                    th:onclick="|location.href='@{/admin/options/{id}(id=${option.id})}'|">
+                                    <td th:text="${optionStat.count}"></td>
+                                    <td th:text="${option.name}"></td>
+                                </tr>
+                                <!-- 데이터가 없으면 표시 -->
+                                <tr th:if="${#lists.isEmpty(optionList.content)}">
+                                    <td colspan="3" class="text-center">데이터가 없습니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
+                    <div class="d-flex justify-content-center" th:if="${optionList.totalElements > 0}">
+                        <nav>
+                            <ul class="pagination">
+                                <!-- 이전 페이지 -->
+                                <li class="page-item" th:classappend="${optionList.first} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/admin/options(page=${optionList.number - 1})}">&laquo;</a>
+                                </li>
 
-                <!-- 페이징 네비게이션: 데이터가 있는 경우에만 렌더링 -->
-                <div th:if="${optionList.totalElements > 0}">
-                    <nav>
-                        <ul class="pagination">
-                            <!-- 이전 페이지 -->
-                            <li class="page-item" th:classappend="${optionList.first} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/options(page=${optionList.number - 1})}">&laquo;</a>
-                            </li>
+                                <!-- 페이지 번호 -->
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, optionList.totalPages - 1)}"
+                                    th:classappend="${optionList.number} == ${i} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/options(page=${i})}"
+                                       th:text="${i + 1}">1</a>
+                                </li>
 
-                            <!-- 페이지 번호 -->
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, optionList.totalPages - 1)}"
-                                th:classappend="${optionList.number} == ${i} ? 'active'">
-                                <a class="page-link" th:href="@{/admin/options(page=${i})}"
-                                   th:text="${i + 1}">1</a>
-                            </li>
-
-                            <!-- 다음 페이지 -->
-                            <li class="page-item" th:classappend="${optionList.last} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/options(page=${optionList.number + 1})}">&raquo;</a>
-                            </li>
-                        </ul>
-                    </nav>
+                                <!-- 다음 페이지 -->
+                                <li class="page-item" th:classappend="${optionList.last} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/admin/options(page=${optionList.number + 1})}">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-            </section>
+
+            </div>
         </div>
-    </div>
-</main>
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
-</body>
+    </section>
+</div>
 
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
+
+</body>
 </html>

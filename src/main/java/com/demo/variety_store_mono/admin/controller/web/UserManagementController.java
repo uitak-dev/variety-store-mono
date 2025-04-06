@@ -38,15 +38,8 @@ public class UserManagementController {
             @RequestParam(defaultValue = "customer") UserType userType,
             @ModelAttribute SearchUser searchUser, Pageable pageable, Model model) {
 
-        // 사이드바 메뉴 목록 생성 (예: 일반 사용자, 판매자, 관리자)
-        List<SidebarMenu> menuItems = new ArrayList<>();
-        menuItems.add(new SidebarMenu("/admin/users?userType=admin", "관리자", "admin".equalsIgnoreCase(userType.name())));
-        menuItems.add(new SidebarMenu("/admin/users?userType=seller", "판매자", "seller".equalsIgnoreCase(userType.name())));
-        menuItems.add(new SidebarMenu("/admin/users?userType=customer", "일반 사용자", "customer".equalsIgnoreCase(userType.name())));
-        model.addAttribute("menuItems", menuItems);
-
         // 페이지 네비게이션 링크 등에 사용하기 위해, userType 도 모델에 담습니다.
-        model.addAttribute("userType", userType.name());
+        model.addAttribute("userType", userType.name().toLowerCase());
 
         Page<UserBasicInfoResponse> userList = userService.getUserList(userType, searchUser, pageable);
         model.addAttribute("userList", userList);
@@ -59,7 +52,7 @@ public class UserManagementController {
     public String userDetails(@PathVariable Long userId,
                               @RequestParam UserType userType, Model model) {
 
-        model.addAttribute("userType", userType.name());
+        model.addAttribute("userType", userType.name().toLowerCase());
         model.addAttribute("allRoles", roleService.getRoles());
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
@@ -73,7 +66,7 @@ public class UserManagementController {
     public String userEditPage(@PathVariable Long userId,
                                @RequestParam UserType userType, Model model) {
 
-        model.addAttribute("userType", userType.name());
+        model.addAttribute("userType", userType.name().toLowerCase());
         model.addAttribute("allRoles", roleService.getRoles());
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
@@ -92,17 +85,7 @@ public class UserManagementController {
         // userDetailRequest는 커스텀 ArgumentResolver 에 의해 구체 DTO로 바인딩됨.
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
         strategy.updateDetail(userId, request);
-        redirectAttributes.addAttribute("userType", userType.name());
+        redirectAttributes.addAttribute("userType", userType.name().toLowerCase());
         return "redirect:/admin/users/{userId}";
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class SidebarMenu {
-        private String url;
-        private String label;
-        private boolean active;
     }
 }

@@ -1,0 +1,76 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="common_head(title, link)">
+
+    <title th:replace="${title}">페이지 제목</title>
+
+    <!-- 공통 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/seller/css/common2.css">
+
+    <!-- 구글 폰트: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/seller/js/common.js"></script>
+
+    <!-- 추가 link -->
+    <th:block th:if="${link != null}">
+        <th:block th:replace="${link}"></th:block>
+    </th:block>
+</head>
+
+<!-- 헤더 -->
+<header th:fragment="common_header" class="navbar navbar-expand navbar-light sticky-top">
+    <div class="container d-flex flex-wrap align-items-center justify-content-between">
+        <a class="navbar-brand" href="#">Seller Site</a>
+        <ul class="navbar-nav nav-underline ms-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">홈</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">서비스</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">고객지원</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">연락처</a>
+            </li>
+        </ul>
+        <!-- 사용자 정보 -->
+        <div class="user-info ms-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/7915/7915522.png" alt="User Avatar">
+            <span th:text="${#authentication.getName()}"></span>
+        </div>
+    </div>
+</header>
+
+<!-- 좌측 사이드바 -->
+<aside th:fragment="common_aside">
+    <nav class="nav flex-column" id="asideMenu">
+        <a class="nav-link active" href="/seller/dashboard">대시보드</a>
+        <a class="nav-link" href="/seller/products">상품 관리</a>
+        <a class="nav-link" href="/seller/orders">주문 관리</a>
+        <a class="nav-link" href="/seller/customers">고객 관리</a>
+        <a class="nav-link" href="/seller/reports">통계/보고서</a>
+        <a class="nav-link" href="/seller/settings">설정</a>
+    </nav>
+</aside>
+
+<!-- 푸터 -->
+<footer th:fragment="common_footer" class="py-3 mt-4">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2025 E-Commerce Seller. All rights reserved.</p>
+    </div>
+</footer>
+
+</html>

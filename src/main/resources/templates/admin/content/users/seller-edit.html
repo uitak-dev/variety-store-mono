@@ -1,91 +1,96 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{admin/layout/head :: head}">
-    <title>관리자 상세</title>
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>판매자 정보 수정</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
-<main class="flex-fill">
-    <div class="container my-4">
-        <h2>관리자 상세 정보 수정</h2>
-        <form th:object="${userDetailInfo}" method="post" th:action>
-            <input type="hidden" th:name="userType" th:value="${userType}">
-            <!-- 공통 사용자 기본 정보 -->
-            <div class="mb-3">
-                <label for="id" class="form-label">ID</label>
-                <input type="text" th:field="*{id}" id="id" class="form-control" readonly>
-            </div>
-            <div class="mb-3">
-                <label for="userName" class="form-label">아이디</label>
-                <input type="text" th:field="*{userName}" id="userName" class="form-control" readonly>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">이메일</label>
-                <input type="email" th:field="*{email}" id="email" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="firstName" class="form-label">이름</label>
-                <input type="text" th:field="*{firstName}" id="firstName" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="lastName" class="form-label">성</label>
-                <input type="text" th:field="*{lastName}" id="lastName" class="form-control">
-            </div>
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-            <!-- 판매자 상세 정보 -->
-            <div class="mb-3">
-                <label for="companyName" class="form-label">회사명</label>
-                <input type="text" id="companyName" class="form-control" th:field="*{companyName}">
-            </div>
-            <div class="mb-3">
-                <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
-                <input type="text" id="businessLicenseNumber" class="form-control" th:field="*{businessLicenseNumber}">
-            </div>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
 
-            <!-- 역할 multi checkbox -->
-            <div class="mb-3">
-                <label class="form-label">역할</label>
-                <div class="row">
-                    <div class="col-md-4" th:each="role : ${allRoles}">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"
-                                   th:id="'role_' + ${role.id}"
-                                   th:name="roles" th:value="${role.id}"
-                                   th:checked="${#lists.contains(userDetailInfo.roles.![id], role.id)}">
-                            <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}">Role Name</label>
+                <!-- 상세 정보 카드 -->
+                <div class="chart-card mb-3">
+                    <h2>판매자 정보 수정</h2>
+                    <form th:object="${userDetailInfo}" method="post" th:action>
+                        <input type="hidden" th:name="userType" th:value="${userType}">
+                        <!-- 공통 사용자 기본 정보 -->
+                        <div class="mb-3">
+                            <label for="id" class="form-label">ID</label>
+                            <input type="text" th:field="*{id}" id="id" class="form-control" disabled>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">아이디</label>
+                            <input type="text" th:field="*{userName}" id="userName" class="form-control" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">이메일</label>
+                            <input type="email" th:field="*{email}" id="email" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">이름</label>
+                            <input type="text" th:field="*{firstName}" id="firstName" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">성</label>
+                            <input type="text" th:field="*{lastName}" id="lastName" class="form-control">
+                        </div>
 
-            <!-- 버튼 -->
-            <div class="row">
-                <div class="col">
-                    <button type="submit" class="w-100 btn btn-primary btn-lg">저장</button>
+                        <!-- 판매자 상세 정보 -->
+                        <div class="mb-3">
+                            <label for="companyName" class="form-label">회사명</label>
+                            <input type="text" id="companyName" class="form-control" th:field="*{companyName}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
+                            <input type="text" id="businessLicenseNumber" class="form-control" th:field="*{businessLicenseNumber}">
+                        </div>
+
+                        <!-- 역할 multi checkbox -->
+                        <div class="mb-3">
+                            <label class="form-label">역할</label>
+                            <div class="row">
+                                <div class="col-md-4" th:each="role : ${allRoles}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               th:id="'role_' + ${role.id}"
+                                               th:name="roles" th:value="${role.id}"
+                                               th:checked="${#lists.contains(userDetailInfo.roles.![id], role.id)}">
+                                        <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}">Role Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 버튼 -->
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="w-100 btn btn-primary">저장</button>
+                            </div>
+                            <div class="col">
+                                <button class="w-100 btn btn-secondary"
+                                        th:onclick="|location.href='@{/admin/users/{userId}(userId=${userDetailInfo.id}, userType=${userType})}'|"
+                                        type="button">
+                                    취소
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="col">
-                    <button class="w-100 btn btn-secondary btn-lg"
-                            th:attr="data-href='/admin/users/' + ${userDetailInfo.id} + '?userType=' + ${userType}"
-                            type="button">
-                        취소
-                    </button>
-                </div>
+
             </div>
-        </form>
-    </div>
-</main>
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('button[data-href]').forEach(function(row) {
-            row.addEventListener('click', function() {
-                window.location.href = row.getAttribute('data-href');
-            });
-        });
-    });
-</script>
+        </div>
+    </section>
+</div>
+
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
+
 </body>
-
 </html>

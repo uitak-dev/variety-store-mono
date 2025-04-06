@@ -133,3 +133,8 @@ footer {
 .loaded-template-card {
     margin-bottom: 1rem;
 }
+
+/* readonly 속성이 있는 input 태그의 배경을 회색으로 지정 */
+input[readonly] {
+    background-color: #e9ecef;
+}

@@ -57,12 +57,18 @@ public class JwtAuthenticationService {
                         "id", user.getId())
         );
 
-        // DB에 리프레시 토큰 저장
-        RefreshToken saveRefreshToken = RefreshToken.builder()
+        // 리프레시 토큰 생성.
+        RefreshToken saveRefreshToken;
+        RefreshToken.RefreshTokenBuilder refreshTokenBuilder = RefreshToken.builder()
                 .token(newRefreshToken)
                 .user(user)
-                .expireDate(Instant.now().plusMillis(jwtProperties.getRefreshTokenValidityMillis()))
-                .build();
+                .expireDate(Instant.now().plusMillis(jwtProperties.getRefreshTokenValidityMillis()));
+
+        if (user.getRefreshToken() == null) {
+            saveRefreshToken = refreshTokenBuilder.build();
+        } else {
+            saveRefreshToken = refreshTokenBuilder.id(user.getRefreshToken().getId()).build();
+        }
 
         refreshTokenRepository.save(saveRefreshToken);
 

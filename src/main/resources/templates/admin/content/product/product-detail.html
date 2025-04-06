@@ -1,143 +1,152 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{admin/layout/head :: head}">
-    <title>상품 관리 상세 정보</title>
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>상품 관리 상세</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-<main class="flex-fill">
-    <div class="container my-4">
-        <h2>상품 관리 상세 정보</h2>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
 
-        <!-- 상품 기본 정보 -->
-        <hr>
-        <h4>상품 정보</h4>
-        <div class="mb-3">
-            <label for="productId" class="form-label">ID</label>
-            <input type="text" id="productId" class="form-control" th:value="${product.id}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="categories" class="form-label">카테고리</label>
-            <input type="text" id="categories" class="form-control" th:value="${#strings.listJoin(product.categories.![name], ', ')}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="name" class="form-label">상품 이름</label>
-            <input type="text" id="name" class="form-control" th:value="${product.name}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">설명</label>
-            <textarea id="description" class="form-control" th:text="${product.description}" readonly></textarea>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="basePrice" class="form-label">가격</label>
-                <input type="text" id="basePrice" th:value="${#numbers.formatInteger(product.basePrice, 4, 'COMMA')}" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="manufactureDate" class="form-label">제조일자</label>
-                <input type="text" id="manufactureDate" th:value="${product.manufactureDate}" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="stockQuantity" class="form-label">재고 수량</label>
-                <input type="text" id="stockQuantity" th:value="${#numbers.formatInteger(product.stockQuantity, 4, 'COMMA')}" class="form-control" readonly>
-            </div>
-        </div>
-        <div class="mb-3">
-            <label for="status" class="form-label">등록 상태</label>
-            <input type="text" id="status" class="form-control" th:value="${product.status.displayName}" readonly>
-        </div>
+                <!-- 카드 영역 -->
+                <div class="chart-card mb-3">
+                    <h4 class="mb-3">상품 관리 상세</h4>
+                    <!-- 상품 기본 정보 -->
+                    <hr>
+                    <h5 class="mb-3">상품 정보</h5>
+                    <div class="mb-3">
+                        <label for="productId" class="form-label">ID</label>
+                        <input type="text" id="productId" class="form-control" th:value="${product.id}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categories" class="form-label">카테고리</label>
+                        <input type="text" id="categories" class="form-control" th:value="${#strings.listJoin(product.categories.![name], ', ')}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">상품 이름</label>
+                        <input type="text" id="name" class="form-control" th:value="${product.name}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">설명</label>
+                        <textarea id="description" class="form-control" th:text="${product.description}" disabled></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="basePrice" class="form-label">가격</label>
+                            <input type="text" id="basePrice" th:value="${#numbers.formatInteger(product.basePrice, 4, 'COMMA')}" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="manufactureDate" class="form-label">제조일자</label>
+                            <input type="text" id="manufactureDate" th:value="${product.manufactureDate}" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-4" th:if="${product.single}">
+                            <label for="stockQuantity" class="form-label">재고 수량</label>
+                            <input type="text" id="stockQuantity" th:value="${#numbers.formatInteger(product.stockQuantity, 4, 'COMMA')}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">등록 상태</label>
+                        <input type="text" id="status" class="form-control" th:value="${product.status.displayName}" disabled>
+                    </div>
 
-        <!-- 옵션 상품인 경우 옵션 정보 카드 (단일 상품이면 표시 안함) -->
-        <div class="card mb-4" th:if="${!product.single}">
-            <div class="card-header">
-                상품 옵션 정보
-            </div>
-            <div class="card-body">
-                <div th:if="${#lists.isEmpty(product.productOptions)}">
-                    <p>옵션이 없습니다.</p>
+                    <!-- 옵션 상품인 경우 옵션 정보 카드 (단일 상품이면 표시 안함) -->
+                    <div class="card mb-4" th:if="${!product.single}">
+                        <div class="card-header">
+                            상품 옵션 정보
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${#lists.isEmpty(product.productOptions)}">
+                                <p>옵션이 없습니다.</p>
+                            </div>
+                            <div th:each="option : ${product.productOptions}">
+                                <h5 th:text="${option.name}">옵션 이름</h5>
+                                <table class="table table-sm mb-3">
+                                    <thead>
+                                    <tr>
+                                        <th>옵션 값</th>
+                                        <th>추가 가격</th>
+                                        <th>재고 수량</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="optionValue : ${option.productOptionValues}">
+                                        <td th:text="${optionValue.productOptionValue}">옵션 값</td>
+                                        <td th:text="${#numbers.formatInteger(optionValue.additionalPrice, 4, 'COMMA')}">추가 가격</td>
+                                        <td th:text="${#numbers.formatInteger(optionValue.stockQuantity, 4, 'COMMA')}">재고 수량</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 판매자 정보 -->
+                    <hr>
+                    <h5 class="mb-3">판매자 정보</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="userName" class="form-label">아이디</label>
+                            <input type="text" id="userName" th:value="${product.seller.userName}" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sellerName" class="form-label">이름</label>
+                            <input type="text" id="sellerName" th:value="|${product.seller.lastName ?: ''}${product.seller.firstName ?: ''}|" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="phoneNumber" class="form-label">핸드폰 번호</label>
+                            <input type="text" id="phoneNumber" th:value="${product.seller.phoneNumber}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <!-- 판매자 상세 정보 -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="companyName" class="form-label">회사 이름</label>
+                            <input type="text" id="companyName" th:value="${product.seller.companyName}" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
+                            <input type="text" id="businessLicenseNumber" th:value="${product.seller.businessLicenseNumber}" class="form-control" disabled>
+                        </div>
+                    </div>
+
+                    <!-- 제품 등록 상태 변경 버튼 -->
+                    <hr>
+                    <h5 class="mb-3">등록 상태 변경</h5>
+                    <div class="d-flex" role="group" aria-label="상품 상태 변경">
+                        <button type="button"
+                                class="btn btn-outline-primary flex-fill mx-3"
+                                th:each="status : ${productStatusList}"
+                                th:attr="data-status=${status.systemValue}"
+                                onclick="updateProductStatus(this.getAttribute('data-status'))"
+                                th:text="${status.displayName}">
+                        </button>
+                    </div>
                 </div>
-                <div th:each="option : ${product.productOptions}">
-                    <h5 th:text="${option.name}">옵션 이름</h5>
-                    <table class="table table-sm mb-3">
-                        <thead>
-                        <tr>
-                            <th>옵션 값</th>
-                            <th>추가 가격</th>
-                            <th>재고 수량</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="optionValue : ${option.productOptionValues}">
-                            <td th:text="${optionValue.productOptionValue}">옵션 값</td>
-                            <td th:text="${#numbers.formatInteger(optionValue.additionalPrice, 4, 'COMMA')}">추가 가격</td>
-                            <td th:text="${#numbers.formatInteger(optionValue.stockQuantity, 4, 'COMMA')}">재고 수량</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <!-- 목록 이동(뒤로가기) -->
+                <div class="row">
+                    <div class="col">
+                        <button class="w-100 btn btn-secondary my-3"
+                                th:onclick="|location.href='@{/admin/products}'|"
+                                type="button">
+                            목록
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- 판매자 정보 -->
-        <hr>
-        <h4>판매자 정보</h4>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="userName" class="form-label">아이디</label>
-                <input type="text" id="userName" th:value="${product.seller.userName}" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="sellerName" class="form-label">이름</label>
-                <input type="text" id="sellerName" th:value="|${product.seller.lastName ?: ''}${product.seller.firstName ?: ''}|" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="phoneNumber" class="form-label">핸드폰 번호</label>
-                <input type="text" id="phoneNumber" th:value="${product.seller.phoneNumber}" class="form-control" readonly>
             </div>
         </div>
-        <!-- 판매자 상세 정보 -->
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="companyName" class="form-label">회사 이름</label>
-                <input type="text" id="companyName" th:value="${product.seller.companyName}" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
-                <input type="text" id="businessLicenseNumber" th:value="${product.seller.businessLicenseNumber}" class="form-control" readonly>
-            </div>
-        </div>
+    </section>
+</div>
 
-        <!-- 제품 등록 상태 변경 버튼 -->
-        <hr>
-        <h4>등록 상태 변경</h4>
-        <div class="d-flex" role="group" aria-label="상품 상태 변경">
-            <button type="button"
-                    class="btn btn-outline-primary flex-fill mx-3"
-                    th:each="status : ${productStatusList}"
-                    th:attr="data-status=${status.systemValue}"
-                    onclick="updateProductStatus(this.getAttribute('data-status'))"
-                    th:text="${status.displayName}">
-            </button>
-        </div>
-
-        <!-- 목록 이동(뒤로가기) -->
-        <hr>
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-secondary my-5"
-                        th:onclick="|location.href='@{/admin/products}'|"
-                        type="button">
-                    목록
-                </button>
-            </div>
-        </div>
-    </div>
-</main>
-
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
 <script>
     /* 서버에 상품 상태 업데이트 요청을 보내는 함수 */
     function updateProductStatus(status) {
@@ -177,6 +186,5 @@
         });
     }
 </script>
-
 </body>
 </html>

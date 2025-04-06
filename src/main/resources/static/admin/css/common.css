@@ -1,44 +1,217 @@
-/* 메뉴 간 간격과 구분선 스타일 */
-.navbar-nav .nav-link {
-    margin-right: 20px;
-    /* 메뉴 간 간격 조정 */
-    position: relative;
+:root {
+    --sidebar-width: 300px;
+    --primary-color: #4E555B;
+    --secondary-color: #F0F0F0;
+    --sidebar-bg: #E0E0E0;
+    --text-light: #FFFFFF;
+    --text-dark: #333333;
+    --border-color: #CCCCCC;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-nav .nav-link::after {
-    content: '';
-    position: absolute;
-    right: -10px;
-    /* 구분선 위치 */
-    height: 24px;
-    width: 1px;
-    background-color: white;
-    /* 구분선 색상 */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+    min-height: 100vh;
 }
 
-/* 마지막 메뉴 항목 구분선 제거 */
-.navbar-nav .nav-item:last-child .nav-link::after {
-    display: none;
+/* 헤더 스타일 */
+header.navbar {
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    z-index: 10;
 }
 
-/* 로그아웃 버튼 스타일 */
-.logout-btn {
-    margin-left: 30px;
-    /* 메뉴와 거리 조정 */
-    padding: 5px 20px;
-    border-radius: 50px;
-    /* 알약 모양 버튼 */
+header .navbar-brand {
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
-/* 클릭 가능한 테이블 행임을 시각적으로 표시 */
-tr.clickable {
-    cursor: pointer;
+header .nav-link {
+    color: var(--text-dark);
+    transition: color 0.2s;
 }
 
-/* readonly 속성이 있는 input 태그의 배경을 회색으로 지정 */
-input[readonly] {
-    background-color: #e9ecef;
+header .nav-link:hover {
+    color: var(--primary-color);
 }
+
+/* 사용자 아바타 & 이름 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+/* 사이드바 스타일 */
+aside {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-color);
+}
+
+aside .nav-link {
+    color: var(--text-dark);
+    border-radius: 0.4rem;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+aside .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+aside .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+/* Accordion 스타일 */
+.accordion-item {
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0.5rem;
+}
+
+.accordion-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--sidebar-bg);
+    color: var(--text-dark);
+    border: none;
+    box-shadow: none;
+    border-radius: 0.4rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.accordion-button::after {
+    filter: invert(0);
+}
+
+.accordion-collapse {
+    background-color: var(--sidebar-bg);
+}
+
+.accordion-body {
+    padding: 0;
+}
+
+.accordion-body .nav-link {
+    padding-left: 2rem;
+    margin-bottom: 0;
+}
+
+/* 메인 콘텐츠 래퍼 (사이드바 옆 공간) */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 1rem;
+    margin-top: 56px;
+}
+
+/* 카드 스타일 (대시보드, 차트, 피드 등) */
+.stats-card,
+.chart-card,
+.feed-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-shadow: var(--box-shadow);
+    padding: 1rem;
+}
+
+.stats-card {
+    text-align: center;
+}
+
+.stats-card h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card .value {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 푸터 스타일 */
+footer {
+    background-color: var(--secondary-color);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* 목록 페이지 > 검색 영역의 input 높이와 패딩 조정 */
+.search-bar input.form-control {
+    height: 2.5rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+}
+
+.search-bar input.search-input {
+    max-width: 250px;
+}
+
+/* 검색 영역의 input 높이와 패딩 조정 */
+.search-bar input.form-control {
+    height: 2.5rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+}
+
+.search-bar input.search-input {
+    max-width: 250px;
+}
+
+/* 페이지네이션 스타일 */
+.pagination .page-item .page-link {
+    color: var(--text-dark);
+    background-color: var(--secondary-color);
+    border: 1px solid var(--light-gray);
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
+}
+.pagination .page-item .page-link:hover {
+    background-color: var(--light-gray);
+}
+
+
+
+
 
 /* 모달 내 트리 뷰 스타일 */
 .category-tree ul {
@@ -62,7 +235,7 @@ input[readonly] {
     cursor: pointer;
 }
 
-/* 카테고리 생성/수정 페이지 옵션 선택 스타일 */
+/* 카테고리 생성/수정 페이지 > 옵션 선택 스타일 */
 .dual-panel-card {
     min-height: 400px;
     overflow-y: auto;

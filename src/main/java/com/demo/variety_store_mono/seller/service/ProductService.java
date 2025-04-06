@@ -134,7 +134,7 @@ public class ProductService {
 
         ProductOptionValue ret = ProductOptionValue.builder()
                 .global(request.isGlobal())
-                .productOptionValue(request.getOptionValue())
+                .optionValue(request.getOptionValue())
                 .additionalPrice(request.getAdditionalPrice())
                 .stockQuantity(request.getStockQuantity())
                 .build();

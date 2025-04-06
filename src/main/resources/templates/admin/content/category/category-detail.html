@@ -1,79 +1,91 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{admin/layout/head :: head}">
-    <title>카테고리 상세 정보</title>
+<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+    <title>카테고리 tkdtp wjdqh</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-<header th:replace="~{admin/layout/header :: header}"></header>
+<body>
+<header th:replace="admin/layout/base :: common_header"></header>
+<aside th:replace="admin/layout/base :: common_aside"></aside>
 
-<main class="flex-fill">
-    <div class="container my-4">
-        <h2>카테고리 상세 정보</h2>
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-12">
 
-        <!-- 상위 카테고리 계층 표시 (breadcrumb 형식) -->
-        <div class="mb-3">
-            <label for="breadcrumb" class="form-label">상위 카테고리 계층</label>
-            <input type="text" id="breadcrumb" class="form-control" th:value="${parentChainPath != null ? parentChainPath : '없음'}" readonly>
-        </div>
+                <!-- 카드 영역 -->
+                <div class="chart-card mb-3">
+                    <h4 class="mb-3">카테고리 상세 정보</h4>
+                    <!-- 상위 카테고리 계층 표시 (breadcrumb 형식) -->
+                    <div class="mb-3">
+                        <label for="breadcrumb" class="form-label">상위 카테고리 계층</label>
+                        <input type="text" id="breadcrumb" class="form-control" th:value="${parentChainPath != null ? parentChainPath : '없음'}" disabled>
+                    </div>
 
-        <!-- 카테고리 기본 정보 -->
-        <div class="mb-3">
-            <label for="id" class="form-label">ID</label>
-            <input type="text" id="id" class="form-control" th:value="${category.id}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="name" class="form-label">카테고리 이름</label>
-            <input type="text" id="name" class="form-control" th:value="${category.name}" readonly>
-        </div>
-        <div class="mb-3">
-            <label for="parent" class="form-label">상위 카테고리</label>
-            <input type="text" id="parent" class="form-control" th:value="${category.parent != null ? category.parent.name : '없음'}" readonly>
-        </div>
+                    <!-- 카테고리 기본 정보 -->
+                    <div class="mb-3">
+                        <label for="id" class="form-label">ID</label>
+                        <input type="text" id="id" class="form-control" th:value="${category.id}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">카테고리 이름</label>
+                        <input type="text" id="name" class="form-control" th:value="${category.name}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parent" class="form-label">상위 카테고리</label>
+                        <input type="text" id="parent" class="form-control" th:value="${category.parent != null ? category.parent.name : '없음'}" disabled>
+                    </div>
 
-        <!-- 선택된 옵션 템플릿 목록 (읽기 전용) -->
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h6>선택된 옵션 템플릿</h6>
-                <div class="card">
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item"
-                                th:each="option : ${category.globalOptions}"
-                                th:text="${option.name}">
-                            </li>
-                            <!-- 만약 옵션이 하나도 없을 경우 메시지 표시 -->
-                            <li class="list-group-item text-muted text-center"
-                                th:if="${#lists.isEmpty(category.globalOptions)}">
-                                선택된 옵션 템플릿이 없습니다.
-                            </li>
-                        </ul>
+                    <!-- 선택된 옵션 템플릿 목록 (읽기 전용) -->
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <h6>선택된 옵션 템플릿</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item"
+                                            th:each="option : ${category.globalOptions}"
+                                            th:text="${option.name}">
+                                        </li>
+                                        <!-- 만약 옵션이 하나도 없을 경우 메시지 표시 -->
+                                        <li class="list-group-item text-muted text-center"
+                                            th:if="${#lists.isEmpty(category.globalOptions)}">
+                                            선택된 옵션 템플릿이 없습니다.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+                <div class="row">
+                    <div class="col">
+                        <button class="w-100 btn btn-secondary"
+                                th:onclick="|location.href='@{/admin/categories}'|"
+                                type="button">
+                            목록
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button class="w-100 btn btn-primary"
+                                th:onclick="|location.href='@{/admin/categories/{id}/edit(id=${category.id})}'|"
+                                type="button">
+                            정보 수정
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
+    </section>
+</div>
 
-        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-secondary"
-                        th:onclick="|location.href='@{/admin/categories}'|"
-                        type="button">
-                    목록
-                </button>
-            </div>
-            <div class="col">
-                <button class="w-100 btn btn-primary"
-                        th:onclick="|location.href='@{/admin/categories/{id}/edit(id=${category.id})}'|"
-                        type="button">
-                    정보 수정
-                </button>
-            </div>
-        </div>
-    </div>
-</main>
+<footer th:replace="~{admin/layout/base :: common_footer}"></footer>
 
-<footer th:replace="~{admin/layout/footer :: footer}"></footer>
 </body>
 </html>

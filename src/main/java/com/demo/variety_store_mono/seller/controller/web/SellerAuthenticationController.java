@@ -49,7 +49,7 @@ public class SellerAuthenticationController {
             CookieUtil.addCookie(response, "refreshToken",
                     tokenResponse.getRefreshToken(), jwtProperties.getRefreshTokenValidityMillis().intValue());
 
-            return "redirect:/seller/home";
+            return "redirect:/seller/dashboard";
         }
         catch(RuntimeException ex) {
             redirectAttributes.addAttribute("error", ex.getMessage());

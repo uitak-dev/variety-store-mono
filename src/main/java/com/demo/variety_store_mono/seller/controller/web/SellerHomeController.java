@@ -15,4 +15,10 @@ public class SellerHomeController {
     public String homePage() {
         return "seller/content/home";
     }
+
+    /** 판매자 대시보드 페이지 */
+    @GetMapping("/dashboard")
+    public String dashboardPage() {
+        return "seller/content/dashboard";
+    }
 }

@@ -14,5 +14,4 @@ public class AdminHomeController {
     public String homePage() {
         return "admin/content/home";
     }
-
 }
