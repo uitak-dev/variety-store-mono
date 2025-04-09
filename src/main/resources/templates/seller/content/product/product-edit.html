@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link})}">
+    <title>상품 수정</title>
+</head>
+
+<body>
+<header th:replace="~{seller/layout/base :: common_header}"></header>
+<aside th:replace="~{seller/layout/base :: common_aside}"></aside>
+
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+
+        <!-- 페이지 제목 -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold">상품 수정</h2>
+                <p class="text-muted">기존 상품 정보를 수정하세요.</p>
+            </div>
+        </div>
+
+        <!-- 카드 영역 -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-12">
+                <!-- 상품 등록 폼: 기본 정보와 옵션 정보를 JSON으로 전송 -->
+                <form id="productForm" data-mode="edit" method="post" th:object="${product}">
+                    <input type="hidden" th:field="*{id}">
+
+                    <!-- 기본 정보 섹션 -->
+                    <section class="card card-section mb-4">
+                        <div class="card-header">기본 정보</div>
+                        <div class="card-body">
+                            <!-- 카테고리 -->
+                            <div class="mb-3">
+                                <label for="categoryId" class="form-label">카테고리</label>
+                                <select id="categoryId" class="form-select" th:field="*{primaryCategory.id}" required>
+                                    <option value="" disabled>카테고리를 선택하세요</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                                </select>
+                            </div>
+                            <!-- 상품명 -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">상품명</label>
+                                <input type="text" id="name" class="form-control" th:field="*{name}"
+                                       placeholder="상품명을 입력하세요" required>
+                            </div>
+                            <!-- 상품 설명 -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">상품 설명</label>
+                                <textarea id="description" class="form-control" rows="4" th:field="*{description}"
+                                          placeholder="상품 설명을 입력하세요" required></textarea>
+                            </div>
+                            <!-- 가격, 제조일자 -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="basePrice" class="form-label">가격</label>
+                                    <input type="number" id="basePrice" class="form-control" th:field="*{basePrice}"
+                                           placeholder="가격 입력" required step="0.01">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="manufactureDate" class="form-label">제조일자</label>
+                                    <input type="date" id="manufactureDate" class="form-control"
+                                           th:field="*{manufactureDate}" required>
+                                </div>
+                            </div>
+                            <!-- 상품 타입 -->
+                            <div class="mb-3">
+                                <label class="form-label">상품 타입</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="singleProduct" name="single"
+                                           th:field="*{single}" value="true" required>
+                                    <label class="form-check-label" for="singleProduct">단일 상품</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="optionProduct" name="single"
+                                           th:field="*{single}" value="false" required>
+                                    <label class="form-check-label" for="optionProduct">옵션 상품</label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 옵션 정보 섹션: 단일 상품일 경우만 표시 -->
+                    <section class="card card-section mb-4" id="singleSection" th:if="*{single}">
+                        <div class="card-header">단일 상품</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="stockQuantity" class="form-label">재고 수량</label>
+                                <input type="number" id="stockQuantity" class="form-control" th:field="*{stockQuantity}"
+                                       placeholder="재고 수량 입력">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 옵션 정보 섹션: 옵션 상품일 경우에만 표시 -->
+                    <section class="card card-section mb-4" id="optionSection" th:style="${single} ? 'display: none;' : ''">
+                        <div class="card-header">옵션 정보 수정</div>
+                        <div class="card-body">
+                            <button type="button" id="loadTemplateButton" class="btn btn-outline-info mb-3">옵션 템플릿 불러오기</button>
+                            <button type="button" id="addManualOptionButton" class="btn btn-outline-primary mb-3">옵션 추가</button>
+                            <div id="productOptionsContainer">
+                                <!-- 기존 옵션 카드 렌더링 -->
+                                <div class="card mb-3 option-card" th:each="option : ${product.productOptions}">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">옵션 이름</label>
+                                            <input class="form-control" type="text" placeholder="옵션 이름..."
+                                                   th:classappend="${option.global} ? 'read-only' : ''"
+                                                   th:readonly="${option.global}"
+                                                   th:value="${option.name}" required>
+                                        </div>
+                                        <div class="option-values">
+                                            <div class="row g-2 mb-3 align-items-end option-value-field"
+                                                 th:each="optionValue : ${option.productOptionValues}">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">옵션 값</label>
+                                                    <input type="text" class="form-control" placeholder="옵션 값..."
+                                                           th:classappend="${optionValue.global} ? 'read-only' : ''"
+                                                           th:readonly="${optionValue.global}"
+                                                           th:value="${optionValue.productOptionValue}" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">추가 가격</label>
+                                                    <input type="number" class="form-control" placeholder="추가 가격..."
+                                                           th:value="${optionValue.additionalPrice}" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">재고 수량</label>
+                                                    <input type="number" class="form-control" placeholder="재고 수량..."
+                                                           th:value="${optionValue.stockQuantity}" required>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <!-- 기존 삭제 버튼에 inline onclick 이벤트 추가 -->
+                                                    <button type="button" class="btn btn-danger btn-sm w-100"
+                                                            onclick="removeOptionValue(this)">삭제</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addOptionValue(this)">옵션 값 추가</button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="removeOptionCard(this)">옵션 카드 삭제</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 제출 및 취소 버튼 -->
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="w-100 btn btn-primary">수정</button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="w-100 btn btn-secondary"
+                                    th:onclick="|location.href='@{/seller/products/{id}(id=${product.id})}'|">
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<!-- 옵션 템플릿 모달 -->
+<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="templateModalLabel">옵션 템플릿 선택</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <div id="templateModalContainer" class="row row-cols-1 row-cols-md-2 g-4">
+                    <!-- 데이터 추가. -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{seller/layout/base :: common_footer}"></footer>
+<script src="/seller/js/productForm.js"></script>
+</body>
+</html>

@@ -18,6 +18,7 @@ public class ProductManagementRestController {
 
     private final ProductManagementService productManagementService;
 
+    // 상품의 등록 상태를 업데이트 합니다.
     @PutMapping("/{productId}/status")
     public ResponseEntity<?> updateProductStatus(@PathVariable Long productId,
                                                  @RequestBody ProductStatusUpdateRequest request) {

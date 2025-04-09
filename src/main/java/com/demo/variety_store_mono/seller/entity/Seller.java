@@ -27,6 +27,7 @@ public class Seller {
     private String businessLicenseNumber;
 
     @OneToMany(mappedBy = "seller")
+    @OrderBy("id asc")
     private Set<Product> products = new LinkedHashSet<>();
 
     @Builder

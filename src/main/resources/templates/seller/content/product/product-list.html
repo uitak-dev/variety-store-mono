@@ -2,13 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="seller/layout/base :: common_head(~{::title}, ~{::link})">
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link})}">
     <title>상품 목록</title>
 </head>
 
 <body>
-<header th:replace="seller/layout/base :: common_header"></header>
-<aside th:replace="seller/layout/base :: common_aside"></aside>
+<header th:replace="~{seller/layout/base :: common_header}"></header>
+<aside th:replace="~{seller/layout/base :: common_aside}"></aside>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
@@ -67,7 +67,7 @@
                             <tbody class="table-group-divider">
                             <tr th:each="product : ${productList.content}"
                                 th:onclick="|location.href='@{/seller/products/{id}(id=${product.id})}'|">
-                                <td th:text="${#strings.listJoin(product.categories.![name], ', ')}"></td>
+                                <td th:text="${product.primaryCategory.name}"></td>
                                 <td th:text="${product.name}"></td>
                                 <td th:text="${#numbers.formatInteger(product.basePrice, 4, 'COMMA')}"></td>
                                 <td th:text="${#numbers.formatInteger(product.stockQuantity, 4, 'COMMA')}"></td>

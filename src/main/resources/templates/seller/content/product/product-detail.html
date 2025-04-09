@@ -2,13 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="seller/layout/base :: common_head(~{::title}, ~{::link})">
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link})}">
     <title>페이지 제목</title>
 </head>
 
 <body>
-<header th:replace="seller/layout/base :: common_header"></header>
-<aside th:replace="seller/layout/base :: common_aside"></aside>
+<header th:replace="~{seller/layout/base :: common_header}"></header>
+<aside th:replace="~{seller/layout/base :: common_aside}"></aside>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
@@ -28,9 +28,9 @@
 
                     <!-- 카테고리 -->
                     <div class="mb-3">
-                        <label for="categories" class="form-label">카테고리</label>
-                        <input type="text" id="categories" class="form-control"
-                               th:value="${#strings.listJoin(product.categories.![name], ', ')}" disabled>
+                        <label for="category" class="form-label">카테고리</label>
+                        <input type="text" id="category" class="form-control"
+                               th:value="${product.primaryCategory.name}" disabled>
                     </div>
 
                     <!-- 상품 기본 정보 -->
@@ -128,6 +128,15 @@
 </div>
 
 <footer th:replace="~{seller/layout/base :: common_footer}"></footer>
-
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        /* errorMessage가 존재하면 alert()로 표시 */
+        /* flash attribute "errorMessage"가 없으면 빈 문자열("")로 처리 */
+        var errorMessage = /*[[${errorMessage} ?: '']]*/ "";
+        if (errorMessage !== "") {
+            alert(errorMessage);
+        }
+    /*]]>*/
+</script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.Product;
+import com.demo.variety_store_mono.seller.entity.ProductCategory;
 import com.demo.variety_store_mono.seller.entity.ProductOption;
 import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -50,6 +52,7 @@ public class ProductService {
                 new EntityNotFoundException("등록되지 않은 카테고리 입니다."));
 
         Product product = Product.builder()
+                .primaryCategory(category)
                 .name(request.getName())
                 .description(request.getDescription())
                 .single(request.isSingle())
@@ -91,14 +94,64 @@ public class ProductService {
     }
 
     /** 상품 수정 */
-    public ProductResponse updateProduct(Long productId, ProductRequest request) {
+    public ProductResponse updateProduct(Long productId, Long sellerId, ProductRequest request) {
 
-        return null;
+        User user = userRepository.findUserDetailsById(sellerId).orElseThrow(() ->
+                new EntityNotFoundException("등록된 판매자가 아닙니다."));
+
+        // primaryCategory(판매자가 상품 등록 시 선택한 카테고리) 조회.
+        Category primaryCategory = categoryRepository.findById(request.getCategoryId()).orElseThrow(() ->
+                new EntityNotFoundException("등록되지 않은 카테고리 입니다."));
+
+        Product product = productRepository.findProductDetails(sellerId, productId).orElseThrow(() ->
+                new EntityNotFoundException("등록되지 않은 상품 입니다."));
+
+        // 상품 기본 정보 수정.
+        product.updateProduct(
+                primaryCategory, request.getName(), request.getDescription(), request.isSingle(),
+                request.getBasePrice(), request.getManufactureDate(),
+                request.getStockQuantity(), request.getAttributes()
+        );
+
+        // 상품 옵션 관련 처리
+        if (request.isSingle()) {
+            // 단일 상품으로 수정하는 경우: 기존 옵션이 있다면 모두 삭제.
+            if (!product.getProductOptions().isEmpty()) {
+                product.getProductOptions().clear();
+            }
+        } else {
+            // 옵션 상품으로 수정하는 경우: 기존 옵션 정보를 초기화 후 새로 생성.
+            product.getProductOptions().clear();  // orphanRemoval 옵션에 의해 기존 옵션 및 옵션 값이 삭제됨.
+            if (request.getProductOptions() != null) {
+                request.getProductOptions().forEach(optionRequest -> {
+                    ProductOption productOption = generateProductOption(optionRequest);
+                    product.addProductOption(productOption);
+                });
+            }
+        }
+
+        // 카테고리 연관 업데이트: 기존 등록된 카테고리 중, 기본 카테고리와 동일한 항목은 유지하고, 나머지만 제거
+        Optional<ProductCategory> existingPrimaryAssociation = product.getProductCategories().stream()
+                .filter(pc -> pc.getCategory().getId().equals(primaryCategory.getId()))
+                .findFirst();
+
+        if (existingPrimaryAssociation.isPresent()) {
+            // 기본 카테고리와 다른 항목 삭제 (변경 감지에 의해 flush 시 삭제 처리됨)
+            product.getProductCategories().removeIf(pc -> !pc.getCategory().getId().equals(primaryCategory.getId()));
+        } else {
+            // 기본 카테고리가 없으면 기존 연관 모두 제거 후 새로운 기본 카테고리 연결
+            product.getProductCategories().clear();
+            product.getProductCategories().add(new ProductCategory(product, primaryCategory));
+        }
+
+        // 수정된 상품 저장
+        Product savedProduct = productRepository.save(product);
+
+        return modelMapper.map(savedProduct, ProductResponse.class);
     }
 
     /** 상품 삭제 */
     public void deleteCategory(Long productId) {
-
     }
 
     private ProductOption generateProductOption(ProductOptionRequest request) {

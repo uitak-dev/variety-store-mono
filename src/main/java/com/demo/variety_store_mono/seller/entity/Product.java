@@ -22,6 +22,10 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "primary_category_id", nullable = false)
+    private Category primaryCategory;   // 판매자가 상품 등록 시, 선택한 카테고리
+
     @Column(nullable = false)
     private String name;
 
@@ -42,9 +46,11 @@ public class Product {
     private Seller seller;    // 판매자
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<ProductCategory> productCategories = new LinkedHashSet<>();    // 상품 카테고리
 
     @OneToMany(mappedBy ="product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<ProductOption> productOptions = new LinkedHashSet<>();    // 상품 옵션
 
     @Enumerated(EnumType.STRING)
@@ -56,11 +62,12 @@ public class Product {
     private Map<String, Object> attributes; // 상품별 특화 속성
 
     @Builder
-    public Product(Long id, String name, String description, Boolean single, BigDecimal basePrice,
-                   LocalDate manufactureDate, int stockQuantity, Seller seller,
+    public Product(Long id, Category primaryCategory, String name, String description, Boolean single,
+                   BigDecimal basePrice, LocalDate manufactureDate, int stockQuantity, Seller seller,
                    Map<String, Object> attributes) {
 
         this.id = id;
+        this.primaryCategory = primaryCategory;
         this.name = name;
         this.description = description;
         this.single = single;
@@ -91,6 +98,24 @@ public class Product {
         return productCategories.stream()
                 .map(ProductCategory::getCategory)
                 .toList();
+    }
+
+    /**
+     * 상품 기본 정보 수정
+     */
+    public void updateProduct(Category primaryCategory, String name, String description,
+                              boolean single, BigDecimal basePrice, LocalDate manufactureDate,
+                              int stockQuantity, Map<String, Object> attributes) {
+        this.primaryCategory = primaryCategory;
+        this.name = name;
+        this.description = description;
+        this.single = single;
+        this.basePrice = basePrice;
+        this.manufactureDate = manufactureDate;
+        this.stockQuantity = stockQuantity;
+        this.attributes = attributes;
+
+        this.status = ProductStatus.PENDING;
     }
 
     /**

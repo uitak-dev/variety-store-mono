@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/seller/products")
@@ -68,7 +69,31 @@ public class ProductController {
     }
 
     /** 상품 수정 페이지 */
+    @GetMapping("/{productId}/edit")
+    public String productUpdate(@AuthenticationPrincipal Jwt jwt, RedirectAttributes redirectAttributes,
+                                @PathVariable Long productId, Model model) {
+
+        ProductResponse product = productService.getProductDetails(jwt.getClaim("id"), productId);
+
+        // 상품 상태가 '등록 대기' 라면, 수정 불가.( 상품 상세 페이지로 리다이렉트 )
+        if (product.getStatus() == ProductStatus.PENDING) {
+            redirectAttributes.addFlashAttribute("errorMessage", "등록 대기 상태인 상품은 수정할 수 없습니다.");
+            return "redirect:/seller/products/{productId}";
+        }
+
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categoryService.getBottomCategories());
+        model.addAttribute("productStatusList", ProductStatus.values());
+
+        return "seller/content/product/product-edit";
+    }
 
     /** 상품 수정 API */
+    @PostMapping("/{productId}/edit")
+    @ResponseBody
+    public ResponseEntity<ProductResponse> updateProduct(@AuthenticationPrincipal Jwt jwt, @PathVariable Long productId,
+                                @RequestBody ProductRequest request, Model model) {
 
+        return ResponseEntity.ok(productService.updateProduct(productId, jwt.getClaim("id"), request));
+    }
 }

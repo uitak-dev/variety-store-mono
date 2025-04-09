@@ -16,7 +16,8 @@ public interface GlobalOptionRepository extends JpaRepository<GlobalOption, Long
     Optional<GlobalOption> findByName(String optionName);
 
     @Query("select go from GlobalOption go " +
-            "join fetch go.globalOptionValues " +
-            "where go.id = :id")
+            "join fetch go.globalOptionValues gov " +
+            "where go.id = :id " +
+            "order by gov.id asc")
     Optional<GlobalOption> findOptionAndValuesById(@Param("id") Long id);
 }

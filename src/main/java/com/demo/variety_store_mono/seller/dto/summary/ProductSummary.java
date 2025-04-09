@@ -16,8 +16,9 @@ public class ProductSummary {
 
     private Long id;
 
+    private CategorySummary primaryCategory;
+
     // 상품 기본 정보
-    private List<CategorySummary> categories;
     private String name;
     private BigDecimal basePrice;
     private int stockQuantity;

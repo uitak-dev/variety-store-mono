@@ -1,140 +1,195 @@
-header {
-    background-color: #343a40;
-    color: #fff;
-    padding: 1rem 0;
+:root {
+    /* 기본 레이아웃 */
+    --sidebar-width: 260px;
+
+    /* 주요 색상 */
+    --primary-color: #3f51b5;
+    /* 활성화 및 액센트 컬러 (밝은 블루) */
+    --header-bg: #2C3E50;
+    /* 헤더와 푸터의 배경: 다크 네이비 */
+    --footer-bg: #2C3E50;
+    --secondary-color: #ECF0F1;
+    /* 본문 배경: 밝은 그레이 */
+    --sidebar-bg: #34495E;
+    /* 사이드바 배경: 다크 그레이 */
+    --card-bg: #FFFFFF;
+    /* 카드 영역 배경: 흰색 */
+
+    /* 텍스트 색상 */
+    --text-light: #FDFEFE;
+    --text-dark: #2C3E50;
+
+    /* 보조 스타일 */
+    --border-color: #BDC3C7;
+    --shadow-color: rgba(44, 62, 80, 0.15);
 }
 
-header h1 {
-    margin: 0;
-    font-size: 1.75rem;
-}
-
+/* 전체 페이지 */
 body {
-    background-color: #f8f9fa;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+    min-height: 100vh;
 }
 
-footer {
-    margin-top: 2rem;
+/* 상단 헤더 */
+header.navbar {
+    background-color: var(--header-bg);
+    border-bottom: 2px solid var(--border-color);
+    box-shadow: 0 2px 6px var(--shadow-color);
+    z-index: 10;
 }
 
-/* 네비게이션 바에 살짝 그림자 추가 */
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+header .navbar-brand {
+    font-weight: 600;
+    color: var(--text-light);
 }
 
-/* 히어로 섹션 스타일 */
-.hero-section {
-    position: relative;
-    height: 400px;
-    background: url('https://source.unsplash.com/random/1600x400/?store') no-repeat center center;
-    background-size: cover;
-    margin-bottom: 2rem;
+header .nav-link {
+    color: var(--text-light);
+    transition: color 0.2s;
 }
 
-.hero-section::after {
-    content: "";
-    position: absolute;
-    top: 0;
+header .nav-link:hover {
+    color: var(--text-light);
+}
+
+/* 사용자 아바타 & 이름 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+}
+
+.user-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+/* 사이드바 */
+aside {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--text-light);
+    position: fixed;
+    top: 56px;
     left: 0;
-    right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.hero-section .hero-content {
-    position: relative;
-    z-index: 2;
-    top: 50%;
-    transform: translateY(-50%);
-    text-align: center;
-    color: #fff;
-}
-
-.hero-section .hero-content h1 {
-    font-size: 3rem;
-    font-weight: bold;
-}
-
-.card:hover {
-    transform: scale(1.02);
-    transition: transform 0.3s;
-}
-
-/* 네비게이션 바 그림자 */
-.navbar {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 카드 호버 효과 */
-.card:hover {
-    transform: scale(1.02);
-    transition: transform 0.3s;
-}
-
-/* 페이지 상단 여백 */
-.container {
-    margin-top: 2rem;
-}
-
-/* 사이드바 네비게이션 스타일 */
-aside nav .nav-link {
-    color: #343a40;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-}
-
-aside nav .nav-link.active,
-aside nav .nav-link:hover {
-    background-color: #e9ecef;
-    color: #212529;
-}
-
-main section {
-    margin-bottom: 2rem;
-}
-
-footer {
-    background-color: #343a40;
-    color: #fff;
-    text-align: center;
-    padding: 1rem 0;
-    margin-top: 2rem;
-}
-
-/* 옵션 값 입력 필드와 삭제 버튼의 스타일 */
-.option-value-row {
-    position: relative;
-}
-.remove-option-value {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #dc3545;
-}
-
-/* 상품 등록 페이지 */
-.dual-panel-card {
-    height: 300px;
+    padding: 1rem;
     overflow-y: auto;
 }
 
+aside .nav-link {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    border-radius: 0.3rem;
+    transition: background-color 0.2s;
+}
+
+aside .nav-link:hover,
+aside .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+/* Accordion (사이드바 하위 메뉴) */
+.accordion-item {
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0.5rem;
+}
+
+.accordion-button {
+    background-color: var(--sidebar-bg);
+    color: var(--text-light);
+    border: none;
+    box-shadow: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    transition: background-color 0.2s;
+}
+
+.accordion-button:hover {
+    background-color: var(--primary-color);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.accordion-button::after {
+    filter: invert(0);
+}
+
+.accordion-collapse {
+    background-color: var(--sidebar-bg);
+}
+
+.accordion-body .nav-link {
+    padding-left: 2rem;
+    margin-bottom: 0;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 1rem;
+    margin-top: 56px;
+}
+
+/* 카드 스타일 */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px var(--shadow-color);
+}
+
+/* 통계 카드 (숫자 강조) */
+.stats-card h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card .value {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 푸터 */
+footer {
+    background-color: var(--footer-bg);
+    border-top: 2px solid var(--border-color);
+    box-shadow: 0 -2px 6px var(--shadow-color);
+    color: var(--text-light);
+}
+
+footer p {
+    margin: 0;
+}
+
+/* read-only 상태의 입력 요소 스타일 */
+input.read-only,
+textarea.read-only,
+select.read-only {
+    background-color: #f7f7f7; /* 밝은 회색 배경 */
+    border: 1px solid #ddd;    /* 연한 회색 경계선 */
+    /*color: #777;                약간 어두운 텍스트 색상 */
+    cursor: not-allowed;       /* 수정 불가능함을 나타내는 커서 */
+}
+
+
+/* 옵션 템플릿 카드 hover 효과 추가 */
 .option-template-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     cursor: pointer;
-    transition: transform 0.2s;
 }
 
 .option-template-card:hover {
-    transform: scale(1.02);
-}
-
-.loaded-template-card {
-    margin-bottom: 1rem;
-}
-
-/* readonly 속성이 있는 input 태그의 배경을 회색으로 지정 */
-input[readonly] {
-    background-color: #e9ecef;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

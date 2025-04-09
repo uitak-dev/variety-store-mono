@@ -87,9 +87,9 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
         }
 
         // 옵션 템플릿 생성.
-        GlobalOption colorOption = createOptionIfNotFound("색상", Set.of("레드", "블루", "블랙", "화이트"));
+        GlobalOption colorOption = createOptionIfNotFound("색상", Set.of("블랙", "화이트", "레드", "블루"));
         GlobalOption sizeOption1 = createOptionIfNotFound("사이즈(바지, 셔츠)", Set.of("S", "M", "L", "XL"));
-        GlobalOption sizeOption2 = createOptionIfNotFound("사이즈(신발)", Set.of("250", "255", "260", "265", "270"));
+        GlobalOption sizeOption2 = createOptionIfNotFound("사이즈(신발)", Set.of("250", "260", "270"));
         GlobalOption materialOption = createOptionIfNotFound("소재", Set.of("면", "실크", "폴리", "스웨이드"));
 
         // 카테고리 생성.
@@ -197,6 +197,7 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     private Product createProductIfNotFound(Seller seller, Category category, String productName, BigDecimal price) {
 
         Product product = Product.builder()
+                .primaryCategory(category)
                 .name(productName)
                 .description("(TEST) 상품 데이터")
                 .single(true)

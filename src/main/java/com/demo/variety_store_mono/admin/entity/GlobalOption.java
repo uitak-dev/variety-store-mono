@@ -23,6 +23,7 @@ public class GlobalOption {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "global_option_id")  // 부모의 id를 외래키로 자식 테이블에 직접 생성.
+    @OrderBy("id asc")
     private Set<GlobalOptionValue> globalOptionValues = new LinkedHashSet<>();
 
     @Builder

@@ -7,8 +7,8 @@
 </head>
 
 <body>
-<header th:replace="seller/layout/base :: common_header"></header>
-<aside th:replace="seller/layout/base :: common_aside"></aside>
+<header th:replace="~{seller/layout/base :: common_header}"></header>
+<aside th:replace="~{seller/layout/base :: common_aside}"></aside>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
@@ -26,7 +26,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-12">
                 <!-- 상품 등록 폼: 기본 정보와 옵션 정보를 JSON으로 전송 -->
-                <form id="productForm" method="post">
+                <form id="productForm" data-mode="new" method="post">
                     <!-- 기본 정보 섹션 -->
                     <section class="card card-section mb-4">
                         <div class="card-header">기본 정보</div>
@@ -117,14 +117,17 @@
 
 <!-- 옵션 템플릿 모달 -->
 <div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="templateModalLabel">옵션 템플릿 선택</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="닫기"></button>
             </div>
             <div class="modal-body">
-                <div id="templateModalContainer" class="row row-cols-1 row-cols-md-2 g-3"></div>
+                <div id="templateModalContainer" class="row row-cols-1 row-cols-md-2 g-4">
+                    <!-- 데이터 추가. -->
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>

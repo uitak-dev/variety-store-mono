@@ -32,14 +32,17 @@ public class Category {
 
     // 자식 카테고리 (self-referencing)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OrderBy("id asc")
     private Set<Category> children = new LinkedHashSet<>();
 
     // 상품과의 연관관계
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<ProductCategory> productCategories = new LinkedHashSet<>();
 
     // 옵션과의 연관관계
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<CategoryGlobalOption> categoryGlobalOptions = new LinkedHashSet<>();
 
     @Builder

@@ -17,6 +17,11 @@ import java.util.Map;
 @NoArgsConstructor
 public class ProductRequest {
 
+    private Long id;
+
+    // 상품이 속할 카테고리 id
+    private Long categoryId;
+
     // 상품 기본 정보
     private String name;
     private String description;
@@ -26,14 +31,11 @@ public class ProductRequest {
     private boolean single;   // true: 단일 상품, false: 옵션이 있는 상품.
     private int stockQuantity;  // 재고량 (단일 상품인 경우 사용.)
 
-    // 상품이 속할 카테고리 id
-    private Long categoryId;
-
     // 상품 옵션 정보 (상품 옵션 및 옵션 값에 대한 요청 DTO를 별도로 정의)
     private List<ProductOptionRequest> productOptions;
 
     // 상품 등록 상태 (문자열이나 enum 타입으로 처리할 수 있음)
-    private ProductStatus status;
+    // private ProductStatus status = ProductStatus.PENDING;
 
     // 상품별 특화 속성
     private Map<String, Object> attributes;

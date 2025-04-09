@@ -43,6 +43,7 @@ public class User extends Audit {
     private UserType userType;      // CUSTOMER, SELLER, ADMIN
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<UserRole> userRoles = new HashSet<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

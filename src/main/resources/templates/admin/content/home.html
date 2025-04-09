@@ -2,12 +2,12 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+<head th:replace="~{admin/layout/base :: common_head(~{::title}, ~{::link})}">
     <title>관리자 대시보드</title>
 </head>
 <body>
-<header th:replace="admin/layout/base :: common_header"></header>
-<aside th:replace="admin/layout/base :: common_aside"></aside>
+<header th:replace="~{admin/layout/base :: common_header}"></header>
+<aside th:replace="~{admin/layout/base :: common_aside}"></aside>
 
 <div class="main-content">
     <section class="container-fluid">

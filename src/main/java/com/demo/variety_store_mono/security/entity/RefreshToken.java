@@ -20,7 +20,7 @@ public class RefreshToken extends Audit {
     @Column(name = "refresh_token_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 512, unique = true)
     private String token;
 
     @OneToOne

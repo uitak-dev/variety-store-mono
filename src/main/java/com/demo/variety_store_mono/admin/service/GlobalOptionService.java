@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class GlobalOptionService {
 
     // 글로벌 옵션 전체 조회
     public List<GlobalOptionSummary> getAllOption() {
-        return optionRepository.findAll().stream()
+        return optionRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(option -> modelMapper.map(option, GlobalOptionSummary.class))
                 .toList();
     }

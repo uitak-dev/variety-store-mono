@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class RoleService {
 
     /** 역할 전체 조회 */
     public List<RoleResponse> getRoles() {
-        return roleRepository.findAll().stream()
+        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(role -> modelMapper.map(role, RoleResponse.class))
                 .collect(Collectors.toList());
     }

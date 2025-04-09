@@ -17,7 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
             "left join fetch p.productOptions po " +
             "left join fetch po.productOptionValues pov " +
             "where p.seller.id = :sellerId " +
-            "and p.id = :productId")
+            "and p.id = :productId " +
+            "order by po.id asc, pov.id asc")
     Optional<Product> findProductDetails(@Param("sellerId") Long sellerId, @Param("productId") Long productId);
 
     // 관리자 도메인 - 상품 상세 조회.
@@ -28,6 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
             "left join fetch po.productOptionValues pov " +
             "left join fetch p.seller s " +
             "left join fetch s.user u " +
-            "where p.id = :productId")
+            "where p.id = :productId " +
+            "order by po.id asc, pov.id asc")
     Optional<Product> findProductManagementDetails(@Param("productId") Long productId);
 }

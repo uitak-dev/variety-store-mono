@@ -2,13 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="admin/layout/base :: common_head(~{::title}, ~{::link})">
+<head th:replace="~{admin/layout/base :: common_head(~{::title}, ~{::link})}">
     <title>판매자 정보 수정</title>
 </head>
 
 <body>
-<header th:replace="admin/layout/base :: common_header"></header>
-<aside th:replace="admin/layout/base :: common_aside"></aside>
+<header th:replace="~{admin/layout/base :: common_header}"></header>
+<aside th:replace="~{admin/layout/base :: common_aside}"></aside>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
