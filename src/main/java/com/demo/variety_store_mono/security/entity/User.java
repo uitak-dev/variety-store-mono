@@ -135,8 +135,9 @@ public class User extends Audit {
     }
 
     /** 관리자 정보 생성 */
-    public void createAdminDetail() {
+    public Admin createAdminDetail() {
         this.admin = Admin.builder().user(this).build();
+        return admin;
     }
 
     /** 관리자 정보 수정 */
@@ -145,8 +146,9 @@ public class User extends Audit {
     }
 
     /** 판매자 정보 생성 */
-    public void createSellerDetail() {
+    public Seller createSellerDetail() {
         this.seller = Seller.builder().user(this).build();
+        return seller;
     }
 
     /** 판매자 정보 수정 */
@@ -155,8 +157,9 @@ public class User extends Audit {
     }
 
     /** 소비자 정보 생성 */
-    public void createCustomerDetail() {
+    public Customer createCustomerDetail() {
         this.customer = Customer.builder().user(this).build();
+        return customer;
     }
 
     /** 소비자 정보 수정 */

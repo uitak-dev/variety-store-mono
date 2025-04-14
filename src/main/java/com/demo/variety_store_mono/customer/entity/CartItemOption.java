@@ -22,14 +22,16 @@ public class CartItemOption {
     @JoinColumn(name = "cart_item_id", nullable = false)
     private CartItem cartItem;
 
-    // 시스템에 등록된 옵션 값인 경우 GlobalOptionValue를 참조
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "global_option_value_id", nullable = true)
-    private GlobalOptionValue globalOptionValue;
-
-    // 판매자 커스텀 옵션 값인 경우 ProductOptionValue를 참조
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_option_value_id", nullable = true)
     private ProductOptionValue productOptionValue;
+
+    public CartItemOption(ProductOptionValue productOptionValue) {
+        this.productOptionValue = productOptionValue;
+    }
+
+    void assignCartItem(CartItem cartItem) {
+        this.cartItem = cartItem;
+    }
 }
 

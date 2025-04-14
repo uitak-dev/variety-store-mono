@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.customer.request;
+package com.demo.variety_store_mono.customer.dto.request;
 
 import com.demo.variety_store_mono.common.entity.Address;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;

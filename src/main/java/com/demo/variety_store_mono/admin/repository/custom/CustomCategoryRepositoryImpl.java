@@ -17,6 +17,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
@@ -88,5 +90,32 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
         return ret.stream()
                 .map(category -> modelMapper.map(category, CategorySummary.class))
                 .toList();
+    }
+
+    /**
+     * 주어진 카테고리를 포함한 모든 하위 카테고리 ID 조회.
+     */
+    @Override
+    public List<Long> findAllDescendantCategoryIds(Long categoryId) {
+        List<Long> resultCategoryIds = new ArrayList<>();
+        resultCategoryIds.add(categoryId);
+
+        Deque<Long> queue = new LinkedList<>();
+        queue.addLast(categoryId);
+
+        while (!queue.isEmpty()) {
+            Long parentId = queue.removeFirst();
+            List<Long> children = queryFactory.select(category.id)
+                    .from(category)
+                    .where(category.parent.id.eq(parentId))
+                    .fetch();
+
+            if (!children.isEmpty()) {
+                children.forEach(queue::addLast);
+                resultCategoryIds.addAll(children);
+            }
+        }
+
+        return resultCategoryIds;
     }
 }

@@ -3,14 +3,13 @@ package com.demo.variety_store_mono.seller.repository.custom;
 import com.demo.variety_store_mono.admin.dto.search.SearchProductManagement;
 import com.demo.variety_store_mono.admin.dto.summary.ProductManagementSummary;
 import com.demo.variety_store_mono.admin.entity.QCategory;
+import com.demo.variety_store_mono.admin.service.CategoryService;
+import com.demo.variety_store_mono.customer.dto.summary.ProductCatalogSummary;
 import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.*;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
-import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Coalesce;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPQLTemplates;
@@ -28,10 +27,12 @@ import java.util.List;
 public class CustomProductRepositoryImpl implements CustomProductRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
-    public CustomProductRepositoryImpl(EntityManager em, ModelMapper modelMapper) {
+    public CustomProductRepositoryImpl(EntityManager em, CategoryService categoryService, ModelMapper modelMapper) {
         this.queryFactory = new JPAQueryFactory(JPQLTemplates.DEFAULT, em);
+        this.categoryService = categoryService;
         this.modelMapper = modelMapper;
     }
 
@@ -140,6 +141,38 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                         productStatusEq(searchProduct.getStatus()),
                         userNameEq(searchProduct.getUserName()),
                         categoryEq(searchProduct.getCategoryId())
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    /** 소비자 도메인: 상품 목록 조회. */
+    @Override
+    public Page<ProductCatalogSummary> findProductsByCategory(Long categoryId, Pageable pageable) {
+        // 입력받은 카테고리와 그 하위 카테고리 모두 포함시키기 위한 ID 목록 조회.
+        List<Long> categoryIds = categoryService.getAllDescendantCategoryIds(categoryId);
+
+        // 기본 쿼리: Product를 조회하고, ProductCategory를 inner join하여 필터링.
+        List<ProductCatalogSummary> content = queryFactory.selectFrom(product)
+                .distinct()
+                .innerJoin(product.productCategories, productCategory)
+                .where(
+                        productCategory.category.id.in(categoryIds),
+                        product.status.in(ProductStatus.APPROVED, ProductStatus.OUT_OF_STOCK)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .distinct()
+                .fetch()
+                .stream()
+                .map(product -> modelMapper.map(product, ProductCatalogSummary.class))
+                .toList();
+
+        JPAQuery<Long> countQuery = queryFactory.select(product.count())
+                .from(product)
+                .where(
+                        productCategory.category.id.in(categoryIds),
+                        product.status.in(ProductStatus.APPROVED, ProductStatus.OUT_OF_STOCK)
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

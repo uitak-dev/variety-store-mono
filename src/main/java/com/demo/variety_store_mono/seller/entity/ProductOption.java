@@ -43,9 +43,7 @@ public class ProductOption {
         this.name = name;
     }
 
-    /** * * * * * * * * * * * * * * * *
-     * association convenience method *
-     * * * * * * * * * * * * * * * * */
+    /** association convenience method */
     void assignProduct(Product product) {
         this.product = product;
     }

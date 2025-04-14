@@ -2,7 +2,7 @@ package com.demo.variety_store_mono.admin.resolver;
 
 import com.demo.variety_store_mono.admin.dto.request.AdminDetailRequest;
 import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
-import com.demo.variety_store_mono.customer.request.CustomerDetailRequest;
+import com.demo.variety_store_mono.customer.dto.request.CustomerDetailRequest;
 import com.demo.variety_store_mono.seller.dto.request.SellerDetailRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.MutablePropertyValues;

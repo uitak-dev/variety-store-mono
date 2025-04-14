@@ -13,4 +13,6 @@ public interface CustomCategoryRepository {
     Page<CategorySummary> searchCategoryList(SearchCategory searchCategory, Pageable pageable);
 
     List<CategorySummary> findAllAncestors(Long categoryId);
+
+    List<Long> findAllDescendantCategoryIds(Long categoryId);
 }

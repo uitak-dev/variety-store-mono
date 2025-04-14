@@ -81,7 +81,7 @@ public class CategoryService {
                 .map(category -> modelMapper.map(category, CategorySummary.class)).toList();
     }
 
-    // 특정 카테고리의 모든 하위 카테고리 조회
+    // 특정 카테고리의 한 단계 하위 카테고리 조회.
     @Transactional(readOnly = true)
     public List<CategorySummary> getChildCategories(Long parentId) {
         return categoryRepository.findChildCategories(parentId).stream()
@@ -92,6 +92,12 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategorySummary> getAllAncestors(Long categoryId) {
         return categoryRepository.findAllAncestors(categoryId);
+    }
+
+    // 특정 카테고리의 모든 하위 카테고리 조회.
+    @Transactional(readOnly = true)
+    public List<Long> getAllDescendantCategoryIds(Long categoryId) {
+        return categoryRepository.findAllDescendantCategoryIds(categoryId);
     }
 
     // 카테고리 상세 조회

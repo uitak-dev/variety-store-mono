@@ -2,6 +2,7 @@ package com.demo.variety_store_mono.seller.repository.custom;
 
 import com.demo.variety_store_mono.admin.dto.search.SearchProductManagement;
 import com.demo.variety_store_mono.admin.dto.summary.ProductManagementSummary;
+import com.demo.variety_store_mono.customer.dto.summary.ProductCatalogSummary;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
 import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
@@ -15,4 +16,7 @@ public interface CustomProductRepository {
 
     // 관리자 도메인 - 상품 목록 조회.
     Page<ProductManagementSummary> searchProductManagementList(SearchProductManagement searchProduct, Pageable pageable);
+
+    // 소비자 도메인 - 상품 목록 조회.
+    Page<ProductCatalogSummary> findProductsByCategory(Long categoryId, Pageable pageable);
 }
