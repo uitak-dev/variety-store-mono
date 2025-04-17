@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -25,6 +26,6 @@ public class ProductCatalogResponse {
     private LocalDate manufactureDate;
     private boolean single;
     private SellerDetailResponse seller;
-    private Set<ProductOptionResponse> productOptions;
+    private List<ProductOptionResponse> productOptions;
     private ProductStatus status;
 }

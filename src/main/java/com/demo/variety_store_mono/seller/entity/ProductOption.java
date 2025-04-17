@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.core.annotation.Order;
 
 import java.util.*;
 
@@ -32,6 +33,7 @@ public class ProductOption {
     private String name;        // 판매자 정의 옵션 이름 (예: "색상", "RAM", "저장 용량")
 
     @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private Set<ProductOptionValue> productOptionValues = new LinkedHashSet<>();
 
     @Builder

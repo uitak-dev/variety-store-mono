@@ -15,7 +15,7 @@ public class ProductOptionValueTestDataBuilder {
     public ProductOptionValueTestDataBuilder() {
         this.optionValue = "Default Option Value";
         this.global = false;
-        this.additionalPrice = new BigDecimal("500.00");
+        this.additionalPrice = BigDecimal.valueOf(500);
         this.stockQuantity = 20;
     }
 

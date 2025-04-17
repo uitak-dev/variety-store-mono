@@ -38,7 +38,7 @@ public class OrderService {
         Customer customer = user.getCustomer();
 
         // 주문 생성.
-        Order newOrder = Order.builder()
+        Order order = Order.builder()
                 .orderDate(LocalDateTime.now())
                 .customer(customer)
                 .build();
@@ -48,7 +48,7 @@ public class OrderService {
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
             // 주문 상품 생성.
-            OrderItem newOrderItem = OrderItem.builder()
+            OrderItem orderItem = OrderItem.builder()
                     .product(product)
                     .quantity(orderItemRequest.getQuantity())
                     .unitPrice(product.getBasePrice())
@@ -60,7 +60,7 @@ public class OrderService {
                 ProductOptionValue pov = productRepository.findProductOptionValueById(optionValueId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 옵션 값입니다."));
 
-                OrderItemOption newOrderItemOption = OrderItemOption.builder()
+                OrderItemOption orderItemOption = OrderItemOption.builder()
                         .productOptionValue(pov)
                         .optionName(pov.getProductOption().getName())
                         .optionValue(pov.getOptionValue())
@@ -68,16 +68,16 @@ public class OrderService {
                         .build();
 
                 // OrderItem에 옵션 추가 (양방향 연관관계 설정)
-                newOrderItem.addOrderItemOption(newOrderItemOption);
+                orderItem.addOrderItemOption(orderItemOption);
             }
             // 단가 산출: 기본가격 + 옵션 추가 가격 합산.
-            BigDecimal finalUnitPrice = newOrderItem.finalUnitPrice();
+            BigDecimal finalUnitPrice = orderItem.finalUnitPrice();
             // Order에 OrderItem 추가 (양방향 연관관계 설정)
-            newOrder.addOrderItem(newOrderItem);
+            order.addOrderItem(orderItem);
         }
         // 주문 항목 총액 = 단가 * 주문 수량
-        BigDecimal totalPrice = newOrder.finalTotalPrice();
+        BigDecimal totalPrice = order.finalTotalPrice();
 
-        return modelMapper.map(orderRepository.save(newOrder), OrderResponse.class);
+        return modelMapper.map(orderRepository.save(order), OrderResponse.class);
     }
 }

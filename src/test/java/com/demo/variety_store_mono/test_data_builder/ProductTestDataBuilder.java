@@ -23,7 +23,7 @@ public class ProductTestDataBuilder {
     public ProductTestDataBuilder() {
         this.primaryCategory = defaultCategory();
         this.name = "Test Product";
-        this.basePrice = new BigDecimal("12900.00");
+        this.basePrice = BigDecimal.valueOf(12900);
         this.stockQuantity = 100;
         this.single = true;
         this.seller = new SellerTestDataBuilder().build();

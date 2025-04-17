@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,5 +16,5 @@ public class GlobalOptionResponse {
 
     private Long id;
     private String name;
-    private Set<GlobalOptionValueResponse> globalOptionValues = new LinkedHashSet<>();
+    private List<GlobalOptionValueResponse> globalOptionValues = new ArrayList<>();
 }
