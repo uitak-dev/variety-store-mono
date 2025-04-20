@@ -1,5 +1,3 @@
-// productForm.js
-
 /**
  * 유틸리티: DOM 요소 생성 도우미
  */
@@ -315,36 +313,64 @@ class ProductForm {
         }
         return productData;
     }
-    _handleSubmit(e) {
+
+    async _handleSubmit(e) {
         e.preventDefault();
-        const data = this._gatherData();
-        console.log("전송 데이터:", JSON.stringify(data, null, 2));
-        let url = '/seller/products/new';
-        if (this.mode === 'edit') {
-            const idInput = this.form.querySelector('input[name="id"]');
-            if (idInput && idInput.value) {
-                url = `/seller/products/${idInput.value}/edit`;
-            } else {
-                console.error("상품 ID를 찾을 수 없습니다.");
+
+        try {
+            // 1) 썸네일 업로드
+            const thumbInput = document.getElementById('thumbnail');
+            let thumbnailData = null;
+            if (thumbInput.files.length > 0) {
+                const thumbForm = new FormData();
+                thumbForm.append('file', thumbInput.files[0]);
+                const thumbRes = await fetch('/api/products/files/upload', {
+                    method: 'POST',
+                    body: thumbForm
+                });
+                if (!thumbRes.ok) throw new Error('썸네일 업로드 실패');
+                const thumbData = await thumbRes.json();
+                thumbnailData = thumbData;
             }
-        }
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('서버 응답 실패');
-                return response.json();
-            })
-            .then(result => {
-                console.log('전송 성공:', result);
-                window.location.replace(`/seller/products/${result.id}`);
-            })
-            .catch(error => {
-                console.error('전송 중 오류 발생:', error);
+
+            // 2) 추가 이미지 업로드
+            const imagesInput = document.getElementById('images');
+            const imagesData = [];
+            for (const file of imagesInput.files) {
+                const imgForm = new FormData();
+                imgForm.append('file', file);
+                const imgRes = await fetch('/api/products/files/upload', {
+                    method: 'POST',
+                    body: imgForm
+                });
+                if (!imgRes.ok) throw new Error('이미지 업로드 실패');
+                const imgData = await imgRes.json();
+                imagesData.push(imgData);
+            }
+
+            // 3) 나머지 폼 데이터 수집
+            const data = this._gatherData();
+            data.thumbnail = thumbnailData;
+            data.images = imagesData;
+            console.log("전송 데이터:", JSON.stringify(data, null, 2));
+
+            // 4) 상품 등록 API 호출
+            const url = '/seller/products/new';
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             });
+            if (!res.ok) throw new Error('상품 등록 실패');
+            const result = await res.json();
+            window.location.replace(`/seller/products/${result.id}`);
+
+        } catch (err) {
+            console.error('상품 등록 에러:', err);
+            alert(err.message);
+        }
     }
+
     _updateTemplateModalUI(templates) {
         const container = $("#templateModalContainer");
         container.empty();

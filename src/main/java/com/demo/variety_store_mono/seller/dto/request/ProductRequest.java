@@ -28,6 +28,10 @@ public class ProductRequest {
     private BigDecimal basePrice;
     private LocalDate manufactureDate;
 
+    // 상품 이미지(파일 업로드 후, 받은 저장된 파일명; storeFileName)
+    private UploadFileRequest thumbnail;
+    private List<UploadFileRequest> images;
+
     private boolean single;   // true: 단일 상품, false: 옵션이 있는 상품.
     private int stockQuantity;  // 재고량 (단일 상품인 경우 사용.)
 

@@ -29,6 +29,14 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    /**
+     * 상품에 매핑된 이미지 컬렉션.
+     * 하나의 이미지에 isThumbnail=true 로 설정하면 썸네일로 사용.
+     */
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn
+    private final List<ProductImage> productImages = new ArrayList<>();
+
     @Column(nullable = false)
     private String description; // 상품 설명
 
@@ -98,6 +106,41 @@ public class Product {
         return productCategories.stream()
                 .map(ProductCategory::getCategory)
                 .toList();
+    }
+
+    // 상품 이미지 추가.
+    public void addImage(ProductImage image) {
+        productImages.add(image);
+        image.assignProduct(this);
+    }
+
+    // 상품 이미지 삭제.
+    public void removeImage(ProductImage image) {
+        productImages.remove(image);
+        image.assignProduct(null);
+    }
+
+    // 상품 썸네일 이미지 조회.
+    public ProductImage getThumbnail() {
+        return productImages.stream()
+                .filter(ProductImage::isThumbnail)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // 상품 썸네일 이미지 수정.
+    public void setThumbnail(ProductImage newThumbnail) {
+        Optional<ProductImage> findThumbnail = productImages.stream()
+                .filter(ProductImage::isThumbnail)
+                .findFirst();
+
+        if (findThumbnail.isPresent()) {
+            ProductImage productImage = findThumbnail.get();
+            removeImage(productImage);
+        }
+
+        newThumbnail.setThumbnail(true);
+        addImage(newThumbnail);
     }
 
     /**

@@ -29,3 +29,6 @@ jwt:
   secret-key: "The secret length must be at least 256 bits"
   access-token-validity-millis: 7200000     # 2 * 60 * 60 * 1000 milliseconds(= 2 hours)
   refresh-token-validity-millis: 604800000  # 7 * 24 * 60 * 60 * 1000 milliseconds(= 7 days)
+
+file:
+  directory: "/Users/uitak/Pictures/variety-store/"

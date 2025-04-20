@@ -5,23 +5,23 @@ import com.demo.variety_store_mono.admin.entity.GlobalOption;
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
 import com.demo.variety_store_mono.admin.repository.CategoryRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
+import com.demo.variety_store_mono.common.entity.UploadFile;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.repository.UserRepository;
+import com.demo.variety_store_mono.seller.dto.request.UploadFileRequest;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
-import com.demo.variety_store_mono.seller.entity.Product;
-import com.demo.variety_store_mono.seller.entity.ProductCategory;
-import com.demo.variety_store_mono.seller.entity.ProductOption;
-import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
+import com.demo.variety_store_mono.seller.entity.*;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
 import com.demo.variety_store_mono.seller.dto.request.ProductOptionRequest;
 import com.demo.variety_store_mono.seller.dto.request.ProductOptionValueRequest;
 import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
-import com.demo.variety_store_mono.seller.dto.response.ProductListResponse;
 import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
+import com.demo.variety_store_mono.utility.FileStore;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,6 @@ import java.util.Set;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -41,6 +40,18 @@ public class ProductService {
     private final GlobalOptionRepository globalOptionRepository;
 
     private final ModelMapper modelMapper;
+    private final FileStore fileStore;
+
+    public ProductService(ProductRepository productRepository, UserRepository userRepository,
+                          CategoryRepository categoryRepository, GlobalOptionRepository globalOptionRepository,
+                          ModelMapper modelMapper, @Qualifier("localFileStore") FileStore fileStore) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.globalOptionRepository = globalOptionRepository;
+        this.modelMapper = modelMapper;
+        this.fileStore = fileStore;
+    }
 
     /** 상품 등록 */
     public ProductResponse createProduct(Long sellerId, ProductRequest request) {
@@ -62,6 +73,28 @@ public class ProductService {
                 .attributes(request.getAttributes())
                 .seller(user.getSeller())
                 .build();
+
+        // 상품 썸네일 등록.
+        ProductImage thumbnail = ProductImage.builder()
+                .uploadFile(new UploadFile(request.getThumbnail().getUploadFileName(),
+                        request.getThumbnail().getStoreFileName())
+                )
+                .isThumbnail(true)
+                .build();
+        product.addImage(thumbnail);
+
+        // 상품 이미지 등록.
+        for (UploadFileRequest uploadFileRequest : request.getImages()) {
+            UploadFile uploadFile = new UploadFile(uploadFileRequest.getUploadFileName(),
+                    uploadFileRequest.getStoreFileName());
+
+            ProductImage productImage = ProductImage.builder()
+                    .uploadFile(uploadFile)
+                    .isThumbnail(false)
+                    .build();
+
+            product.addImage(productImage);
+        }
 
         // 옵션 상품인 경우, 옵션 등록.
         if (!request.isSingle() && request.getProductOptions() != null) {
