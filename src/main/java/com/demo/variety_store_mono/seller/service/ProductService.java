@@ -18,15 +18,19 @@ import com.demo.variety_store_mono.seller.dto.request.ProductRequest;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
 import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
 import com.demo.variety_store_mono.utility.FileStore;
+import com.demo.variety_store_mono.utility.mapper.ProductMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.attribute.standard.Destination;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -107,7 +111,7 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
         category.addProduct(product);
 
-        return modelMapper.map(savedProduct, ProductResponse.class);
+        return ProductMapper.toResponse(savedProduct);
     }
 
     /** 상품 목록 조회 */
@@ -123,7 +127,7 @@ public class ProductService {
         Product product = productRepository.findProductDetails(sellerId, productId)
                 .orElseThrow(() -> new EntityNotFoundException("관련 상품을 찾을 수 없습니다."));
 
-        return modelMapper.map(product, ProductResponse.class);
+        return ProductMapper.toResponse(product);
     }
 
     /** 상품 수정 */
@@ -180,7 +184,7 @@ public class ProductService {
         // 수정된 상품 저장
         Product savedProduct = productRepository.save(product);
 
-        return modelMapper.map(savedProduct, ProductResponse.class);
+        return ProductMapper.toResponse(savedProduct);
     }
 
     /** 상품 삭제 */

@@ -33,20 +33,51 @@
                     <section class="card card-section mb-4">
                         <div class="card-header">기본 정보</div>
                         <div class="card-body">
-                            <!-- 카테고리 -->
+
+                            <!-- 상품 카테고리 선택 영역 -->
                             <div class="mb-3">
-                                <label for="categoryId" class="form-label">카테고리</label>
-                                <select id="categoryId" class="form-select" th:field="*{primaryCategory.id}" required>
-                                    <option value="" disabled>카테고리를 선택하세요</option>
-                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
-                                </select>
+                                <label for="selectedParent" class="form-label">상품 카테고리 선택:</label>
+                                <div class="input-group">
+                                    <input type="text" id="selectedParent" class="form-control" placeholder="상품 카테고리 선택" disabled
+                                           th:value="*{primaryCategory != null ? primaryCategory.name : ''}">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                            data-bs-target="#categoryModal">선택</button>
+                                </div>
+                                <!-- 선택된 상품 카테고리 id를 저장 -->
+                                <input type="hidden" id="categoryId" name="categoryId" th:value="*{primaryCategory != null ? primaryCategory.id : ''}" required>
                             </div>
+
                             <!-- 상품명 -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">상품명</label>
                                 <input type="text" id="name" class="form-control" th:field="*{name}"
                                        placeholder="상품명을 입력하세요" required>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="thumbnail" class="form-label">썸네일 이미지</label>
+                                <!-- 기존 썸네일 -->
+                                <div th:if="*{thumbnail != null}">
+                                    <img th:src="@{/api/images/{image}(image=*{thumbnail.storeFileName})}"
+                                         th:alt="*{thumbnail.uploadFileName}"
+                                         style="max-width:100px; max-height:100px;" />
+                                </div>
+                                <input type="file" id="thumbnail" accept="image/*" required class="form-control-file" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="images" class="form-label">추가 이미지</label>
+                                <!-- 기존 추가 이미지 -->
+                                <div th:if="*{images != null}">
+                                    <div th:each="image : *{images}">
+                                        <img th:src="@{/api/images/{file}(file=${image.storeFileName})}"
+                                             th:alt="${image.uploadFileName}"
+                                             style="max-width:100px; max-height:100px;" />
+                                    </div>
+                                </div>
+                                <input type="file" id="images" multiple accept="image/*" class="form-control-file" />
+                            </div>
+
                             <!-- 상품 설명 -->
                             <div class="mb-3">
                                 <label for="description" class="form-label">상품 설명</label>
@@ -168,6 +199,34 @@
     </section>
 </div>
 
+<!-- 모달 팝업: 동적으로 카테고리 선택 -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">상위 카테고리 선택</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Breadcrumb 영역 -->
+                <nav aria-label="breadcrumb">
+                    <ol id="breadcrumbContainer" class="breadcrumb">
+                        <!-- 동적으로 breadcrumb 항목이 추가됩니다 -->
+                    </ol>
+                </nav>
+                <!-- 동적으로 로드될 카테고리 목록 -->
+                <div id="categoryListContainer" class="category-tree">
+                    <!-- AJAX로 카테고리 목록이 로드됩니다 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">이전</button>
+                <button type="button" id="confirmBtn" class="btn btn-primary" onclick="confirmSelection()" disabled>선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 옵션 템플릿 모달 -->
 <div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -191,5 +250,146 @@
 
 <footer th:replace="~{seller/layout/base :: common_footer}"></footer>
 <script src="/seller/js/productForm.js"></script>
+<script>
+    // 전역 변수: 현재 선택한 카테고리 id 및 breadcrumb 스택
+    let currentParentId = null;
+    let breadcrumbStack = [];
+
+    // 최상위 또는 하위 카테고리 목록을 비동기로 로드하는 함수
+    async function loadCategories(parentId) {
+        const container = document.getElementById("categoryListContainer");
+        const confirmBtn = document.getElementById("confirmBtn");
+        container.innerHTML = "";
+        confirmBtn.disabled = true;    // 일단 비활성화
+
+        let url = parentId
+            ? `/api/categories/children?categoryId=${parentId}`
+            : "/api/categories/children";
+
+        try {
+            const response = await fetch(url);
+            const categories = await response.json();
+
+            if (categories.length === 0) {
+                // 더 이상 하위가 없으면 “선택 완료” 활성화
+                container.innerHTML = "<p>더 이상 하위 카테고리가 없습니다.</p>";
+                confirmBtn.disabled = false;
+            } else {
+                // 하위가 있으면 여전히 비활성화
+                const ul = document.createElement("ul");
+                ul.classList.add("list-group");
+                categories.forEach(cat => {
+                    const li = document.createElement("li");
+                    li.classList.add("list-group-item", "list-group-item-action");
+                    li.textContent = cat.name;
+                    li.style.cursor = "pointer";
+                    li.onclick = () => {
+                        currentParentId = cat.id;
+                        breadcrumbStack.push({ id: cat.id, name: cat.name });
+                        updateBreadcrumb();
+                        loadCategories(cat.id);
+                    };
+                    ul.appendChild(li);
+                });
+                container.appendChild(ul);
+            }
+        } catch (error) {
+            console.error("카테고리 로드 실패:", error);
+        }
+    }
+
+    // 브레드크럼 업데이트: 현재까지 선택한 경로를 표시
+    function updateBreadcrumb() {
+        const breadcrumbContainer = document.getElementById("breadcrumbContainer");
+        breadcrumbContainer.innerHTML = "";
+        breadcrumbStack.forEach((item, index) => {
+            const span = document.createElement("span");
+            span.textContent = item.name;
+            span.style.cursor = "pointer";
+            span.onclick = function () {
+                // 해당 브레드크럼 항목 클릭 시 해당 레벨로 돌아가기
+                breadcrumbStack = breadcrumbStack.slice(0, index + 1);
+                currentParentId = item.id;
+                updateBreadcrumb();
+                loadCategories(item.id);
+            };
+            breadcrumbContainer.appendChild(span);
+            if (index < breadcrumbStack.length - 1) {
+                const sep = document.createElement("span");
+                sep.textContent = " > ";
+                breadcrumbContainer.appendChild(sep);
+            }
+        });
+    }
+
+    // 이전 버튼: breadcrumb에서 마지막 항목 제거 후 이전 레벨로 이동
+    function goBack() {
+        if (breadcrumbStack.length > 0) {
+            breadcrumbStack.pop();
+            currentParentId = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1].id : null;
+            updateBreadcrumb();
+            loadCategories(currentParentId);
+        } else {
+            loadCategories(null);
+        }
+    }
+
+    // 선택 완료 버튼: breadcrumb의 마지막 항목을 최종 선택으로 반영하여 폼에 업데이트
+    function confirmSelection() {
+        let selectedCategory = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1] : null;
+        if (selectedCategory) {
+            document.getElementById("selectedParent").value = breadcrumbStack.map(item => item.name).join(" > ");
+            document.getElementById("categoryId").value = selectedCategory.id;
+        } else {
+            document.getElementById("selectedParent").value = "";
+            document.getElementById("categoryId").value = "";
+        }
+        // 모달 닫기
+        const modalEl = document.getElementById("categoryModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+    }
+
+    // 모달이 열릴 때 초기 상태 설정: 최상위 카테고리 로드 및 breadcrumb 초기화
+    document.getElementById("categoryModal").addEventListener('shown.bs.modal', function () {
+        breadcrumbStack = [];
+        currentParentId = null;
+        updateBreadcrumb();
+        loadCategories(null);
+        document.getElementById("confirmBtn").disabled = true;
+    });
+
+
+    // 옵션 템플릿 선택
+    $(document).ready(function () {
+        // 1. 검색 인풋: 왼쪽 목록 필터링
+        $("#searchInput").on("input", function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $("#availableItemsList li").each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(searchTerm) > -1);
+            });
+        });
+
+        // 2. 왼쪽 목록의 아이템 클릭 시 오른쪽 패널로 이동 (애니메이션 없이 즉시 이동)
+        $("#availableItemsList").on("click", "li", function () {
+            $(this).detach().appendTo("#selectedItemsList");
+        });
+
+        // 3. 오른쪽 목록의 아이템 클릭 시 왼쪽 패널로 이동
+        $("#selectedItemsList").on("click", "li", function () {
+            $(this).detach().appendTo("#availableItemsList");
+        });
+
+        // 4. 폼 제출 시, 각 li의 value 속성을 수집하여 hidden input에 설정
+        $("#categoryForm").on("submit", function () {
+            var selectedOptionIds = [];
+            $("#selectedItemsList li").each(function () {
+                selectedOptionIds.push($(this).attr("value"));
+            });
+            $("#optionIds").val(selectedOptionIds.join(","));
+        });
+    });
+</script>
 </body>
 </html>

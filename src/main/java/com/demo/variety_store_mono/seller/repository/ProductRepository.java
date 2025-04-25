@@ -16,6 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
     @Query("select distinct p from Product p " +
             "left join fetch p.productCategories pc " +
             "left join fetch pc.category c " +
+            "left join fetch p.productImages pi " +
             "left join fetch p.productOptions po " +
             "left join fetch po.productOptionValues pov " +
             "where p.seller.id = :sellerId " +
@@ -27,6 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
     @Query("select distinct p from Product p " +
             "left join fetch p.productCategories pc " +
             "left join fetch pc.category c " +
+            "left join fetch p.productImages pi " +
             "left join fetch p.productOptions po " +
             "left join fetch po.productOptionValues pov " +
             "left join fetch p.seller s " +
@@ -36,6 +38,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
 
     // 소비자 도메인 - 상품 상세 조회.
     @Query("select distinct p from Product p " +
+            "left join fetch p.productImages pi " +
             "left join fetch p.productOptions po " +
             "left join fetch po.productOptionValues pov " +
             "left join fetch p.seller s " +

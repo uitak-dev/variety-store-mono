@@ -38,6 +38,29 @@
                         <label for="name" class="form-label">상품 이름</label>
                         <input type="text" id="name" class="form-control" th:value="${product.name}" disabled>
                     </div>
+
+                    <!-- 썸네일 -->
+                    <div class="mb-3">
+                        <label class="form-label">썸네일</label>
+                        <div id="thumbnailPreview" class="preview-container">
+                            <div class="preview-item">
+                                <img th:src="@{/api/images/{f}(f=${product.thumbnail.storeFileName})}"
+                                     th:alt="${product.thumbnail.uploadFileName}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 추가 상품 이미지 -->
+                    <div class="mb-3">
+                        <label class="form-label">추가 상품 이미지</label>
+                        <div id="imagesPreview" class="preview-container">
+                            <div th:each="img : ${product.images}" class="preview-item">
+                                <img th:src="@{/api/images/{f}(f=${img.storeFileName})}"
+                                     th:alt="${img.uploadFileName}" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="description" class="form-label">설명</label>
                         <textarea id="description" class="form-control" th:text="${product.description}"
