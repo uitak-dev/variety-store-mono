@@ -1,6 +1,5 @@
 package com.demo.variety_store_mono.seller.dto.request;
 
-import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

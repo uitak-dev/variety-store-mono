@@ -2,8 +2,26 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link})}">
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
     <title>상품 수정</title>
+    <style>
+        .image-container {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 5px;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,7 +44,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-12">
                 <!-- 상품 등록 폼: 기본 정보와 옵션 정보를 JSON으로 전송 -->
-                <form id="productForm" data-mode="edit" method="post" th:object="${product}">
+                <form id="productForm" method="post" th:object="${product}">
                     <input type="hidden" th:field="*{id}">
 
                     <!-- 기본 정보 섹션 -->
@@ -54,28 +72,40 @@
                                        placeholder="상품명을 입력하세요" required>
                             </div>
 
+                            <!-- 썸네일 -->
                             <div class="mb-3">
                                 <label for="thumbnail" class="form-label">썸네일 이미지</label>
-                                <!-- 기존 썸네일 -->
-                                <div th:if="*{thumbnail != null}">
-                                    <img th:src="@{/api/images/{image}(image=*{thumbnail.storeFileName})}"
-                                         th:alt="*{thumbnail.uploadFileName}"
-                                         style="max-width:100px; max-height:100px;" />
-                                </div>
                                 <input type="file" id="thumbnail" accept="image/*" required class="form-control-file" />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="images" class="form-label">추가 이미지</label>
-                                <!-- 기존 추가 이미지 -->
-                                <div th:if="*{images != null}">
-                                    <div th:each="image : *{images}">
-                                        <img th:src="@{/api/images/{file}(file=${image.storeFileName})}"
-                                             th:alt="${image.uploadFileName}"
-                                             style="max-width:100px; max-height:100px;" />
+                                <!-- 기존 썸네일 -->
+                                <div th:if="*{thumbnail != null}" id="currentThumbnail">
+                                    <p>등록된 썸네일:</p>
+                                    <div class="image-container">
+                                        <img th:src="@{/api/images/{image}(image=*{thumbnail.storeFileName})}"
+                                             th:alt="*{thumbnail.uploadFileName}" width="150" />
+                                        <button type="button" class="delete-btn delete-thumbnail-btn"
+                                                th:attr="data-image-url=*{thumbnail.storeFileName}">삭제</button>
                                     </div>
                                 </div>
-                                <input type="file" id="images" multiple accept="image/*" class="form-control-file" />
+                            </div>
+
+                            <!-- 상품 추가 이미지 -->
+                            <div class="mb-3">
+                                <label for="images" class="form-label">상품 이미지 (최대 4장):</label>
+                                <input type="file" id="images" name="images" multiple accept="image/*" class="form-control-file" />
+                                <!-- 기존 추가 이미지 -->
+                                <div th:if="*{images != null}" id="currentImages">
+                                    <p>등록된 상품 이미지:</p>
+                                    <ul id="imagesList">
+                                        <li th:each="image : *{images}">
+                                            <div class="image-container">
+                                                <img th:src="@{/api/images/{file}(file=${image.storeFileName})}"
+                                                     th:alt="${image.uploadFileName}" width="150" />
+                                                <button type="button" class="delete-btn delete-additional-btn"
+                                                        th:attr="data-image-url=${image.storeFileName}">삭제</button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <!-- 상품 설명 -->
@@ -84,6 +114,7 @@
                                 <textarea id="description" class="form-control" rows="4" th:field="*{description}"
                                           placeholder="상품 설명을 입력하세요" required></textarea>
                             </div>
+
                             <!-- 가격, 제조일자 -->
                             <div class="row mb-3">
                                 <div class="col-md-4">
@@ -132,51 +163,8 @@
                         <div class="card-body">
                             <button type="button" id="loadTemplateButton" class="btn btn-outline-info mb-3">옵션 템플릿 불러오기</button>
                             <button type="button" id="addManualOptionButton" class="btn btn-outline-primary mb-3">옵션 추가</button>
-                            <div id="productOptionsContainer">
-                                <!-- 기존 옵션 카드 렌더링 -->
-                                <div class="card mb-3 option-card" th:each="option : ${product.productOptions}">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">옵션 이름</label>
-                                            <input class="form-control" type="text" placeholder="옵션 이름..."
-                                                   th:classappend="${option.global} ? 'read-only' : ''"
-                                                   th:readonly="${option.global}"
-                                                   th:value="${option.name}" required>
-                                        </div>
-                                        <div class="option-values">
-                                            <div class="row g-2 mb-3 align-items-end option-value-field"
-                                                 th:each="optionValue : ${option.productOptionValues}">
-                                                <div class="col-md-4">
-                                                    <label class="form-label">옵션 값</label>
-                                                    <input type="text" class="form-control" placeholder="옵션 값..."
-                                                           th:classappend="${optionValue.global} ? 'read-only' : ''"
-                                                           th:readonly="${optionValue.global}"
-                                                           th:value="${optionValue.productOptionValue}" required>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="form-label">추가 가격</label>
-                                                    <input type="number" class="form-control" placeholder="추가 가격..."
-                                                           th:value="${optionValue.additionalPrice}" required>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="form-label">재고 수량</label>
-                                                    <input type="number" class="form-control" placeholder="재고 수량..."
-                                                           th:value="${optionValue.stockQuantity}" required>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <!-- 기존 삭제 버튼에 inline onclick 이벤트 추가 -->
-                                                    <button type="button" class="btn btn-danger btn-sm w-100"
-                                                            onclick="removeOptionValue(this)">삭제</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addOptionValue(this)">옵션 값 추가</button>
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="removeOptionCard(this)">옵션 카드 삭제</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- 기존 옵션 카드 Hydration -->
+                            <div id="productOptionsContainer"></div>
                         </div>
                     </section>
 
@@ -220,8 +208,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="goBack()">이전</button>
-                <button type="button" id="confirmBtn" class="btn btn-primary" onclick="confirmSelection()" disabled>선택 완료</button>
+                <button type="button" id="goBackBtn" class="btn btn-secondary">이전</button>
+                <button type="button" id="confirmBtn" class="btn btn-primary" disabled>선택 완료</button>
             </div>
         </div>
     </div>
@@ -249,145 +237,25 @@
 </div>
 
 <footer th:replace="~{seller/layout/base :: common_footer}"></footer>
+<!-- 초기 옵션 데이터 주입(Hydration) -->
+<script th:inline="javascript">
+    window.initialProductOptions = /*[[${product.productOptions}]]*/ [];
+    var initialThumbnail = /*[[${product.thumbnail}]]*/;
+    var initialImages = /*[[${product.images}]]*/ [];
+</script>
 <script src="/seller/js/productForm.js"></script>
+<script src="/seller/js/productEdit.js"></script>
+<script src="/seller/js/categorySelector.js"></script>
 <script>
-    // 전역 변수: 현재 선택한 카테고리 id 및 breadcrumb 스택
-    let currentParentId = null;
-    let breadcrumbStack = [];
-
-    // 최상위 또는 하위 카테고리 목록을 비동기로 로드하는 함수
-    async function loadCategories(parentId) {
-        const container = document.getElementById("categoryListContainer");
-        const confirmBtn = document.getElementById("confirmBtn");
-        container.innerHTML = "";
-        confirmBtn.disabled = true;    // 일단 비활성화
-
-        let url = parentId
-            ? `/api/categories/children?categoryId=${parentId}`
-            : "/api/categories/children";
-
-        try {
-            const response = await fetch(url);
-            const categories = await response.json();
-
-            if (categories.length === 0) {
-                // 더 이상 하위가 없으면 “선택 완료” 활성화
-                container.innerHTML = "<p>더 이상 하위 카테고리가 없습니다.</p>";
-                confirmBtn.disabled = false;
-            } else {
-                // 하위가 있으면 여전히 비활성화
-                const ul = document.createElement("ul");
-                ul.classList.add("list-group");
-                categories.forEach(cat => {
-                    const li = document.createElement("li");
-                    li.classList.add("list-group-item", "list-group-item-action");
-                    li.textContent = cat.name;
-                    li.style.cursor = "pointer";
-                    li.onclick = () => {
-                        currentParentId = cat.id;
-                        breadcrumbStack.push({ id: cat.id, name: cat.name });
-                        updateBreadcrumb();
-                        loadCategories(cat.id);
-                    };
-                    ul.appendChild(li);
-                });
-                container.appendChild(ul);
-            }
-        } catch (error) {
-            console.error("카테고리 로드 실패:", error);
-        }
-    }
-
-    // 브레드크럼 업데이트: 현재까지 선택한 경로를 표시
-    function updateBreadcrumb() {
-        const breadcrumbContainer = document.getElementById("breadcrumbContainer");
-        breadcrumbContainer.innerHTML = "";
-        breadcrumbStack.forEach((item, index) => {
-            const span = document.createElement("span");
-            span.textContent = item.name;
-            span.style.cursor = "pointer";
-            span.onclick = function () {
-                // 해당 브레드크럼 항목 클릭 시 해당 레벨로 돌아가기
-                breadcrumbStack = breadcrumbStack.slice(0, index + 1);
-                currentParentId = item.id;
-                updateBreadcrumb();
-                loadCategories(item.id);
-            };
-            breadcrumbContainer.appendChild(span);
-            if (index < breadcrumbStack.length - 1) {
-                const sep = document.createElement("span");
-                sep.textContent = " > ";
-                breadcrumbContainer.appendChild(sep);
-            }
-        });
-    }
-
-    // 이전 버튼: breadcrumb에서 마지막 항목 제거 후 이전 레벨로 이동
-    function goBack() {
-        if (breadcrumbStack.length > 0) {
-            breadcrumbStack.pop();
-            currentParentId = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1].id : null;
-            updateBreadcrumb();
-            loadCategories(currentParentId);
-        } else {
-            loadCategories(null);
-        }
-    }
-
-    // 선택 완료 버튼: breadcrumb의 마지막 항목을 최종 선택으로 반영하여 폼에 업데이트
-    function confirmSelection() {
-        let selectedCategory = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1] : null;
-        if (selectedCategory) {
-            document.getElementById("selectedParent").value = breadcrumbStack.map(item => item.name).join(" > ");
-            document.getElementById("categoryId").value = selectedCategory.id;
-        } else {
-            document.getElementById("selectedParent").value = "";
-            document.getElementById("categoryId").value = "";
-        }
-        // 모달 닫기
-        const modalEl = document.getElementById("categoryModal");
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-    }
-
-    // 모달이 열릴 때 초기 상태 설정: 최상위 카테고리 로드 및 breadcrumb 초기화
-    document.getElementById("categoryModal").addEventListener('shown.bs.modal', function () {
-        breadcrumbStack = [];
-        currentParentId = null;
-        updateBreadcrumb();
-        loadCategories(null);
-        document.getElementById("confirmBtn").disabled = true;
-    });
-
-
-    // 옵션 템플릿 선택
-    $(document).ready(function () {
-        // 1. 검색 인풋: 왼쪽 목록 필터링
-        $("#searchInput").on("input", function () {
-            var searchTerm = $(this).val().toLowerCase();
-            $("#availableItemsList li").each(function () {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(searchTerm) > -1);
-            });
-        });
-
-        // 2. 왼쪽 목록의 아이템 클릭 시 오른쪽 패널로 이동 (애니메이션 없이 즉시 이동)
-        $("#availableItemsList").on("click", "li", function () {
-            $(this).detach().appendTo("#selectedItemsList");
-        });
-
-        // 3. 오른쪽 목록의 아이템 클릭 시 왼쪽 패널로 이동
-        $("#selectedItemsList").on("click", "li", function () {
-            $(this).detach().appendTo("#availableItemsList");
-        });
-
-        // 4. 폼 제출 시, 각 li의 value 속성을 수집하여 hidden input에 설정
-        $("#categoryForm").on("submit", function () {
-            var selectedOptionIds = [];
-            $("#selectedItemsList li").each(function () {
-                selectedOptionIds.push($(this).attr("value"));
-            });
-            $("#optionIds").val(selectedOptionIds.join(","));
+    document.addEventListener('DOMContentLoaded', () => {
+        new CategorySelector({
+            modalId: 'categoryModal',
+            listContainerId: 'categoryListContainer',
+            breadcrumbContainerId: 'breadcrumbContainer',
+            confirmBtnId: 'confirmBtn',
+            goBackBtnId: 'goBackBtn',
+            selectedDisplayId: 'selectedParent',
+            hiddenInputId: 'categoryId'
         });
     });
 </script>

@@ -2,8 +2,14 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link})}">
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
     <title>상품 등록</title>
+    <style>
+        .preview-img {
+            width: 150px;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,7 +32,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-12">
                 <!-- 상품 등록 폼: 기본 정보와 옵션 정보를 JSON으로 전송 -->
-                <form id="productForm" data-mode="new" method="post">
+                <form id="productForm" method="post">
                     <!-- 기본 정보 섹션 -->
                     <section class="card card-section mb-4">
                         <div class="card-header">기본 정보</div>
@@ -53,7 +59,8 @@
                                 <label for="thumbnail" class="form-label">썸네일 이미지</label>
                                 <input class="form-control" type="file" id="thumbnail" name="thumbnail"
                                        accept="image/*" required>
-                                <div id="thumbnailPreview" class="preview-container"></div>
+                                <!-- 썸네일 이미지 미리보기 -->
+                                <div id="thumbnailPreview"></div>
                             </div>
 
                             <!-- 추가 상품 이미지 (최대 4장) -->
@@ -61,7 +68,8 @@
                                 <label for="images" class="form-label">추가 상품 이미지 (최대 4장)</label>
                                 <input class="form-control" type="file" id="images" name="images"
                                        multiple accept="image/*" required>
-                                <div id="imagesPreview" class="preview-container"></div>
+                                <!-- 추가 상품 이미지 미리보기 -->
+                                <div id="imagesPreview"></div>
                             </div>
 
                             <div class="mb-3">
@@ -156,8 +164,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="goBack()">이전</button>
-                <button type="button" id="confirmBtn" class="btn btn-primary" onclick="confirmSelection()" disabled>선택 완료</button>
+                <button type="button" id="goBackBtn" class="btn btn-secondary">이전</button>
+                <button type="button" id="confirmBtn" class="btn btn-primary" disabled>선택 완료</button>
             </div>
         </div>
     </div>
@@ -187,144 +195,17 @@
 <footer th:replace="~{seller/layout/base :: common_footer}"></footer>
 <script src="/seller/js/productForm.js"></script>
 <script src="/seller/js/productNew.js"></script>
+<script src="/seller/js/categorySelector.js"></script>
 <script>
-    // 전역 변수: 현재 선택한 카테고리 id 및 breadcrumb 스택
-    let currentParentId = null;
-    let breadcrumbStack = [];
-
-    // 최상위 또는 하위 카테고리 목록을 비동기로 로드하는 함수
-    async function loadCategories(parentId) {
-        const container = document.getElementById("categoryListContainer");
-        const confirmBtn = document.getElementById("confirmBtn");
-        container.innerHTML = "";
-        confirmBtn.disabled = true;    // 일단 비활성화
-
-        let url = parentId
-            ? `/api/categories/children?categoryId=${parentId}`
-            : "/api/categories/children";
-
-        try {
-            const response = await fetch(url);
-            const categories = await response.json();
-
-            if (categories.length === 0) {
-                // 더 이상 하위가 없으면 “선택 완료” 활성화
-                container.innerHTML = "<p>더 이상 하위 카테고리가 없습니다.</p>";
-                confirmBtn.disabled = false;
-            } else {
-                // 하위가 있으면 여전히 비활성화
-                const ul = document.createElement("ul");
-                ul.classList.add("list-group");
-                categories.forEach(cat => {
-                    const li = document.createElement("li");
-                    li.classList.add("list-group-item", "list-group-item-action");
-                    li.textContent = cat.name;
-                    li.style.cursor = "pointer";
-                    li.onclick = () => {
-                        currentParentId = cat.id;
-                        breadcrumbStack.push({ id: cat.id, name: cat.name });
-                        updateBreadcrumb();
-                        loadCategories(cat.id);
-                    };
-                    ul.appendChild(li);
-                });
-                container.appendChild(ul);
-            }
-        } catch (error) {
-            console.error("카테고리 로드 실패:", error);
-        }
-    }
-
-    // 브레드크럼 업데이트: 현재까지 선택한 경로를 표시
-    function updateBreadcrumb() {
-        const breadcrumbContainer = document.getElementById("breadcrumbContainer");
-        breadcrumbContainer.innerHTML = "";
-        breadcrumbStack.forEach((item, index) => {
-            const span = document.createElement("span");
-            span.textContent = item.name;
-            span.style.cursor = "pointer";
-            span.onclick = function () {
-                // 해당 브레드크럼 항목 클릭 시 해당 레벨로 돌아가기
-                breadcrumbStack = breadcrumbStack.slice(0, index + 1);
-                currentParentId = item.id;
-                updateBreadcrumb();
-                loadCategories(item.id);
-            };
-            breadcrumbContainer.appendChild(span);
-            if (index < breadcrumbStack.length - 1) {
-                const sep = document.createElement("span");
-                sep.textContent = " > ";
-                breadcrumbContainer.appendChild(sep);
-            }
-        });
-    }
-
-    // 이전 버튼: breadcrumb에서 마지막 항목 제거 후 이전 레벨로 이동
-    function goBack() {
-        if (breadcrumbStack.length > 0) {
-            breadcrumbStack.pop();
-            currentParentId = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1].id : null;
-            updateBreadcrumb();
-            loadCategories(currentParentId);
-        } else {
-            loadCategories(null);
-        }
-    }
-
-    // 선택 완료 버튼: breadcrumb의 마지막 항목을 최종 선택으로 반영하여 폼에 업데이트
-    function confirmSelection() {
-        let selectedCategory = breadcrumbStack.length > 0 ? breadcrumbStack[breadcrumbStack.length - 1] : null;
-        if (selectedCategory) {
-            document.getElementById("selectedParent").value = breadcrumbStack.map(item => item.name).join(" > ");
-            document.getElementById("categoryId").value = selectedCategory.id;
-        } else {
-            document.getElementById("selectedParent").value = "";
-            document.getElementById("categoryId").value = "";
-        }
-        // 모달 닫기
-        const modalEl = document.getElementById("categoryModal");
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-    }
-
-    // 모달이 열릴 때 초기 상태 설정: 최상위 카테고리 로드 및 breadcrumb 초기화
-    document.getElementById("categoryModal").addEventListener('shown.bs.modal', function () {
-        breadcrumbStack = [];
-        currentParentId = null;
-        updateBreadcrumb();
-        loadCategories(null);
-        document.getElementById("confirmBtn").disabled = true;
-    });
-
-
-    // 옵션 템플릿 선택
-    $(document).ready(function () {
-        // 1. 검색 인풋: 왼쪽 목록 필터링
-        $("#searchInput").on("input", function () {
-            var searchTerm = $(this).val().toLowerCase();
-            $("#availableItemsList li").each(function () {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(searchTerm) > -1);
-            });
-        });
-
-        // 2. 왼쪽 목록의 아이템 클릭 시 오른쪽 패널로 이동 (애니메이션 없이 즉시 이동)
-        $("#availableItemsList").on("click", "li", function () {
-            $(this).detach().appendTo("#selectedItemsList");
-        });
-
-        // 3. 오른쪽 목록의 아이템 클릭 시 왼쪽 패널로 이동
-        $("#selectedItemsList").on("click", "li", function () {
-            $(this).detach().appendTo("#availableItemsList");
-        });
-
-        // 4. 폼 제출 시, 각 li의 value 속성을 수집하여 hidden input에 설정
-        $("#categoryForm").on("submit", function () {
-            var selectedOptionIds = [];
-            $("#selectedItemsList li").each(function () {
-                selectedOptionIds.push($(this).attr("value"));
-            });
-            $("#optionIds").val(selectedOptionIds.join(","));
+    document.addEventListener('DOMContentLoaded', () => {
+        new CategorySelector({
+            modalId: 'categoryModal',
+            listContainerId: 'categoryListContainer',
+            breadcrumbContainerId: 'breadcrumbContainer',
+            confirmBtnId: 'confirmBtn',
+            goBackBtnId: 'goBackBtn',
+            selectedDisplayId: 'selectedParent',
+            hiddenInputId: 'categoryId'
         });
     });
 </script>

@@ -42,8 +42,7 @@ public class ProductMapper {
         // 4) 기타 이미지 매핑
         List<UploadFileResponse> images = product.getProductImages().stream()
                 .filter(productImage -> !productImage.isThumbnail())
-                .map(ProductImage::getUploadFile)
-                .map(uploadFile -> basicMapper.map(uploadFile, UploadFileResponse.class))
+                .map(productImage -> basicMapper.map(productImage.getUploadFile(), UploadFileResponse.class))
                 .toList();
 
         // 5) 옵션 매핑

@@ -1,13 +1,30 @@
 /**
- * 상품 등록 Form 관리
+ * 상품 수정 Form 관리
  */
-class ProductNewForm {
+class ProductEditForm {
     constructor() {
         this.form = document.getElementById('productForm');
         this.optionsContainer = document.getElementById('productOptionsContainer');
         this.cards = [];
         this.counter = 0;
         this._bind();
+        this._hydrateInitial();
+    }
+
+    _hydrateInitial() {
+        if (!window.initialProductOptions) return;
+        window.initialProductOptions.forEach(opt => {
+            this._addCard(opt.global, {
+                name: opt.name,
+                templateId: opt.globalOptionId,
+                optionValues: opt.productOptionValues.map(v => ({
+                    optionValue: v.productOptionValue,
+                    additionalPrice: v.additionalPrice,
+                    stockQuantity: v.stockQuantity,
+                    global: v.global
+                }))
+            });
+        });
     }
 
     _bind() {
@@ -79,6 +96,7 @@ class ProductNewForm {
 
     _gather() {
         return {
+            id: document.getElementById('id').value,
             name: document.getElementById('name').value,
             description: document.getElementById('description').value,
             basePrice: document.getElementById('basePrice').value,
@@ -94,21 +112,22 @@ class ProductNewForm {
         e.preventDefault();
         try {
             // 썸네일 및 추가 이미지 업로드
-            let thumbData = null;
-            const imagesData = [];
+            let thumbData = [initialThumbnail];         // 기본적으로 기존 썸네일 데이터 유지
+            let imagesData = initialImages.slice();   // 기존 상품 이미지 데이터 복사
 
             // 썸네일 업로드 (파일이 존재하면 업로드 수행)
             const thumbInput = document.getElementById('thumbnail');
-            if (thumbInput.files.length) {
+            if (thumbInput.files.length > 0) {
                 thumbData = await uploadFiles(thumbInput.files);
             }
 
             // 추가 이미지 업로드 (파일이 존재하면 업로드 수행)
             const imagesInput = document.getElementById('images');
             if (imagesInput.files.length > 0) {
-                // 보수적 처리 (이미 onchange 시 체크하지만 중복 체크)
-                if (imagesInput.files.length > 4) {
-                    alert("추가 상품 이미지는 최대 4장까지만 업로드할 수 있습니다.");
+                // 총 추가 이미지 수가 4장을 초과하는지 체크
+                const totalNewCount = imagesInput.files.length + imagesData.length;
+                if (totalNewCount > 4) {
+                    alert("상품 이미지는 최대 4장까지만 업로드할 수 있습니다.(이미 등록된 이미지 포함)");
                     return;
                 }
                 imagesData.push(...await uploadFiles(imagesInput.files));
@@ -118,13 +137,13 @@ class ProductNewForm {
             const data = this._gather();
             data.thumbnail = thumbData[0];
             data.images = imagesData;
-            const res = await fetch('/seller/products/new', {
+            const res = await fetch(`/seller/products/${data.id}/edit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
-            if (!res.ok) throw new Error('상품 등록 실패');
+            if (!res.ok) throw new Error('상품 수정 실패');
             const result = await res.json();
 
             window.location.replace(`/seller/products/${result.id}`);
@@ -137,6 +156,8 @@ class ProductNewForm {
 
 // 파일 업로드 함수
 async function uploadFiles(files) {
+    const productId = document.getElementById('id').value;
+
     const fm = new FormData();
     // 모든 파일을 'files' 키에 추가
     for (const file of files) {
@@ -153,45 +174,52 @@ async function uploadFiles(files) {
 }
 
 
-// 썸네일 이미지 미리보기
-document.getElementById('thumbnail').addEventListener('change', function () {
-    var preview = document.getElementById('thumbnailPreview');
-    preview.innerHTML = ""; // 기존 미리보기 초기화
-    if (this.files && this.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            preview.innerHTML = '<img src="' + e.target.result + '" class="preview-img" alt="썸네일 미리보기"/>';
+// 지정한 이미지 URL을 서버에 삭제 요청
+async function deleteImage(storeFileName) {
+    try {
+        const productId = document.getElementById('id').value;
+        const response = await fetch(`/api/products/${productId}/images/${storeFileName}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(storeFileName)
+        });
+        if (!response.ok) {
+            throw new Error('삭제 실패');
         }
-        reader.readAsDataURL(this.files[0]);
+        return true;
+    } catch (error) {
+        alert("이미지 삭제 중 오류 발생: " + error);
+        return false;
     }
-});
+}
 
-// 추가 이미지 미리보기 및 최대 4장 제한
-document.getElementById('images').addEventListener('change', function () {
-    var preview = document.getElementById('imagesPreview');
-    preview.innerHTML = ""; // 미리보기 영역 초기화
-    if (this.files) {
-        // 선택된 파일 수가 4장을 초과하면 경고 후 파일 선택 초기화
-        if (this.files.length > 4) {
-            alert("추가 상품 이미지는 최대 4장까지만 업로드할 수 있습니다.");
-            this.value = "";
-            return;
-        }
-        for (var i = 0; i < this.files.length; i++) {
-            var file = this.files[i];
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = "preview-img";
-                img.alt = "추가 이미지 미리보기";
-                preview.appendChild(img);
+// 삭제 버튼 이벤트 핸들러 (썸네일 및 추가 이미지 삭제)
+document.addEventListener('click', async function (event) {
+    if (event.target.matches('.delete-thumbnail-btn')) {
+        var imageUrl = event.target.getAttribute('data-image-url');
+        if (confirm("썸네일 이미지를 삭제하시겠습니까?")) {
+            if (await deleteImage(imageUrl)) {
+                initialThumbnail = "";
+                document.getElementById('currentThumbnail').innerHTML = "<p>썸네일이 삭제되었습니다.</p>";
             }
-            reader.readAsDataURL(file);
+        }
+    }
+    if (event.target.matches('.delete-additional-btn')) {
+        var imageUrl = event.target.getAttribute('data-image-url');
+
+        if (confirm("해당 상품 이미지를 삭제하시겠습니까?")) {
+            if (await deleteImage(imageUrl)) {
+                var liElement = event.target.closest('li');
+                if (liElement) {
+                    liElement.remove();
+                }
+                initialImages = initialImages.filter(function (uploadFile) {
+                    return uploadFile.storeFileName !== imageUrl;
+                });
+            }
         }
     }
 });
-
 
 // 페이지 로드시 인스턴스화
-document.addEventListener('DOMContentLoaded', () => new ProductNewForm());
+document.addEventListener('DOMContentLoaded', () => new ProductEditForm());

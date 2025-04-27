@@ -20,16 +20,13 @@ import com.demo.variety_store_mono.seller.dto.response.ProductResponse;
 import com.demo.variety_store_mono.utility.FileStore;
 import com.demo.variety_store_mono.utility.mapper.ProductMapper;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.attribute.standard.Destination;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -150,6 +147,36 @@ public class ProductService {
                 request.getStockQuantity(), request.getAttributes()
         );
 
+        // 상품 썸네일 수정.
+        if (product.getThumbnail() == null) {
+            ProductImage thumbnail = ProductImage.builder()
+                    .uploadFile(new UploadFile(request.getThumbnail().getUploadFileName(),
+                            request.getThumbnail().getStoreFileName())
+                    )
+                    .isThumbnail(true)
+                    .build();
+            product.setThumbnail(thumbnail);
+        }
+
+        // 상품 이미지 수정.
+        for (UploadFileRequest uploadFileRequest : request.getImages()) {
+            UploadFile uploadFile = new UploadFile(uploadFileRequest.getUploadFileName(),
+                    uploadFileRequest.getStoreFileName());
+
+            List<String> list = product.getImages().stream()
+                    .map(productImage -> productImage.getUploadFile().getStoreFileName())
+                    .toList();
+
+            if (list.contains(uploadFile.getStoreFileName())) continue;
+
+            ProductImage productImage = ProductImage.builder()
+                    .uploadFile(uploadFile)
+                    .isThumbnail(false)
+                    .build();
+
+            product.addImage(productImage);
+        }
+
         // 상품 옵션 관련 처리
         if (request.isSingle()) {
             // 단일 상품으로 수정하는 경우: 기존 옵션이 있다면 모두 삭제.
@@ -188,7 +215,24 @@ public class ProductService {
     }
 
     /** 상품 삭제 */
-    public void deleteCategory(Long productId) {
+
+
+    /** 상품 이미지 삭제 */
+    @Transactional
+    public void deleteProductImage(Long productId, String storeFileName) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found. id=" + productId));
+
+        ProductImage target = product.getProductImages().stream()
+                .filter(images -> images.getUploadFile().getStoreFileName().equals(storeFileName))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "ProductImage not found. storeFileName=" + storeFileName));
+
+        // 물리 파일 삭제
+
+        // 논리 파일 삭제(DB에 저장된 데이터 제거)
+        product.removeImage(target);
     }
 
     private ProductOption generateProductOption(ProductOptionRequest request) {

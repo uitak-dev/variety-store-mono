@@ -128,6 +128,13 @@ public class Product {
                 .orElse(null);
     }
 
+    // 상품 이미지 조회.(썸네일 이미지 제외)
+    public List<ProductImage> getImages() {
+        return productImages.stream()
+                .filter(productImage -> !productImage.isThumbnail())
+                .toList();
+    }
+
     // 상품 썸네일 이미지 수정.
     public void setThumbnail(ProductImage newThumbnail) {
         Optional<ProductImage> findThumbnail = productImages.stream()

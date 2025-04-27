@@ -82,9 +82,6 @@ public class ProductController {
         }
 
         model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.getBottomCategories());
-        model.addAttribute("productStatusList", ProductStatus.values());
-
         return "seller/content/product/product-edit";
     }
 

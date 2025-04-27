@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="common_head(title, link)">
+<head th:fragment="common_head(title, link, style)">
 
     <title th:replace="${title}">페이지 제목</title>
 
@@ -25,6 +25,11 @@
     <!-- 추가 link -->
     <th:block th:if="${link != null}">
         <th:block th:replace="${link}"></th:block>
+    </th:block>
+
+    <!-- 추가 style -->
+    <th:block th:if="${style != null}">
+        <th:block th:replace="${style}"></th:block>
     </th:block>
 </head>
 
