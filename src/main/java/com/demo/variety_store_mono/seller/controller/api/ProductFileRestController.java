@@ -28,6 +28,7 @@ public class ProductFileRestController {
         this.modelMapper = modelMapper;
     }
 
+    /** 상품 이미지 업로드 */
     @PostMapping("/images")
     public ResponseEntity<List<UploadFileResponse>> uploadImages(@RequestParam("files") List<MultipartFile> files) throws IOException {
         List<UploadFile> uploadFiles = fileStore.storeFiles(files);
@@ -36,6 +37,7 @@ public class ProductFileRestController {
                 .toList());
     }
 
+    /** 상품 이미지 삭제 */
     @DeleteMapping("/{productId}/images/{storeFileName}")
     public ResponseEntity<Void> deleteImages(@PathVariable Long productId, @PathVariable String storeFileName) {
          productService.deleteProductImage(productId, storeFileName);

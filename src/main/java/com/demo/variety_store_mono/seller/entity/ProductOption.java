@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.seller.entity;
 
 import com.demo.variety_store_mono.admin.entity.GlobalOption;
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductOption {
+public class ProductOption extends Audit {
 
     @Id
     @GeneratedValue
@@ -33,7 +34,7 @@ public class ProductOption {
     private String name;        // 판매자 정의 옵션 이름 (예: "색상", "RAM", "저장 용량")
 
     @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<ProductOptionValue> productOptionValues = new LinkedHashSet<>();
 
     @Builder

@@ -80,7 +80,7 @@
                                 <div th:if="*{thumbnail != null}" id="currentThumbnail">
                                     <p>등록된 썸네일:</p>
                                     <div class="image-container">
-                                        <img th:src="@{/api/images/{image}(image=*{thumbnail.storeFileName})}"
+                                        <img th:src="@{/api/products/images/{image}(image=*{thumbnail.storeFileName})}"
                                              th:alt="*{thumbnail.uploadFileName}" width="150" />
                                         <button type="button" class="delete-btn delete-thumbnail-btn"
                                                 th:attr="data-image-url=*{thumbnail.storeFileName}">삭제</button>
@@ -98,7 +98,7 @@
                                     <ul id="imagesList">
                                         <li th:each="image : *{images}">
                                             <div class="image-container">
-                                                <img th:src="@{/api/images/{file}(file=${image.storeFileName})}"
+                                                <img th:src="@{/api/products/images/{file}(file=${image.storeFileName})}"
                                                      th:alt="${image.uploadFileName}" width="150" />
                                                 <button type="button" class="delete-btn delete-additional-btn"
                                                         th:attr="data-image-url=${image.storeFileName}">삭제</button>

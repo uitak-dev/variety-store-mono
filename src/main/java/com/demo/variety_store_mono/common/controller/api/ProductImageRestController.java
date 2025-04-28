@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.MalformedURLException;
 
 @RestController
-@RequestMapping("/api/images")
-public class ImageRestController {
+@RequestMapping("/api/products/images")
+public class ProductImageRestController {
 
     private final FileStore fileStore;
 
-    public ImageRestController(@Qualifier("localFileStore") FileStore fileStore) {
+    public ProductImageRestController(@Qualifier("localFileStore") FileStore fileStore) {
         this.fileStore = fileStore;
     }
 

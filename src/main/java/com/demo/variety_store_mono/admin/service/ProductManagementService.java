@@ -8,6 +8,7 @@ import com.demo.variety_store_mono.config.modelmapper.SellerToSellerDetailRespon
 import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductStatus;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
+import com.demo.variety_store_mono.utility.mapper.ProductManagementMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
@@ -42,7 +43,7 @@ public class ProductManagementService {
         Product product = productRepository.findProductManagementDetails(productId)
                 .orElseThrow(() -> new EntityNotFoundException("관련 상품을 찾을 수 없습니다."));
 
-        return modelMapper.map(product, ProductManagementResponse.class);
+        return ProductManagementMapper.toResponse(product);
     }
 
     // 등록 상태 변경.

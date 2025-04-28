@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.admin.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import com.demo.variety_store_mono.security.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Admin {
+public class Admin{
 
     @Id
     private Long id; // User와 동일한 ID 사용 (Foreign Key)

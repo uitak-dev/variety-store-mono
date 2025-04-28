@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.seller.entity;
 
 import com.demo.variety_store_mono.admin.entity.Category;
+import com.demo.variety_store_mono.common.entity.Audit;
 import com.demo.variety_store_mono.seller.entity.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
         name = "product_category",
         uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "category_id"})
 )
-public class ProductCategory {
+public class ProductCategory extends Audit {
 
     @Id
     @GeneratedValue

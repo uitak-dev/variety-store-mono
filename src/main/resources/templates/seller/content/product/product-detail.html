@@ -44,7 +44,7 @@
                         <label class="form-label">썸네일</label>
                         <div id="thumbnailPreview" class="preview-container">
                             <div class="preview-item">
-                                <img th:src="@{/api/images/{f}(f=${product.thumbnail.storeFileName})}"
+                                <img th:src="@{/api/products/images/{f}(f=${product.thumbnail.storeFileName})}"
                                      th:alt="${product.thumbnail.uploadFileName}" />
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                         <label class="form-label">추가 상품 이미지</label>
                         <div id="imagesPreview" class="preview-container">
                             <div th:each="img : ${product.images}" class="preview-item">
-                                <img th:src="@{/api/images/{f}(f=${img.storeFileName})}"
+                                <img th:src="@{/api/products/images/{f}(f=${img.storeFileName})}"
                                      th:alt="${img.uploadFileName}" />
                             </div>
                         </div>

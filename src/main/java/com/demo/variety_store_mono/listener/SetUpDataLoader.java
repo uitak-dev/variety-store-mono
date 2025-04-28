@@ -7,14 +7,13 @@ import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.admin.repository.CategoryRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionRepository;
 import com.demo.variety_store_mono.admin.repository.GlobalOptionValueRepository;
+import com.demo.variety_store_mono.common.entity.UploadFile;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
-import com.demo.variety_store_mono.seller.entity.Product;
-import com.demo.variety_store_mono.seller.entity.ProductOption;
-import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
-import com.demo.variety_store_mono.seller.entity.Seller;
+import com.demo.variety_store_mono.seller.dto.request.UploadFileRequest;
+import com.demo.variety_store_mono.seller.entity.*;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
@@ -29,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -663,6 +663,30 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
                 .manufactureDate(LocalDate.now())
                 .seller(seller)
                 .build();
+
+        // 상품 썸네일 등록.
+        int randomNumber = ThreadLocalRandom.current().nextInt(1, 18);
+        ProductImage thumbnail = ProductImage.builder()
+                .uploadFile(new UploadFile("gift-box_" + String.format("%02d", randomNumber) + ".png",
+                        "gift-box_" + String.format("%02d", randomNumber) + ".png")
+                )
+                .isThumbnail(true)
+                .build();
+        product.addImage(thumbnail);
+
+        // 상품 이미지 등록.
+        for (int i = 0; i < 4; i++) {
+            randomNumber = ThreadLocalRandom.current().nextInt(1, 18);
+            UploadFile uploadFile = new UploadFile("gift-box_" + String.format("%02d", randomNumber) + ".png",
+                    "gift-box_" + String.format("%02d", randomNumber) + ".png");
+
+            ProductImage productImage = ProductImage.builder()
+                    .uploadFile(uploadFile)
+                    .isThumbnail(false)
+                    .build();
+
+            product.addImage(productImage);
+        }
 
         // 옵션 상품인 경우, 연관관계 처리.
         if ( !(single || productOptionList.isEmpty()) ) {

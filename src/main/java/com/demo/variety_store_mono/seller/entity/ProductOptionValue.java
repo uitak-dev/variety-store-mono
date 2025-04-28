@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.seller.entity;
 
 import com.demo.variety_store_mono.admin.entity.GlobalOptionValue;
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductOptionValue {
+public class ProductOptionValue extends Audit {
 
     @Id
     @GeneratedValue

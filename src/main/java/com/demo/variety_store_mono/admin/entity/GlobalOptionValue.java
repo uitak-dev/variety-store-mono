@@ -1,13 +1,14 @@
 package com.demo.variety_store_mono.admin.entity;
 
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GlobalOptionValue {
+public class GlobalOptionValue extends Audit {
 
     @Id
     @GeneratedValue

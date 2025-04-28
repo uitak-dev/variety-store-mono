@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.admin.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GlobalOption {
+public class GlobalOption extends Audit {
 
     @Id
     @GeneratedValue
@@ -23,7 +24,7 @@ public class GlobalOption {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "global_option_id")  // 부모의 id를 외래키로 자식 테이블에 직접 생성.
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<GlobalOptionValue> globalOptionValues = new LinkedHashSet<>();
 
     @Builder

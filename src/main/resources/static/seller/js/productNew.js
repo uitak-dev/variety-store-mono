@@ -143,10 +143,14 @@ async function uploadFiles(files) {
         fm.append('files', file);
     }
 
+    console.log(fm);
+
     const res = await fetch(`/api/products/images`, {
         method: 'POST',
         body: fm
     });
+
+    console.log(res);
 
     if (!res.ok) throw new Error('이미지 업로드 실패');
     return res.json(); // 업로드된 파일 데이터 반환(배열)

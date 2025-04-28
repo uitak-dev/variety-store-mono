@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.seller.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import com.demo.variety_store_mono.common.entity.UploadFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductImage {
+public class ProductImage extends Audit {
 
     @Id
     @GeneratedValue

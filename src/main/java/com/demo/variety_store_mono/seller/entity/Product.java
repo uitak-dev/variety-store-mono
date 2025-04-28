@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.seller.entity;
 
 import com.demo.variety_store_mono.admin.entity.Category;
+import com.demo.variety_store_mono.common.entity.Audit;
 import com.demo.variety_store_mono.seller.converter.ProductAttributeConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class Product extends Audit {
 
     @Id
     @GeneratedValue
@@ -54,11 +55,11 @@ public class Product {
     private Seller seller;    // 판매자
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<ProductCategory> productCategories = new LinkedHashSet<>();    // 상품 카테고리
 
     @OneToMany(mappedBy ="product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<ProductOption> productOptions = new LinkedHashSet<>();    // 상품 옵션
 
     @Enumerated(EnumType.STRING)

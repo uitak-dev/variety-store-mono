@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.admin.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import com.demo.variety_store_mono.security.entity.UserRole;
 import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductCategory;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class Category extends Audit {
 
     @Id
     @GeneratedValue
@@ -32,17 +33,17 @@ public class Category {
 
     // 자식 카테고리 (self-referencing)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<Category> children = new LinkedHashSet<>();
 
     // 상품과의 연관관계
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<ProductCategory> productCategories = new LinkedHashSet<>();
 
     // 옵션과의 연관관계
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id asc")
+    @OrderBy("id desc")
     private Set<CategoryGlobalOption> categoryGlobalOptions = new LinkedHashSet<>();
 
     @Builder

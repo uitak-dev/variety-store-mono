@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.admin.entity;
 
+import com.demo.variety_store_mono.common.entity.Audit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryGlobalOption {
+public class CategoryGlobalOption extends Audit {
 
     @Id
     @GeneratedValue

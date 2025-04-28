@@ -38,6 +38,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
 
     private QProduct product = QProduct.product;
     private QProductCategory productCategory = QProductCategory.productCategory;
+    private QProductImage productImage = QProductImage.productImage;
     private QCategory category = QCategory.category;
     private QProductOption productOption = QProductOption.productOption;
     private QProductOptionValue productOptionValue = QProductOptionValue.productOptionValue;
@@ -84,6 +85,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                 .leftJoin(productCategory.category, category).fetchJoin()
                 .leftJoin(product.productOptions, productOption)
                 .leftJoin(productOption.productOptionValues, productOptionValue)
+                .orderBy(product.id.desc())
                 .groupBy(product.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -122,6 +124,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                 .leftJoin(productCategory.category, category).fetchJoin()
                 .leftJoin(product.seller, seller).fetchJoin()
                 .leftJoin(product.seller.user, user).fetchJoin()
+                .orderBy(product.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .distinct()
@@ -154,12 +157,13 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
 
         // 기본 쿼리: Product를 조회하고, ProductCategory를 inner join하여 필터링.
         List<ProductCatalogSummary> content = queryFactory.selectFrom(product)
-                .distinct()
                 .innerJoin(product.productCategories, productCategory)
+                .leftJoin(product.productImages, productImage).fetchJoin()
                 .where(
                         productCategory.category.id.in(categoryIds),
                         product.status.in(ProductStatus.APPROVED, ProductStatus.OUT_OF_STOCK)
                 )
+                .orderBy(product.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .distinct()

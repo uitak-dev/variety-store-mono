@@ -1,10 +1,10 @@
 package com.demo.variety_store_mono.seller.dto.response;
 
+import com.demo.variety_store_mono.common.response.RoleResponse;
 import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
