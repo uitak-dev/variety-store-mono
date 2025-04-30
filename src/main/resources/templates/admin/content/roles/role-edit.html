@@ -27,11 +27,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">역할 이름</label>
-                            <input type="text" th:field="*{name}" id="name" class="form-control">
+                            <input type="text" th:field="*{name}" id="name" class="form-control"
+                                   th:errorclass="field-error">
+                            <div class="field-error" th:errors="*{name}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">역할 설명</label>
-                            <input type="text" th:field="*{description}" id="description" class="form-control">
+                            <input type="text" th:field="*{description}" id="description" class="form-control"
+                                   th:errorclass="field-error">
+                            <div class="field-error" th:errors="*{description}"></div>
                         </div>
 
                         <!-- 버튼 -->

@@ -252,6 +252,28 @@ footer {
 
 
 
+/* 오류 발생 시 input 필드 스타일 */
+input.field-error {
+    border: 2px solid #dc3545; /* 빨간색 테두리 */
+    color: #721c24; /* 글자 색상을 오류 강조 */
+}
+
+/* 오류 메시지 스타일 */
+.field-error {
+    color: #dc3545; /* 오류 메시지 빨간색 */
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 오류 메시지 강조 */
+.field-error::before {
+    content: "⚠ "; /* 경고 아이콘 추가 */
+    font-weight: bold;
+}
+
+
+
 /* 상품 등록/수정 이미지 미리보기 */
 .preview-container {
     display: flex;

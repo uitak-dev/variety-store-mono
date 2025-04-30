@@ -6,13 +6,16 @@ import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
 import com.demo.variety_store_mono.admin.dto.summary.CategorySummary;
 import com.demo.variety_store_mono.admin.service.CategoryService;
 import com.demo.variety_store_mono.admin.service.GlobalOptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -21,6 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -70,8 +74,14 @@ public class CategoryController {
 
     /** 카테고리 등록 API */
     @PostMapping("/new")
-    public String newCategory(@ModelAttribute CategoryRequest request,
-                              RedirectAttributes redirectAttributes) {
+    public String newCategory(@ModelAttribute("category") @Valid CategoryRequest request, BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            model.addAttribute("options", globalOptionService.getAllOption());
+            return "admin/content/category/category-new";
+        }
 
         CategoryResponse category = categoryService.createCategory(request);
         redirectAttributes.addAttribute("categoryId", category.getId());
@@ -105,9 +115,7 @@ public class CategoryController {
 
     /** 카테고리 수정 API */
     @PostMapping("/{categoryId}/edit")
-    public String updateCategory(@PathVariable Long categoryId,
-                                 CategoryRequest request, Model model) {
-
+    public String updateCategory(@PathVariable Long categoryId, CategoryRequest request) {
         CategoryResponse category = categoryService.updateCategory(categoryId, request);
         return "redirect:/admin/categories/{categoryId}";
     }

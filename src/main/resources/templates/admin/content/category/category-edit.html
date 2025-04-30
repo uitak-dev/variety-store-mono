@@ -39,7 +39,9 @@
                         <!-- 카테고리 기본 정보 -->
                         <div class="mb-3">
                             <label for="name" class="form-label">카테고리 이름</label>
-                            <input type="text" th:field="*{name}" id="name" class="form-control" required />
+                            <input type="text" th:field="*{name}" id="name" class="form-control" required
+                                   th:errorclass="field-error" />
+                            <div class="field-error" th:errors="*{name}"></div>
                         </div>
 
                         <!-- 카테고리에 포함시킬 옵션 템플릿 선택 영역 -->

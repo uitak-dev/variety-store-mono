@@ -4,19 +4,23 @@ import com.demo.variety_store_mono.admin.dto.request.RoleRequest;
 import com.demo.variety_store_mono.admin.dto.search.SearchRole;
 import com.demo.variety_store_mono.admin.dto.response.RoleResponse;
 import com.demo.variety_store_mono.admin.service.RoleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/roles")
 @RequiredArgsConstructor
+@Slf4j
 public class RoleManagementController {
 
     private final RoleService roleService;
@@ -51,7 +55,15 @@ public class RoleManagementController {
 
     /** 역할 등록 API */
     @PostMapping("/new")
-    public String newRole(RoleRequest request, RedirectAttributes redirectAttributes) {
+    public String newRole(@ModelAttribute("role") @Valid RoleRequest request, BindingResult bindingResult,
+                          Model model, RedirectAttributes redirectAttributes) {
+
+        // 검증에 실패하면 다시 입력 폼으로
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            return "admin/content/roles/role-new";
+        }
+
         RoleResponse role = roleService.createRole(request);
         redirectAttributes.addAttribute("roleId", role.getId());
         return "redirect:/admin/roles/{roleId}";
@@ -69,7 +81,14 @@ public class RoleManagementController {
 
     /** 역할 수정 API */
     @PostMapping("/{roleId}/edit")
-    public String updateRole(@PathVariable Long roleId, RoleRequest request, Model model) {
+    public String updateRole(@PathVariable Long roleId, @ModelAttribute("role") @Valid RoleRequest request,
+                             BindingResult bindingResult) {
+
+        // 검증에 실패하면 다시 입력 폼으로
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            return "admin/content/roles/role-edit";
+        }
 
         roleService.update(roleId, request);
         return "redirect:/admin/roles/{roleId}";

@@ -5,19 +5,23 @@ import com.demo.variety_store_mono.admin.dto.search.SearchOption;
 import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import com.demo.variety_store_mono.admin.dto.summary.GlobalOptionSummary;
 import com.demo.variety_store_mono.admin.service.GlobalOptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/options")
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalOptionController {
 
     private final GlobalOptionService globalOptionService;
@@ -48,14 +52,13 @@ public class GlobalOptionController {
     public String optionNew(Model model) {
 
         model.addAttribute("option", new GlobalOptionRequest());
-
         return "admin/content/option/option-new";
     }
 
     /** 옵션 등록 API */
     @PostMapping("/new")
-    public String newOption(@ModelAttribute GlobalOptionRequest request,
-                              RedirectAttributes redirectAttributes) {
+    public String newOption(@ModelAttribute("option") GlobalOptionRequest request, BindingResult bindingResult,
+                            RedirectAttributes redirectAttributes) {
 
         GlobalOptionResponse option = globalOptionService.createGlobalOption(request);
         redirectAttributes.addAttribute("optionId", option.getId());
@@ -75,7 +78,7 @@ public class GlobalOptionController {
     /** 옵션 수정 API */
     @PostMapping("/{optionId}/edit")
     public String updateOption(@PathVariable Long optionId,
-                                 GlobalOptionRequest request, Model model) {
+                               @ModelAttribute GlobalOptionRequest request, Model model) {
 
         GlobalOptionResponse option = globalOptionService.updateGlobalOption(optionId, request);
         return "redirect:/admin/options/{optionId}";
