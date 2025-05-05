@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{customer/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
+    <title>Variety-Store</title>
+</head>
+<body>
+<header th:replace="~{customer/layout/base :: common_header}"></header>
+
+<div class="content-wrapper">
+    <main>
+        <h2>장바구니</h2>
+        <div th:if="${#lists.isEmpty(cart.cartItems)}">
+            <p>장바구니가 비어 있습니다.</p>
+            <a class="btn btn-primary" th:href="@{/public/home}">상품 보러가기</a>
+        </div>
+        <div th:if="${!#lists.isEmpty(cart.cartItems)}">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">상품</th>
+                    <th scope="col">옵션</th>
+                    <th scope="col" class="text-center">수량</th>
+                    <th scope="col" class="text-end">단가</th>
+                    <th scope="col" class="text-end">합계</th>
+                    <th scope="col" class="text-center">삭제</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${cart.cartItems}" th:data-item-id="${item.id}">
+                    <!-- 이미지 + 이름 -->
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img th:src="@{/api/products/images/{f}(f=${item.product.thumbnail.storeFileName})}"
+                                 alt="${item.product.thumbnail.uploadFileName}" class="me-2"
+                                 style="width:60px; height:60px; object-fit:cover;">
+                            <div>
+                                <p class="mb-1" th:text="${item.product.name}">상품명</p>
+                                <small class="text-muted"
+                                       th:text="|상품 가격: ${#numbers.formatInteger(item.product.basePrice, 4, 'COMMA')}|">상품 가격</small><br>
+                                <small class="text-muted"
+                                       th:text="|판매자: ${item.product.seller.userName}|">판매자 아이디</small>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- 옵션 리스트 -->
+                    <td>
+                        <ul class="list-unstyled mb-0" th:each="opt : ${item.cartItemOptions}">
+                            <li>
+                                <small th:text="|${opt.optionName}: ${opt.optionValue}, (+${#numbers.formatInteger(opt.additionalPrice, 4, 'COMMA')})|">
+                                    사이즈: M, +추가금액</small>
+                            </li>
+                        </ul>
+                    </td>
+
+                    <!-- 수량 변경 -->
+                    <td class="text-center">
+                        <input type="number" class="form-control form-control-sm quantity-input" min="1"
+                               th:value="${item.quantity}" style="width:80px;">
+                    </td>
+
+                    <!-- 단가(옵션 포함) -->
+                    <td class="text-end" th:text="|${#numbers.formatInteger(item.unitPrice, 4, 'COMMA')} 원|">₩0</td>
+                    <!-- 합계 -->
+                    <td class="text-end"
+                        th:text="|${#numbers.formatInteger(item.unitPrice * item.quantity, 4, 'COMMA')} 원|">₩0</td>
+
+                    <!-- 삭제 버튼 -->
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-danger remove-btn" title="삭제">×</button>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="4" class="text-end">총 합계</th>
+                    <th class="text-end" th:text="|${#numbers.formatInteger(cart.totalPrice, 4, 'COMMA')} 원|">₩0</th>
+                    <th></th>
+                </tr>
+                </tfoot>
+            </table>
+
+            <!-- 주문하기 -->
+            <div class="d-flex justify-content-end">
+                <button id="checkoutBtn" class="btn btn-primary">주문하기</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{customer/layout/base :: common_footer}"></footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const removeItem = (itemId) => {
+            return fetch(`/customer/api/carts/items/${itemId}`, { method: 'DELETE' })
+                .then(res => {
+                    if (!res.ok) throw new Error('삭제에 실패했습니다.');
+                });
+        };
+
+        // 수량 input 이벤트 바인딩
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const tr = e.target.closest('tr');
+                const qty = parseInt(e.target.value, 10) || 1;
+                e.target.value = qty;  // 최소 1 보장
+
+                // 1) 해당 행의 단가 가져오기
+                const unitPrice = Number(
+                    tr.querySelector('td:nth-child(4)').textContent
+                        .replace(/[^0-9]/g, '')
+                );
+                // 2) 소계 계산해 갱신
+                tr.querySelector('td:nth-child(5)').textContent =
+                    (unitPrice * qty).toLocaleString() + ' 원';
+
+                // 3) 전체 합계 다시 계산
+                const total = Array.from(document.querySelectorAll('tbody tr'))
+                    .reduce((sum, row) => {
+                        const text = row.querySelector('td:nth-child(5)').textContent;
+                        return sum + Number(text.replace(/[^0-9]/g, ''));
+                    }, 0);
+                document.querySelector('tfoot th:nth-child(2)').textContent =
+                    total.toLocaleString() + ' 원';
+            });
+        });
+
+        // 삭제 버튼 이벤트
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tr = e.target.closest('tr');
+                const itemId = tr.getAttribute('data-item-id');
+                if (confirm('정말로 삭제하시겠습니까?')) {
+                    removeItem(itemId)
+                        .then(() => window.location.reload())
+                        .catch(err => alert(err.message));
+                }
+            });
+        });
+
+        // 주문하기
+    });
+</script>
+</body>
+</html>

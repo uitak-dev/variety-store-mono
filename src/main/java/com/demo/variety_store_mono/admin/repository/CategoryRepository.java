@@ -33,4 +33,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Custo
             "where c.id = :categoryId " +
             "order by go.id asc, gov.id asc")
     Optional<Category> findCategoryDetailsById(@Param("categoryId") Long categoryId);
+
+    /** 카테고리 트리 생성을 위해, 하위 카테고리를 포함한 모든 카테고리 조회. */
+    @Query("""
+        select distinct c
+        from Category c
+            left join fetch c.parent parent
+            left join fetch c.children child
+        order by c.id asc, child.id asc
+        """)
+    List<Category> findAllWithChildrenOrdered();
 }

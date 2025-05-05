@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductOptionResponse {
 
+    private Long id;
     private boolean global;
 
     // 옵션 이름

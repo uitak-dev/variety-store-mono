@@ -58,7 +58,7 @@ public class Order {
         BigDecimal total = BigDecimal.ZERO;
         for (OrderItem orderItem : orderItems) {
             // 각 주문 항목의 총액 = 단가 * 수량
-            BigDecimal itemTotal = orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+            BigDecimal itemTotal = orderItem.finalUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()));
             total = total.add(itemTotal);
         }
         this.totalPrice = total;

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{customer/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
+    <title>Variety-Store</title>
+    <style>
+        .carousel-item img {
+            height: 400px;
+            object-fit: cover;          /* 비율 유지하면서 잘라내기 */
+            object-position: center;    /* 중앙 기준으로 잘라내기 */
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{customer/layout/base :: common_header}"></header>
+
+<div class="content-wrapper">
+    <main>
+
+        <div class="row">
+            <!-- 이미지 Carousel -->
+            <div class="col-md-6">
+                <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item" th:each="img, stat : ${product.images}"
+                             th:classappend="${stat.index > 0}? '':'active'">
+                            <img th:src="@{/api/products/images/{f}(f=${img.storeFileName})}"
+                                 class="d-block w-100" th:alt="${product.name}" />
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 상품 기본정보 -->
+            <div class="col-md-6">
+                <h1 th:text="${product.name}">상품명</h1>
+                <h3 class="text-danger" th:text="|${#numbers.formatInteger(product.basePrice, 4, 'COMMA')} 원|">₩0</h3>
+                <p th:text="${product.description}">상품 설명이 들어갑니다.</p>
+
+                <!-- 옵션 선택 -->
+                <div th:each="optGroup : ${product.productOptions}" class="mb-3">
+                    <label th:for="'opt-' + ${optGroup.id}" class="form-label"
+                           th:text="${optGroup.name}">옵션명</label>
+                    <select class="form-select" th:id="'opt-' + ${optGroup.id}"
+                            th:name="'options[' + ${optGroup.id} + ']'" required>
+                        <option value="" disabled selected>선택하세요</option>
+                        <option th:each="val : ${optGroup.productOptionValues}"
+                                th:value="${val.id}"
+                                th:text="|${val.productOptionValue} +(${#numbers.formatInteger(val.additionalPrice, 4, 'COMMA')})|">
+                            옵션값
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 수량 -->
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">수량</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control w-25" min="1"
+                           value="1" />
+                </div>
+
+                <!-- 액션 버튼 -->
+                <div class="d-flex gap-2">
+                    <button id="addCartBtn" class="btn btn-outline-primary">장바구니 담기</button>
+                    <button id="buyNowBtn" class="btn btn-primary">바로 구매</button>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- 판매자 정보 -->
+        <div class="seller-info mt-4 p-3 border rounded">
+            <h5>판매자 정보</h5>
+            <p>판매자: <strong th:text="${product.seller.userName ?: ''}">판매자 아이디</strong></p>
+            <p>핸드폰: <span th:text="${product.seller.phoneNumber ?: ''}">핸드폰 번호</span></p>
+            <p>회사: <span th:text="${product.seller.companyName ?: ''}">회사명</span></p>
+        </div>
+
+    </main>
+</div>
+
+<footer th:replace="~{customer/layout/base :: common_footer}"></footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const productId = /*[[${product.id}]]*/ 0;
+        const addCartBtn = document.getElementById('addCartBtn');
+        const buyNowBtn = document.getElementById('buyNowBtn');
+
+        function collectPayload() {
+            // 1) select 요소들을 배열로 가져와서
+            const selects = Array.from(
+                document.querySelectorAll('select[name^="options"]')
+            );
+
+            // 2) 빈 값("")이 아닌, 선택된 value만 Number로 변환해 배열로 수집
+            const optionValueIds = selects
+                .map(sel => Number(sel.value))    // value → 숫자로 변환 (빈 값은 NaN)
+                .filter(value => !isNaN(value));  // NaN(선택 안 함) 걸러내기
+
+            // 3) 수량은 정수로 변환 (기본 1)
+            const rawQty = parseInt(document.getElementById('quantity').value, 10);
+            const quantity = rawQty > 0 ? rawQty : 1;
+
+            return {
+                productId, quantity,
+                optionValueIds  // 선택된 옵션 값 ID 배열
+            };
+        }
+
+        addCartBtn.addEventListener('click', () => {
+            fetch('/customer/api/carts/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(collectPayload())
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    // 인증되지 않았거나 권한이 없는 경우
+                    if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                        window.location.href = '/auth/customer/login';
+                    }
+                    // 이후 처리를 중단하기 위해 에러 던지기
+                    throw new Error('로그인이 필요합니다.');
+                }
+                if (!res.ok) {
+                    throw new Error('장바구니 담기에 실패했습니다.');
+                }
+                return res;
+            })
+            .then(() => {
+                alert('장바구니에 담겼습니다!');
+            })
+            .catch(err => {
+                // 이미 로그인 안내를 한 경우 에러 메시지는 표시하지 않거나,
+                // 네트워크 오류 등 다른 오류만 출력.
+                if (err.message !== '로그인이 필요합니다.') {
+                    alert(err.message);
+                }
+            });
+        });
+
+        /*
+        buyNowBtn.addEventListener('click', () => {
+            fetch('/customer/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(collectPayload())
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('주문에 실패했습니다.');
+                return res.json();
+            })
+            .then(order => {
+                // 주문 완료 페이지로 이동
+                window.location.href = `/order/complete/${order.id}`;
+            })
+            .catch(err => alert(err.message));
+        });
+        */
+    });
+</script>
+</body>
+</html>

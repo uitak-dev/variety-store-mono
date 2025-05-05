@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Variety Store — 도메인 선택</title>
+    <link th:href="@{/public/css/bootstrap.min.css}" rel="stylesheet"/>
+    <script th:src="@{/public/js/bootstrap.bundle.min.js}"></script>
+    <style>
+        .domain-card {
+          cursor: pointer;
+          overflow: hidden;
+          border: none;
+        }
+
+        .domain-card img.card-img {
+          height: 300px;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.2s;
+          filter: brightness(0.8); /* 이미지 자체를 어둡게 */
+        }
+
+        .domain-card:hover img.card-img {
+          transform: scale(1.05);
+        }
+
+        .domain-card .card-img-overlay {
+          background: rgba(0, 0, 0, 0.6);
+          color: #fff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          text-align: center;
+          padding: 1.5rem;
+        }
+
+        .domain-card .card-img-overlay .card-title {
+          font-size: 2rem;    /* 크게 */
+          font-weight: 700;
+          margin-bottom: 1rem;
+        }
+
+        .domain-card .card-img-overlay ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .domain-card .card-img-overlay ul li {
+          font-size: 1.125rem;  /* 기본 텍스트 보다 약간 크게 */
+          margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100 bg-light">
+<div class="container">
+    <h2 class="text-center mb-5">도메인을 선택하세요</h2>
+    <div class="row gy-4">
+
+        <!-- 소비자 도메인 -->
+        <div class="col-md-4">
+            <a th:href="@{/public/home}" class="text-decoration-none">
+                <div class="card domain-card">
+                    <img th:src="@{/public/images/consumer_bg.jpg}" class="card-img" alt="소비자 도메인 배경">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">소비자</h3>
+                        <ul class="list-unstyled">
+                            <li>- 상품 조회</li>
+                            <li>- 장바구니</li>
+                            <li>- 주문(예정)</li>
+                        </ul>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 판매자 도메인 -->
+        <div class="col-md-4">
+            <a th:href="@{/auth/seller/login}" class="text-decoration-none">
+                <div class="card domain-card">
+                    <img th:src="@{/public/images/seller_bg.jpg}" class="card-img" alt="판매자 도메인 배경">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">판매자</h3>
+                        <ul class="list-unstyled">
+                            <li>- 상품 등록</li>
+                            <li>- 재고 관리(예정)</li>
+                            <li>- 매출 조회(예정)</li>
+                        </ul>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 관리자 도메인 -->
+        <div class="col-md-4">
+            <a th:href="@{/auth/admin/login}" class="text-decoration-none">
+                <div class="card domain-card">
+                    <img th:src="@{/public/images/admin_bg.jpg}" class="card-img" alt="관리자 도메인 배경">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">관리자</h3>
+                        <ul class="list-unstyled">
+                            <li>- 사용자 및 권한 관리</li>
+                            <li>- 카테고리 및 옵션 템플릿 관리</li>
+                            <li>- 상품 관리</li>
+                        </ul>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>

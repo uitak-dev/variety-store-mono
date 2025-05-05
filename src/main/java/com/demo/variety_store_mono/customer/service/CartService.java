@@ -1,5 +1,6 @@
 package com.demo.variety_store_mono.customer.service;
 
+import com.demo.variety_store_mono.customer.dto.request.CartItemRequest;
 import com.demo.variety_store_mono.customer.dto.response.CartResponse;
 import com.demo.variety_store_mono.customer.entity.Cart;
 import com.demo.variety_store_mono.customer.entity.CartItem;
@@ -12,6 +13,7 @@ import com.demo.variety_store_mono.security.repository.UserRepository;
 import com.demo.variety_store_mono.seller.entity.Product;
 import com.demo.variety_store_mono.seller.entity.ProductOptionValue;
 import com.demo.variety_store_mono.seller.repository.ProductRepository;
+import com.demo.variety_store_mono.utility.mapper.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -50,20 +52,17 @@ public class CartService {
     }
 
     /** 장바구니 조회. */
-    @Transactional(readOnly = true)
     public CartResponse getCartDetails(Long customerId) {
-        return modelMapper.map(getOrCreateCart(customerId), CartResponse.class);
+        return CartMapper.toResponse(getOrCreateCart(customerId));
     }
 
-    /**
-     * 장바구니에 상품 추가.
-     *
-     * @param customerId          고객 ID
-     * @param productId           추가할 상품 ID
-     * @param quantity            추가할 수량
-     * @param optionValueIds      선택한 옵션 값(ID)의 목록 (없을 경우 null 또는 빈 리스트)
-     */
-    public void addItemToCart(Long customerId, Long productId, int quantity, List<Long> optionValueIds) {
+    /** 장바구니에 상품 추가. */
+    public void addItemToCart(Long customerId, CartItemRequest request) {
+
+        Long productId = request.getProductId();    // 추가할 상품 ID
+        int quantity = request.getQuantity();       // 추가할 수량
+        List<Long> optionValueIds = request.getOptionValueIds();    // 선택한 옵션 값(optionValueIds) 목록
+
         if (quantity <= 0) {
             throw new IllegalArgumentException("수량은 0보다 커야 합니다.");
         }
@@ -84,6 +83,10 @@ public class CartService {
             // 기존 항목이 있다면, 수량 증가.
             CartItem cartItem = existingCartItem.get();
             cartItem.updateQuantity(cartItem.getQuantity() + quantity);
+
+            cartItem.finalUnitPrice();
+            cart.finalTotalPrice();
+
             cartItemRepository.save(cartItem);
         } else {
             // 없으면 장바구니에 새 항목 생성.
@@ -104,8 +107,10 @@ public class CartService {
                     newCartItem.addCartItemOption(itemOption);
                 }
             }
-
+            newCartItem.finalUnitPrice();
             cart.addCartItem(newCartItem);
+
+            cart.finalTotalPrice();
             cartItemRepository.save(newCartItem);
         }
     }
@@ -127,23 +132,34 @@ public class CartService {
     /**
      * 장바구니 항목 수량 업데이트
      */
-    public void updateCartItemQuantity(Long cartItemId, int newQuantity) {
+    public void updateCartItemQuantity(Long customerId, Long cartItemId, int newQuantity) {
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("수량은 0보다 커야 합니다.");
         }
+
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장바구니 항목입니다."));
+
+        Cart cart = getOrCreateCart(customerId);
         cartItem.updateQuantity(newQuantity);
+
+        cartItem.finalUnitPrice();
+        cart.finalTotalPrice();
+
         cartItemRepository.save(cartItem);
     }
 
     /**
      * 장바구니 항목 삭제
      */
-    public void removeCartItem(Long cartItemId) {
-        if (!cartItemRepository.existsById(cartItemId)) {
-            throw new IllegalArgumentException("존재하지 않는 장바구니 항목입니다.");
-        }
+    public void removeCartItem(Long customerId, Long cartItemId) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장바구니 항목입니다."));
+
+        Cart cart = getOrCreateCart(customerId);
+        cart.removeCartItem(cartItem);
+        cart.finalTotalPrice();
+
         cartItemRepository.deleteById(cartItemId);
     }
 }

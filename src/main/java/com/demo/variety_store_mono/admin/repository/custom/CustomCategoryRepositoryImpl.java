@@ -16,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
 
@@ -118,4 +115,5 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
 
         return resultCategoryIds;
     }
+
 }

@@ -4,6 +4,7 @@ import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
 import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import com.demo.variety_store_mono.admin.dto.summary.CategorySummary;
 import com.demo.variety_store_mono.admin.service.CategoryService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,11 @@ public class CategoryRestController {
             return ResponseEntity.ok(categoryService.getTopCategories());
         }
         return ResponseEntity.ok(categoryService.getChildCategories(categoryId));
+    }
+
+    /** 모든 카테고리 조회 */
+    @GetMapping
+    public ResponseEntity<List<CategoryService.CategoryTreeDto>> findAllCategories() {
+        return ResponseEntity.ok(categoryService.getCategoryTree());
     }
 }

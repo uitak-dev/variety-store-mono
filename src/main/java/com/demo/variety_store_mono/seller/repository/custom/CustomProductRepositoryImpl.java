@@ -9,6 +9,7 @@ import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.seller.dto.summary.ProductSummary;
 import com.demo.variety_store_mono.seller.entity.*;
 import com.demo.variety_store_mono.seller.dto.search.SearchProduct;
+import com.demo.variety_store_mono.utility.mapper.ProductCatalogSummaryMapper;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -158,9 +159,10 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
         // 기본 쿼리: Product를 조회하고, ProductCategory를 inner join하여 필터링.
         List<ProductCatalogSummary> content = queryFactory.selectFrom(product)
                 .innerJoin(product.productCategories, productCategory)
+                .innerJoin(productCategory.category, category)
                 .leftJoin(product.productImages, productImage).fetchJoin()
                 .where(
-                        productCategory.category.id.in(categoryIds),
+                        category.id.in(categoryIds),
                         product.status.in(ProductStatus.APPROVED, ProductStatus.OUT_OF_STOCK)
                 )
                 .orderBy(product.id.desc())
@@ -169,15 +171,19 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                 .distinct()
                 .fetch()
                 .stream()
-                .map(product -> modelMapper.map(product, ProductCatalogSummary.class))
+                .map(ProductCatalogSummaryMapper::toResponse)
                 .toList();
 
-        JPAQuery<Long> countQuery = queryFactory.select(product.count())
+        JPAQuery<Long> countQuery = queryFactory
+                .select(product.id.count())      // 또는 Expressions.count(product.id)
                 .from(product)
+                .innerJoin(product.productCategories, productCategory)
+                .innerJoin(productCategory.category, category)
                 .where(
-                        productCategory.category.id.in(categoryIds),
+                        category.id.in(categoryIds),
                         product.status.in(ProductStatus.APPROVED, ProductStatus.OUT_OF_STOCK)
                 );
+
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

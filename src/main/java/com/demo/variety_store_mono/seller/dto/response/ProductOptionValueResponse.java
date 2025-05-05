@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProductOptionValueResponse {
 
+    private Long id;
     private boolean global;
 
     // 옵션 값

@@ -45,7 +45,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, CustomP
             "left join fetch s.user u " +
             "where p.id = :productId " +
                 "and p.status = ProductStatus.APPROVED " +
-                "or p.status = ProductStatus.OUT_OF_STOCK")
+                "or p.status = ProductStatus.OUT_OF_STOCK " +
+            "order by po.id asc, pov.id asc")
     Optional<Product> findProductCatalogDetails(@Param("productId") Long productId);
 
     @Query("select pov from ProductOptionValue pov where pov.id = :optionValueId")

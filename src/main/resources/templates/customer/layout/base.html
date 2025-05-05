@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="common_head(title, link)">
+<head th:fragment="common_head(title, link, style)">
 
     <title th:replace="${title}">페이지 제목</title>
 
@@ -9,101 +9,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/customer/css/common.css">
+    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/common.css">
 
-    <!-- 구글 폰트: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/customer/js/common.js"></script>
+    <script src="/public/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/jquery-3.7.1.slim.min.js"></script>
+    <script src="/public/js/common.js"></script>
 
     <!-- 추가 link -->
     <th:block th:if="${link != null}">
         <th:block th:replace="${link}"></th:block>
     </th:block>
+
+    <!-- 추가 style -->
+    <th:block th:if="${style != null}">
+        <th:block th:replace="${style}"></th:block>
+    </th:block>
 </head>
 
 <!-- 헤더 -->
-<header th:fragment="common_header" class="navbar navbar-expand navbar-light sticky-top">
-    <div class="container d-flex flex-wrap align-items-center justify-content-between">
-        <a class="navbar-brand" href="#">Variety Store</a>
-        <ul class="navbar-nav nav-underline ms-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#">홈</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">서비스</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">고객지원</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">연락처</a>
-            </li>
-        </ul>
-        <!-- 사용자 정보 -->
-        <div class="user-info ms-5">
-            <img src="https://i.pinimg.com/474x/2f/55/97/2f559707c3b04a1964b37856f00ad608.jpg" alt="User Avatar">
-            <span th:text="${#authentication.getName()}"></span>
+<header th:fragment="common_header">
+    <div class="container">
+        <!-- 로고 / 타이틀 -->
+        <h1>Variety Store</h1>
+
+        <!-- 네비게이션 -->
+        <nav>
+            <ul>
+                <li><a class="active" th:href="@{/public/home}">홈</a></li>
+                <li th:if="${isAuthenticated}">
+                    <a th:href="@{/customer/carts}">장바구니</a>
+                </li>
+                <li th:if="${isAuthenticated}">
+                    <a th:href="@{/customer/users/{userId}(userId=${userId})}">내정보</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 로그인 상태 표시 -->
+        <div class="auth-info">
+            <div th:if="${isAuthenticated}">
+                <p>환영합니다, <span th:text="${userName}"></span>님!</p>
+                <a th:href="@{/auth/logout}" class="btn btn-outline-danger btn-sm">로그아웃</a>
+            </div>
+            <div th:unless="${isAuthenticated}">
+                <a th:href="@{/auth/customer/login}" class="btn btn-primary btn-sm">로그인</a>
+            </div>
         </div>
     </div>
 </header>
 
 <!-- 좌측 사이드바 -->
 <aside th:fragment="common_aside">
-    <nav>
-        <ul class="nav flex-column" id="asideMenu">
-            <!-- 대시보드 -->
-            <li class="nav-item">
-                <a class="nav-link active" href="#">대시보드</a>
-            </li>
-            <!-- 상품 관리 드롭다운 -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">상품 관리</a>
-                <ul class="dropdown-menu">
-                    <!-- 의류 하위 드롭다운 -->
-                    <li class="dropdown-submenu">
-                        <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">의류</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">남성 패션</a></li>
-                            <li><a class="dropdown-item" href="#">여성 패션</a></li>
-                            <li><a class="dropdown-item" href="#">아동 패션</a></li>
-                        </ul>
-                    </li>
-                    <!-- 전자제품 하위 드롭다운 -->
-                    <li class="dropdown-submenu">
-                        <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">전자제품</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">휴대폰</a></li>
-                            <li><a class="dropdown-item" href="#">노트북</a></li>
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">액세서리</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">케이스</a></li>
-                                    <li><a class="dropdown-item" href="#">충전기</a></li>
-                                    <li><a class="dropdown-item" href="#">이어폰</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <!-- 주문 관리 -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">주문 관리</a>
-            </li>
+    <div class="tree-menu">
+        <h2>카테고리</h2>
+        <ul id="category-tree">
+            <!-- 카테고리 목록 동적 생성 -->
         </ul>
-    </nav>
+    </div>
 </aside>
 
 <!-- 푸터 -->
 <footer th:fragment="common_footer" class="py-3 mt-4">
     <div class="container text-center">
-        <p class="mb-0 text-secondary">&copy; 2025 Administrator Site, Inc</p>
+        <p class="mb-0 text-secondary">&copy; 2025 Customer Site, Inc</p>
     </div>
 </footer>
 

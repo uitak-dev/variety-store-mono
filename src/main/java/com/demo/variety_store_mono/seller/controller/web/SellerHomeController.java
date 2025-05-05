@@ -10,12 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class SellerHomeController {
 
-    /** 판매자 홈 페이지 */
-    @GetMapping("/home")
-    public String homePage() {
-        return "seller/content/home";
-    }
-
     /** 판매자 대시보드 페이지 */
     @GetMapping("/dashboard")
     public String dashboardPage() {

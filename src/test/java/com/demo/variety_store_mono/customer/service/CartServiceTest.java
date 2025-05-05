@@ -2,6 +2,7 @@ package com.demo.variety_store_mono.customer.service;
 
 import com.demo.variety_store_mono.admin.entity.Category;
 import com.demo.variety_store_mono.config.modelmapper.ModelMapperConfig;
+import com.demo.variety_store_mono.customer.dto.request.CartItemRequest;
 import com.demo.variety_store_mono.customer.dto.response.CartResponse;
 import com.demo.variety_store_mono.customer.entity.Cart;
 import com.demo.variety_store_mono.customer.entity.CartItem;
@@ -176,7 +177,7 @@ class CartServiceTest {
         dummyCart.getCartItems().clear();
 
         // When: 상품 추가.
-        cartService.addItemToCart(customerId, productId, quantityToAdd, optionValueIds);
+        cartService.addItemToCart(customerId, new CartItemRequest(productId, quantityToAdd, optionValueIds));
 
         // Then: Spy
         // 장바구니에 상품이 추가되었는지 확인 (CartItem)
@@ -224,7 +225,7 @@ class CartServiceTest {
         dummyCart.addCartItem(existingItem);
 
         // When: 기존 항목과 동일한 상품 및 옵션으로 추가 요청 (추가 수량)
-        cartService.addItemToCart(customerId, productId, additionalQuantity, optionValueIds);
+        cartService.addItemToCart(customerId, new CartItemRequest(productId, additionalQuantity, optionValueIds));
 
         // Then: 기존 CartItem의 수량이 증가하여 initialQuantity + additionalQuantity가 되어야 함.
         int expectedQuantity = initialQuantity + additionalQuantity;
@@ -235,6 +236,7 @@ class CartServiceTest {
     @Test
     void testUpdateCartItemQuantity() {
         // Given
+        Long customerId = 1L;
         Long cartItemId = 10L;
         int initialQuantity = 3;
         int newQuantity = 5;
@@ -243,7 +245,7 @@ class CartServiceTest {
         when(cartItemRepository.findById(cartItemId)).thenReturn(Optional.of(existingItem));
 
         // When: 수량 업데이트 요청
-        cartService.updateCartItemQuantity(cartItemId, newQuantity);
+        cartService.updateCartItemQuantity(customerId, cartItemId, newQuantity);
 
         // Then: CartItem의 수량이 새 값으로 업데이트
         assertEquals(newQuantity, existingItem.getQuantity(), "CartItem의 수량이 업데이트되어야 합니다.");
@@ -254,11 +256,12 @@ class CartServiceTest {
     @Test
     void testRemoveCartItem() {
         // Given
+        Long customerId = 1L;
         Long cartItemId = 20L;
         when(cartItemRepository.existsById(cartItemId)).thenReturn(true);
 
         // When: CartItem 삭제 요청
-        cartService.removeCartItem(cartItemId);
+        cartService.removeCartItem(customerId, cartItemId);
 
         // Then: existsById와 deleteById가 각각 호출되어야 함
         verify(cartItemRepository, times(1)).existsById(cartItemId);

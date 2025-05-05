@@ -29,7 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         } else if (requestUri.startsWith("/seller")) {
             loginUrl = "/auth/seller/login";
         } else {
-            loginUrl = "/auth/user/login";
+            loginUrl = "/auth/customer/login";
         }
 
         // 요청의 Accept 헤더가 HTML을 포함하는 경우, 에러 페이지로 포워딩

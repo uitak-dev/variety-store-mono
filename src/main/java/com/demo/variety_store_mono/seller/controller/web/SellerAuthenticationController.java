@@ -65,46 +65,13 @@ public class SellerAuthenticationController {
 
     /** 판매자 회원가입 API */
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignUpRequest request) {
-        userService.createUser(request, UserType.SELLER);
-        return "redirect:/auth/seller/login";
-    }
-
-    /** 판매자 리프레시 토큰 API */
-    @ResponseBody
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
-
-        // 세션에서 Refresh Token ID 확인
-        String refreshToken = CookieUtil.getCookieValue(request, "refreshToken").orElse(null);
-        if (refreshToken == null) {
-            return ResponseEntity.status(401).body("Missing refresh token");
+    public String signup(@ModelAttribute SignUpRequest request, RedirectAttributes redirectAttributes) {
+        try {
+            userService.createUser(request, UserType.SELLER);
+        } catch (RuntimeException ex) {
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/auth/seller/signup";
         }
-
-        // 새로운 Access Token 발급.
-        String newAccessToken = jwtAuthenticationService.refreshAccessToken(refreshToken);
-
-        // 발급받은 Access Token을 쿠키에 저장.
-        CookieUtil.addCookie(response, "accessToken",
-                newAccessToken, -1);
-
-        return ResponseEntity.ok("New access token issued");
-    }
-
-    /** 판매자 로그아웃 API */
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-
-        // DB에서 Refresh Token 삭제
-        String refreshToken = CookieUtil.getCookieValue(request, "refreshToken").orElse(null);
-        if (refreshToken != null) {
-            jwtAuthenticationService.logout(refreshToken);
-        }
-
-        // 세션 및 쿠키에서 Access Token & Refresh Token 삭제
-        CookieUtil.deleteCookie(response, "accessToken");
-        CookieUtil.deleteCookie(response, "refreshToken");
-
-        return "redirect:/auth/seller/login";
+        return "redirect:/auth/seller/signup";
     }
 }

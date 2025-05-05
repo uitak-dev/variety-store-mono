@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{admin/layout/base :: common_head(~{::title}, ~{::link})}">
-    <title>관리자 대시보드</title>
+    <title>관리자 홈</title>
 </head>
 <body>
 <header th:replace="~{admin/layout/base :: common_header}"></header>
@@ -14,11 +14,11 @@
         <div class="row mb-4">
             <div class="col">
                 <h2 class="fw-semibold">대시보드</h2>
-                <p class="text-secondary">관리자 페이지의 주요 정보를 확인할 수 있는 대시보드입니다.</p>
+                <p class="text-secondary">관리자 홈 페이지입니다.</p>
             </div>
         </div>
 
-        <!-- 통계 카드 3개 예시 -->
+        <!-- 통계 카드 3개 예시
         <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <div class="stats-card">
@@ -42,13 +42,13 @@
                 </div>
             </div>
         </div>
+        -->
 
-        <!-- 차트 & 피드 -->
+        <!-- 차트 & 피드
         <div class="row g-3">
             <div class="col-lg-8">
                 <div class="chart-card mb-3">
                     <h5 class="mb-3">매출 / 주문 추이</h5>
-                    <!-- 실제 차트 대신 차트 영역 placeholder -->
                     <div class="bg-light"
                          style="height: 300px; display: flex; align-items: center; justify-content: center;">
                         <span class="text-secondary">[차트 영역]</span>
@@ -83,13 +83,13 @@
                 </div>
             </div>
         </div>
+        -->
 
-        <!-- 주문 영역 -->
+        <!-- 주문 영역
         <div class="row g-3">
             <div class="col-lg-12">
                 <div class="chart-card mb-3">
                     <h5 class="mb-3">주문 목록</h5>
-                    <!-- 실제 차트 대신 차트 영역 placeholder -->
                     <div class="bg-light"
                          style="height: 250px; display: flex; align-items: center; justify-content: center;">
                         <span class="text-secondary">[주문 영역]</span>
@@ -97,6 +97,7 @@
                 </div>
             </div>
         </div>
+        -->
     </section>
 </div>
 

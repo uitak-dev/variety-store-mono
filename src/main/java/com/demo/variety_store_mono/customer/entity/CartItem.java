@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,6 +34,10 @@ public class CartItem {
     @Column(nullable = false)
     private int quantity;
 
+    // 상품의 주문 가격( 옵션 포함 )
+    @Column(nullable = false)
+    private BigDecimal unitPrice = BigDecimal.ZERO;
+
     @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private Set<CartItemOption> cartItemOptions = new LinkedHashSet<>();
@@ -55,5 +60,14 @@ public class CartItem {
 
     public void updateQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal finalUnitPrice() {
+        BigDecimal ret = product.getBasePrice();
+        for (CartItemOption option : cartItemOptions) {
+            ret = ret.add(option.getProductOptionValue().getAdditionalPrice());
+        }
+        unitPrice = ret;
+        return ret;
     }
 }

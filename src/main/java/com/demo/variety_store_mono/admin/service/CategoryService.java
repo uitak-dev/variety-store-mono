@@ -10,17 +10,18 @@ import com.demo.variety_store_mono.admin.dto.search.SearchCategory;
 import com.demo.variety_store_mono.admin.dto.response.CategoryResponse;
 import com.demo.variety_store_mono.admin.dto.response.GlobalOptionResponse;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,7 +95,7 @@ public class CategoryService {
         return categoryRepository.findAllAncestors(categoryId);
     }
 
-    // 특정 카테고리의 모든 하위 카테고리 조회.
+    // 특정 카테고리의 모든 하위 카테고리 ID 목록 조회.
     @Transactional(readOnly = true)
     public List<Long> getAllDescendantCategoryIds(Long categoryId) {
         return categoryRepository.findAllDescendantCategoryIds(categoryId);
@@ -153,5 +154,42 @@ public class CategoryService {
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. id: " + categoryId));
 
         return modelMapper.map(category, CategoryResponse.class).getGlobalOptions();
+    }
+
+    /** 카테고리 트리 */
+    @Transactional(readOnly = true)
+    public List<CategoryTreeDto> getCategoryTree() {
+
+        List<Category> all = categoryRepository.findAllWithChildrenOrdered();
+
+        Map<Long, CategoryTreeDto> dtoMap = all.stream()
+                .map(c -> new CategoryTreeDto(c.getId(), c.getName()))
+                .collect(Collectors.toMap(CategoryTreeDto::getId, Function.identity()));
+
+        List<CategoryTreeDto> ret = new ArrayList<>();
+        for (Category cat : all) {
+            CategoryTreeDto dto = dtoMap.get(cat.getId());
+            if (cat.getParent() == null) {
+                ret.add(dto);
+            } else {
+                dtoMap.get(cat.getParent().getId()).getChildren().add(dto);
+            }
+        }
+
+        return ret;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    static public class CategoryTreeDto {
+        private Long id;
+        private String name;
+        private List<CategoryTreeDto> children = new ArrayList<>();
+
+        public CategoryTreeDto(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
     }
 }
