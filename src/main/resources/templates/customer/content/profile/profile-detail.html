@@ -101,10 +101,15 @@
         <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
         <div class="row">
             <div class="col">
-                <button class="w-10 btn btn-primary"
+                <button class="w-10 btn btn-success"
                         th:onclick="|location.href='@{/customer/profiles/edit}'|"
                         type="button">
                     프로필 수정
+                </button>
+                <button class="w-15 btn btn-warning"
+                        th:onclick="|location.href='@{/customer/userName/edit}'|"
+                        type="button">
+                    아이디 변경
                 </button>
             </div>
         </div>

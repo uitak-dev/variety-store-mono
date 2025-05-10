@@ -14,10 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -88,11 +85,49 @@ public class SellerHomeController {
         }
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
+        strategy.updateProfile(userId, request);
+
+        return "redirect:/seller/profiles";
+    }
+
+    /** 사용자 아이디 수정 페이지 */
+    @GetMapping("/userName/edit")
+    public String userNameEditPage(@AuthenticationPrincipal Jwt jwt, Model model) {
+        Long userId = jwt.getClaim("id");
+        String userName = jwt.getSubject();
+        UserType userType = UserType.valueOf(jwt.getClaim("userType"));
+
+        // 관리자 계정이 아닌 경우, 관리자 도메인의 프로필에 접근 불가.
+        if (UserType.SELLER != userType) {
+            return "error/403";
+        }
+
+        model.addAttribute("userName", userName);
+        return "seller/content/profile/username-edit";
+    }
+
+    /** 사용자 아이디 수정 API */
+    @PostMapping("/userName/edit")
+    public String editUserName(@AuthenticationPrincipal Jwt jwt, Model model,
+                               @RequestParam String newUserName, @RequestParam String password,
+                               RedirectAttributes redirectAttributes) {
+
+        Long userId = jwt.getClaim("id");
+        String userName = jwt.getSubject();
+        UserType userType = UserType.valueOf(jwt.getClaim("userType"));
+
+        // 관리자 계정이 아닌 경우, 관리자 도메인의 프로필에 접근 불가.
+        if (UserType.SELLER != userType) {
+            return "error/403";
+        }
+
+        UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
         try {
-            strategy.updateProfile(userId, request);
-        } catch (IllegalArgumentException ex) {
-            bindingResult.addError(new FieldError("profile", "userName", "중복된 아이디 입니다."));
-            return "seller/content/profile/profile-edit";
+            strategy.updateUserName(userId, newUserName, password);
+        } catch (RuntimeException ex) {
+            model.addAttribute("userName", userName);
+            model.addAttribute("error", ex.getMessage());
+            return "seller/content/profile/username-edit";
         }
 
         return "redirect:/seller/profiles";

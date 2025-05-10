@@ -32,16 +32,6 @@
                         <form th:object="${profile}" method="post" id="profileForm">
                             <!-- 사용자 기본 정보 -->
                             <div class="mb-3">
-                                <label for="userName" class="form-label">아이디</label>
-                                <div class="input-group">
-                                    <input type="text" th:field="*{userName}" id="userName" class="form-control" th:errorclass="field-error">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="checkUsername()">중복 확인</button>
-                                </div>
-                                <div id="userNameFieldError" class="field-error" th:errors="*{userName}"></div>
-                                <small id="usernameFeedback"></small>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="email" class="form-label">이메일</label>
                                 <input type="email" th:field="*{email}" id="email" class="form-control" th:errorclass="field-error">
                                 <div class="field-error" th:errors="*{email}"></div>
@@ -82,8 +72,7 @@
                             <!-- 버튼 -->
                             <div class="row">
                                 <div class="col">
-                                    <button type="submit" id="saveBtn" class="w-100 btn btn-primary" title="아이디 중복 확인 후 활성화됩니다." disabled>저장</button>
-                                    <small class="form-text text-muted">아이디 중복 확인을 통과해야 저장버튼이 활성화 됩니다.</small>
+                                    <button type="submit" id="saveBtn" class="w-100 btn btn-primary">저장</button>
                                 </div>
                                 <div class="col">
                                     <button class="w-100 btn btn-secondary"
@@ -104,74 +93,6 @@
 </div>
 
 <footer th:replace="~{seller/layout/base :: common_footer}"></footer>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const saveBtn = document.getElementById('saveBtn');
-        const usernameInput = document.getElementById('userName');
-        const feedback = document.getElementById('usernameFeedback');
-        const fieldError = document.getElementById('userNameFieldError');
-        let duplicateChecked = false;
-
-        // 초기 상태: 저장 버튼 비활성화
-        saveBtn.disabled = true;
-
-        // 아이디 입력 수정 시 기존 피드백/오류 초기화 및 저장 버튼 비활성화
-        usernameInput.addEventListener('input', () => {
-            duplicateChecked = false;
-            saveBtn.disabled = true;
-            feedback.textContent = '';
-            feedback.classList.remove('text-success', 'text-danger');
-            if (fieldError) {
-                fieldError.textContent = '';
-            }
-        });
-
-        // 중복 확인 함수
-        window.checkUsername = function() {
-            const username = usernameInput.value.trim();
-            if (!username) {
-                feedback.textContent = '아이디를 입력하세요.';
-                feedback.classList.add('text-danger');
-                return;
-            }
-
-            fetch(`/api/profile/userName/check?userName=` + encodeURIComponent(username))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.available) {
-                        feedback.textContent = '사용 가능한 아이디입니다.';
-                        feedback.classList.remove('text-danger');
-                        feedback.classList.add('text-success');
-                        duplicateChecked = true;
-                        saveBtn.disabled = false;
-                    } else {
-                        feedback.textContent = '이미 사용 중인 아이디입니다.';
-                        feedback.classList.remove('text-success');
-                        feedback.classList.add('text-danger');
-                        duplicateChecked = false;
-                        saveBtn.disabled = true;
-                    }
-                })
-                .catch(error => {
-                    feedback.textContent = '중복 확인 중 오류가 발생했습니다.';
-                    feedback.classList.add('text-danger');
-                    duplicateChecked = false;
-                    saveBtn.disabled = true;
-                });
-        };
-
-        // 폼 제출 전 중복 확인 여부 검증
-        const form = document.getElementById('profileForm');
-        form.addEventListener('submit', event => {
-            if (!duplicateChecked) {
-                event.preventDefault();
-                feedback.textContent = '아이디 중복 확인이 필요합니다.';
-                feedback.classList.add('text-danger');
-                usernameInput.focus();
-            }
-        });
-    });
-</script>
 
 </body>
 </html>

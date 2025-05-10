@@ -10,6 +10,8 @@ import com.demo.variety_store_mono.seller.dto.request.SellerDetailRequest;
 import com.demo.variety_store_mono.seller.dto.response.SellerDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,8 @@ public class SellerDetailStrategy implements UserDetailStrategy {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String getDetailView() {
@@ -81,17 +85,27 @@ public class SellerDetailStrategy implements UserDetailStrategy {
 
         SellerProfileForm request = (SellerProfileForm) sellerProfileForm;
 
-        // userName 중복 확인.
-        String userName = request.getUserName();
-        if (userRepository.existsByUserName(userName)) {
-            throw new IllegalArgumentException("중복된 아이디 입니다.");
-        }
-
         // 사용자 기본 정보 변경.
-        user.updateProfile(userName, request.getEmail(), request.getFirstName(),
+        user.updateProfile(request.getEmail(), request.getFirstName(),
                 request.getLastName(), request.getPhoneNumber());
 
         // 판매자 상세 정보 변경.
         user.updateSellerDetail(request.getCompanyName(), request.getBusinessLicenseNumber());
+    }
+
+    @Override
+    public void updateUserName(Long userId, String newUserName, String password) {
+        User user = userRepository.findUserDetailsById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 올바르지 않습니다.");
+        }
+
+        if (userRepository.existsByUserName(newUserName)) {
+            throw new IllegalArgumentException("중복된 아이디 입니다.");
+        }
+
+        user.updateUserName(newUserName);
     }
 }

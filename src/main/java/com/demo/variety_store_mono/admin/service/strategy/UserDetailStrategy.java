@@ -19,4 +19,7 @@ public interface UserDetailStrategy {
 
     /** 사용자 프로필 정보 수정 */
     void updateProfile(Long userId, Object request);
+
+    /** 사용자 아이디 변경 */
+    void updateUserName(Long userId, String newUserName, String password);
 }

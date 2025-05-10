@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CustomerProfileForm {
 
-    @NotBlank(message = "아이디는 필수 입력값입니다.")
-    @Size(min = 4, max = 20, message = "아이디는 4자 이상 20자 이하로 입력해주세요.")
     private String userName;
 
     @NotBlank(message = "이메일은 필수 입력값입니다.")

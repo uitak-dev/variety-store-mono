@@ -86,13 +86,17 @@ public class User extends Audit {
     }
 
     /** 사용자 프로필 정보 수정 */
-    public void updateProfile(String userName, String email, String firstName,
+    public void updateProfile(String email, String firstName,
                               String lastName, String phoneNumber) {
-        this.userName = userName;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+    }
+
+    /** 사용자 아이디 변경 */
+    public void updateUserName(String userName) {
+        this.userName = userName;
     }
 
     /** 사용자에게 할당된 역할 조회 */
