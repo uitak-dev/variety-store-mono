@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{seller/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
+    <title>페이지 제목</title>
+</head>
+
+<body>
+<header th:replace="~{seller/layout/base :: common_header}"></header>
+<aside th:replace="~{seller/layout/base :: common_aside}"></aside>
+
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <section class="container-fluid">
+
+        <!-- 페이지 제목 -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold">프로필 정보</h2>
+            </div>
+        </div>
+
+        <!-- 카드 영역 -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-12">
+                <div class="card p-3 stats-card">
+
+                    <!-- 판매자 프로필 카드 -->
+                    <div class="chart-card mb-3">
+                        <h2>프로필 수정</h2>
+                        <form th:object="${profile}" method="post" id="profileForm">
+                            <!-- 사용자 기본 정보 -->
+                            <div class="mb-3">
+                                <label for="userName" class="form-label">아이디</label>
+                                <div class="input-group">
+                                    <input type="text" th:field="*{userName}" id="userName" class="form-control" th:errorclass="field-error">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="checkUsername()">중복 확인</button>
+                                </div>
+                                <div id="userNameFieldError" class="field-error" th:errors="*{userName}"></div>
+                                <small id="usernameFeedback"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">이메일</label>
+                                <input type="email" th:field="*{email}" id="email" class="form-control" th:errorclass="field-error">
+                                <div class="field-error" th:errors="*{email}"></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">성</label>
+                                    <input type="text" th:field="*{lastName}" id="lastName" class="form-control" th:errorclass="field-error">
+                                    <div class="field-error" th:errors="*{lastName}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">이름</label>
+                                    <input type="text" th:field="*{firstName}" id="firstName" class="form-control" th:errorclass="field-error">
+                                    <div class="field-error" th:errors="*{firstName}"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">핸드폰</label>
+                                <input type="text" th:field="*{phoneNumber}" id="phoneNumber" class="form-control" placeholder="ex) 010-1234-5678"
+                                       th:errorclass="field-error">
+                                <div class="field-error" th:errors="*{phoneNumber}"></div>
+                            </div>
+
+                            <!-- 판매자 상세 정보 -->
+                            <div class="mb-3">
+                                <label for="companyName" class="form-label">회사명</label>
+                                <input type="text" th:field="*{companyName}" id="companyName" class="form-control" th:errorclass="field-error">
+                                <div class="field-error" th:errors="*{companyName}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="businessLicenseNumber" class="form-label">사업자 번호</label>
+                                <input type="text" th:field="*{businessLicenseNumber}" id="businessLicenseNumber" class="form-control" th:errorclass="field-error">
+                                <div class="field-error" th:errors="*{businessLicenseNumber}"></div>
+                            </div>
+
+                            <!-- 버튼 -->
+                            <div class="row">
+                                <div class="col">
+                                    <button type="submit" id="saveBtn" class="w-100 btn btn-primary" title="아이디 중복 확인 후 활성화됩니다." disabled>저장</button>
+                                    <small class="form-text text-muted">아이디 중복 확인을 통과해야 저장버튼이 활성화 됩니다.</small>
+                                </div>
+                                <div class="col">
+                                    <button class="w-100 btn btn-secondary"
+                                            th:onclick="|location.href='@{/seller/profiles}'|"
+                                            type="button">
+                                        취소
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<footer th:replace="~{seller/layout/base :: common_footer}"></footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const saveBtn = document.getElementById('saveBtn');
+        const usernameInput = document.getElementById('userName');
+        const feedback = document.getElementById('usernameFeedback');
+        const fieldError = document.getElementById('userNameFieldError');
+        let duplicateChecked = false;
+
+        // 초기 상태: 저장 버튼 비활성화
+        saveBtn.disabled = true;
+
+        // 아이디 입력 수정 시 기존 피드백/오류 초기화 및 저장 버튼 비활성화
+        usernameInput.addEventListener('input', () => {
+            duplicateChecked = false;
+            saveBtn.disabled = true;
+            feedback.textContent = '';
+            feedback.classList.remove('text-success', 'text-danger');
+            if (fieldError) {
+                fieldError.textContent = '';
+            }
+        });
+
+        // 중복 확인 함수
+        window.checkUsername = function() {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                feedback.textContent = '아이디를 입력하세요.';
+                feedback.classList.add('text-danger');
+                return;
+            }
+
+            fetch(`/api/profile/userName/check?userName=` + encodeURIComponent(username))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        feedback.textContent = '사용 가능한 아이디입니다.';
+                        feedback.classList.remove('text-danger');
+                        feedback.classList.add('text-success');
+                        duplicateChecked = true;
+                        saveBtn.disabled = false;
+                    } else {
+                        feedback.textContent = '이미 사용 중인 아이디입니다.';
+                        feedback.classList.remove('text-success');
+                        feedback.classList.add('text-danger');
+                        duplicateChecked = false;
+                        saveBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    feedback.textContent = '중복 확인 중 오류가 발생했습니다.';
+                    feedback.classList.add('text-danger');
+                    duplicateChecked = false;
+                    saveBtn.disabled = true;
+                });
+        };
+
+        // 폼 제출 전 중복 확인 여부 검증
+        const form = document.getElementById('profileForm');
+        form.addEventListener('submit', event => {
+            if (!duplicateChecked) {
+                event.preventDefault();
+                feedback.textContent = '아이디 중복 확인이 필요합니다.';
+                feedback.classList.add('text-danger');
+                usernameInput.focus();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

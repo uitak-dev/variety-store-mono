@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // BearerTokenAuthenticationFilter 실행 전에 커스텀 필터 실행.
                 .addFilterBefore(refreshTokenFilter, BearerTokenAuthenticationFilter.class)
                 // JWT 기반 인증 활성화
                 .oauth2ResourceServer(oauth2 -> oauth2

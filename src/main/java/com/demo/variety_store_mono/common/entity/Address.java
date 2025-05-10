@@ -1,6 +1,7 @@
 package com.demo.variety_store_mono.common.entity;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Embeddable
@@ -26,6 +27,8 @@ public class Address {
     private String street;
     private String buildingNumber;
     private String apartment;
+
+    @Pattern(regexp = "^\\d{5}$", message = "우편 번호 형식이 올바르지 않습니다. (예: 12345)")
     private String zipCode;
 
     @Builder

@@ -1,6 +1,8 @@
 package com.demo.variety_store_mono.admin.service.strategy;
 
 import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.common.dto.form.AdminProfileForm;
+import com.demo.variety_store_mono.common.dto.form.SellerProfileForm;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
@@ -55,6 +57,39 @@ public class SellerDetailStrategy implements UserDetailStrategy {
 
         // 사용자 기본 정보 변경.
         user.updateBasicInfo(request.getEmail(), request.getFirstName(), request.getLastName());
+
+        // 판매자 상세 정보 변경.
+        user.updateSellerDetail(request.getCompanyName(), request.getBusinessLicenseNumber());
+    }
+
+    @Override
+    public SellerProfileForm getProfile(Long userId) {
+        User user = userRepository.findUserDetailsById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        SellerProfileForm ret = modelMapper.map(user, SellerProfileForm.class);
+        ret.setCompanyName(user.getSeller().getCompanyName());
+        ret.setBusinessLicenseNumber(user.getSeller().getBusinessLicenseNumber());
+
+        return ret;
+    }
+
+    @Override
+    public void updateProfile(Long userId, Object sellerProfileForm) {
+        User user = userRepository.findUserDetailsById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        SellerProfileForm request = (SellerProfileForm) sellerProfileForm;
+
+        // userName 중복 확인.
+        String userName = request.getUserName();
+        if (userRepository.existsByUserName(userName)) {
+            throw new IllegalArgumentException("중복된 아이디 입니다.");
+        }
+
+        // 사용자 기본 정보 변경.
+        user.updateProfile(userName, request.getEmail(), request.getFirstName(),
+                request.getLastName(), request.getPhoneNumber());
 
         // 판매자 상세 정보 변경.
         user.updateSellerDetail(request.getCompanyName(), request.getBusinessLicenseNumber());

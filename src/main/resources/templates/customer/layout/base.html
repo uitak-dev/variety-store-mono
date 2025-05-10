@@ -39,9 +39,7 @@
                 <li><a class="active" th:href="@{/public/home}">홈</a></li>
                 <li th:if="${isAuthenticated}">
                     <a th:href="@{/customer/carts}">장바구니</a>
-                </li>
-                <li th:if="${isAuthenticated}">
-                    <a th:href="@{/customer/users/{userId}(userId=${userId})}">내정보</a>
+                    <a th:href="@{/customer/profiles}">프로필</a>
                 </li>
             </ul>
         </nav>

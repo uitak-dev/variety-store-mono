@@ -13,4 +13,10 @@ public interface UserDetailStrategy {
 
     /** 사용자 상세 정보를 업데이트 (업데이트 요청 DTO 를 받아 처리) */
     void updateDetail(Long userId, Object request);
+
+    /** 사용자 프로필 정보 조회 */
+    Object getProfile(Long userId);
+
+    /** 사용자 프로필 정보 수정 */
+    void updateProfile(Long userId, Object request);
 }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{customer/layout/base :: common_head(~{::title}, ~{::link}, ~{::style})}">
+    <title>사용자 프로필</title>
+</head>
+<body>
+<header th:replace="~{customer/layout/base :: common_header}"></header>
+
+<div class="content-wrapper">
+    <main>
+
+        <!-- 페이지 제목 -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold">사용자 프로필</h2>
+            </div>
+        </div>
+
+        <!-- 카드 영역 -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-12">
+
+                <div class="card p-3 stats-card mb-3">
+                    <!-- 소비자 프로필 카드 -->
+                    <div class="chart-card mb-3">
+                        <h2>기본 정보</h2>
+                        <!-- 사용자 기본 정보 -->
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">아이디</label>
+                            <input type="text" id="userName" class="form-control" th:value="${profile.userName}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">이메일</label>
+                            <input type="text" id="email" class="form-control" th:value="${profile.email}" disabled>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">성</label>
+                                <input type="text" th:field="*{profile.lastName}" id="lastName" class="form-control" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">이름</label>
+                                <input type="text" th:field="*{profile.firstName}" id="firstName" class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">핸드폰</label>
+                            <input type="text" id="phoneNumber" class="form-control" th:value="${profile.phoneNumber}" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-3 stats-card">
+                    <div class="chart-card mb-3">
+                        <h2>주소 정보</h2>
+                        <!-- 소비자 주소 상세 정보 -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="state" class="form-label">특별시/광역시/도</label>
+                                <input type="text" id="state" class="form-control" th:value="${profile.address?.state}" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="city" class="form-label">시/군/구</label>
+                                <input type="text" id="city" class="form-control" th:value="${profile.address?.city}" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="area" class="form-label">읍/면/동</label>
+                                <input type="text" id="area" class="form-control" th:value="${profile.address?.area}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="street" class="form-label">도로명</label>
+                                <input type="text" id="street" class="form-control" th:value="${profile.address?.street}" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="buildingNumber" class="form-label">건물 번호</label>
+                                <input type="text" id="buildingNumber" class="form-control" th:value="${profile.address?.buildingNumber}" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="zipCode" class="form-label">우편번호</label>
+                                <input type="text" id="zipCode" class="form-control" th:value="${profile.address?.zipCode}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="apartment" class="form-label">아파트/동/호수</label>
+                            <input type="text" id="apartment" class="form-control" th:value="${profile.address?.apartment}" disabled>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 수정하기 버튼을 클릭하면 수정 페이지로 이동 -->
+        <div class="row">
+            <div class="col">
+                <button class="w-10 btn btn-primary"
+                        th:onclick="|location.href='@{/customer/profiles/edit}'|"
+                        type="button">
+                    프로필 수정
+                </button>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<footer th:replace="~{customer/layout/base :: common_footer}"></footer>
+
+</body>
+</html>

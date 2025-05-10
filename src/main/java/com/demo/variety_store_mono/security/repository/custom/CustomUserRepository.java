@@ -2,7 +2,7 @@ package com.demo.variety_store_mono.security.repository.custom;
 
 import com.demo.variety_store_mono.admin.dto.search.SearchUser;
 import com.demo.variety_store_mono.security.entity.UserType;
-import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.common.dto.response.UserBasicInfoResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,4 +1,4 @@
-package com.demo.variety_store_mono.common.response;
+package com.demo.variety_store_mono.common.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -3,6 +3,7 @@ package com.demo.variety_store_mono.admin.service.strategy;
 import com.demo.variety_store_mono.admin.dto.request.AdminDetailRequest;
 import com.demo.variety_store_mono.admin.dto.response.AdminDetailResponse;
 import com.demo.variety_store_mono.admin.entity.Role;
+import com.demo.variety_store_mono.common.dto.form.AdminProfileForm;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
@@ -55,6 +56,38 @@ public class AdminDetailStrategy implements UserDetailStrategy {
 
         // 사용자 기본 정보 변경.
         user.updateBasicInfo(request.getEmail(), request.getFirstName(), request.getLastName());
+
+        // 관리자 상세 정보 변경.
+        user.updateAdminDetail(request.getDepartment());
+    }
+
+    @Override
+    public AdminProfileForm getProfile(Long userId) {
+        User user = userRepository.findUserDetailsById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        AdminProfileForm ret = modelMapper.map(user, AdminProfileForm.class);
+        ret.setDepartment(user.getAdmin().getDepartment());
+
+        return ret;
+    }
+
+    @Override
+    public void updateProfile(Long userId, Object adminProfileForm) {
+        User user = userRepository.findUserDetailsById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        AdminProfileForm request = (AdminProfileForm) adminProfileForm;
+
+        // userName 중복 확인.
+        String userName = request.getUserName();
+        if (userRepository.existsByUserName(userName)) {
+            throw new IllegalArgumentException("중복된 아이디 입니다.");
+        }
+
+        // 사용자 기본 정보 변경.
+        user.updateProfile(userName, request.getEmail(), request.getFirstName(),
+                request.getLastName(), request.getPhoneNumber());
 
         // 관리자 상세 정보 변경.
         user.updateAdminDetail(request.getDepartment());

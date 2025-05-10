@@ -6,9 +6,8 @@ import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
-import com.demo.variety_store_mono.common.request.SignUpRequest;
-import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
-import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.common.dto.request.SignUpRequest;
+import com.demo.variety_store_mono.common.dto.response.UserBasicInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,16 +60,6 @@ public class UserService {
     /** 사용자 목록 조회 */
     public Page<UserBasicInfoResponse> getUserList(UserType userType, SearchUser searchUser, Pageable pageable) {
         return userRepository.searchUserListByUserType(userType, searchUser, pageable);
-    }
-
-    /** 사용자 기본 정보 수정 */
-    public void updateUserBasicInfo(Long userId, UserBasicInfoRequest request) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
-
-        user.updateBasicInfo(request.getEmail(), request.getFirstName(), request.getLastName());
-
     }
 
 }

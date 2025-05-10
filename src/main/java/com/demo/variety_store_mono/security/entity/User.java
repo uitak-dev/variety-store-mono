@@ -34,8 +34,6 @@ public class User extends Audit {
     private String email;
     private String firstName;
     private String lastName;
-
-    @Column(unique = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -85,6 +83,16 @@ public class User extends Audit {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    /** 사용자 프로필 정보 수정 */
+    public void updateProfile(String userName, String email, String firstName,
+                              String lastName, String phoneNumber) {
+        this.userName = userName;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
     }
 
     /** 사용자에게 할당된 역할 조회 */

@@ -1,17 +1,15 @@
 package com.demo.variety_store_mono.seller.controller.web;
 
-import com.demo.variety_store_mono.common.request.LoginRequest;
-import com.demo.variety_store_mono.common.request.SignUpRequest;
-import com.demo.variety_store_mono.common.response.TokenResponse;
+import com.demo.variety_store_mono.common.dto.request.LoginRequest;
+import com.demo.variety_store_mono.common.dto.request.SignUpRequest;
+import com.demo.variety_store_mono.common.dto.response.TokenResponse;
 import com.demo.variety_store_mono.common.service.JwtAuthenticationService;
 import com.demo.variety_store_mono.common.service.UserService;
 import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.security.jwt.JwtProperties;
 import com.demo.variety_store_mono.utility.CookieUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;

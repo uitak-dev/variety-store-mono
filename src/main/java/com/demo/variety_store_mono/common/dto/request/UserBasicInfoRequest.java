@@ -1,24 +1,22 @@
-package com.demo.variety_store_mono.common.response;
+package com.demo.variety_store_mono.common.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+/**
+ * 회원 정보 수정 dto
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserBasicInfoResponse {
+public class UserBasicInfoRequest {
 
-    private Long id;
-    private String userName;
     private String email;
     private String firstName;
     private String lastName;
-    private String phoneNumber;
 
-    private Set<RoleResponse> roles;
+    private Set<Long> roles;
 }

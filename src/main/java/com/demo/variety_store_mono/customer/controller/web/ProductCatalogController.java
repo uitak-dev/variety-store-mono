@@ -29,7 +29,7 @@ public class ProductCatalogController {
         model.addAttribute("productCatalogList", productCatalogList);
         model.addAttribute("categoryId", categoryId);
 
-        return "customer/content/product-list";
+        return "customer/content/product/product-list";
     }
 
     /** 상품 상세 페이지 */
@@ -39,6 +39,6 @@ public class ProductCatalogController {
         ProductCatalogResponse productCatalogDetails = productCatalogService.getProductCatalogDetails(productId);
         model.addAttribute("product", productCatalogDetails);
 
-        return "customer/content/product-detail";
+        return "customer/content/product/product-detail";
     }
 }

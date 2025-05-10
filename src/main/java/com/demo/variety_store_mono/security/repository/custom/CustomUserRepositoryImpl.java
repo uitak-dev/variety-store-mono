@@ -3,7 +3,7 @@ package com.demo.variety_store_mono.security.repository.custom;
 import com.demo.variety_store_mono.admin.dto.search.SearchUser;
 import com.demo.variety_store_mono.security.entity.QUser;
 import com.demo.variety_store_mono.security.entity.UserType;
-import com.demo.variety_store_mono.common.response.UserBasicInfoResponse;
+import com.demo.variety_store_mono.common.dto.response.UserBasicInfoResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;

@@ -3,22 +3,24 @@ package com.demo.variety_store_mono.common.service;
 import com.demo.variety_store_mono.security.entity.RefreshToken;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.security.entity.User;
+import com.demo.variety_store_mono.security.entity.UserType;
 import com.demo.variety_store_mono.security.repository.RefreshTokenRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
-import com.demo.variety_store_mono.common.request.LoginRequest;
-import com.demo.variety_store_mono.common.response.TokenResponse;
+import com.demo.variety_store_mono.common.dto.request.LoginRequest;
+import com.demo.variety_store_mono.common.dto.response.TokenResponse;
 import com.demo.variety_store_mono.security.jwt.JwtProperties;
 import com.demo.variety_store_mono.security.jwt.JwtTokenProvider;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -49,12 +51,15 @@ public class JwtAuthenticationService {
         String accessToken = jwtTokenProvider.generateAccessToken(
                 user.getUserName(),
                 Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
-                        "id", user.getId())
+                        "id", user.getId(),
+                        "userType", user.getUserType())
         );
+
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(
                 user.getUserName(),
                 Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
-                        "id", user.getId())
+                        "id", user.getId(),
+                        "userType", user.getUserType())
         );
 
         // 리프레시 토큰 생성.
@@ -85,18 +90,21 @@ public class JwtAuthenticationService {
         Jwt jwt = jwtTokenProvider.validateRefreshToken(findRefreshToken.getToken());
         String userName = jwt.getSubject();
         Long userId = jwt.getClaim("id");
+        List<String> roles = jwt.getClaim("roles");
+        UserType userType = jwt.getClaim("userType");
 
         if (findRefreshToken.getExpireDate().isBefore(Instant.now())) {
             // 만료된 토큰은 DB에서 삭제 후 예외 처리
             refreshTokenRepository.delete(findRefreshToken);
-            throw new RuntimeException("refresh token expired");
+            throw new JwtException("refresh token expired");
         }
 
         // 새로운 Access Token 발급.
         return jwtTokenProvider.generateAccessToken(
                 userName,
-                Map.of("roles", findRefreshToken.getUser().getRoles(),
-                        "id", userId)
+                Map.of("id", userId,
+                        "roles", findRefreshToken.getUser().getRoles(),
+                        "userType", userType)
         );
     }
 

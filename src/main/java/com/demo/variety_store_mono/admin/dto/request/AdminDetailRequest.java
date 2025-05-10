@@ -1,6 +1,6 @@
 package com.demo.variety_store_mono.admin.dto.request;
 
-import com.demo.variety_store_mono.common.request.UserBasicInfoRequest;
+import com.demo.variety_store_mono.common.dto.request.UserBasicInfoRequest;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
