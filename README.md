@@ -2,7 +2,7 @@
 
 ## 🚀 프로젝트 개요
 
-**목적**: Spring Boot 기반으로 서비스 전 과정을 직접 설계·구현해 본 풀스택 이커머스 플랫폼입니다.
+**목적**: Spring Boot 기반으로 서비스 전 과정을 직접 설계·구현해 본 풀스택 이커머스 플랫폼입니다.  
 **주요 역할**: 백엔드 전 과정 수행 (요구사항 분석 → 도메인 설계 → REST API 설계·구현 → 보안·인증·인가 → CI/CD 배포)
 
 ## 📋 목차
@@ -50,9 +50,9 @@
 | 레이어       | 기술/도구                                          |
 | --------- | ---------------------------------------------- |
 | Framework | Spring Boot 3.x                                |
-| 보안        | Spring Security 6.x, JWT, OAuth2               |
-| 데이터 접근    | Spring Data JPA, QueryDSL, ModelMapper         |
-| 데이터베이스    | MySQL (운영), H2 (테스트)                           |
+| 보안        | Spring Security 6.x, JWT                      |
+| 데이터 접근    | Spring Data JPA, QueryDSL, ModelMapper       |
+| 데이터베이스    | MySQL (운영), H2 (테스트)                      |
 | 템플릿 엔진    | Thymeleaf + Bootstrap                          |
 | 빌드/배포     | Gradle, Docker, AWS                            |
 | 아키텍처      | Monolithic (Controller/Service/Repository 레이어) |
