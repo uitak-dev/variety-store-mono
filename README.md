@@ -71,7 +71,7 @@
 
    * GitHub Actions 기반 빌드→Docker 이미지 생성→AWS ECS 배포 파이프라인 구성
 
-## 📊 ERD
+## 📊 [ERD](https://dbdiagram.io/d/68261c255b2fc4582fcc1f93)
 
 ## 💡 향후 개선 및 계획
 
