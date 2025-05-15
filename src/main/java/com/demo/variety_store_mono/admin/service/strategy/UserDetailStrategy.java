@@ -1,5 +1,7 @@
 package com.demo.variety_store_mono.admin.service.strategy;
 
+import com.demo.variety_store_mono.common.dto.response.TokenResponse;
+
 public interface UserDetailStrategy {
 
     /** 상세 페이지 뷰 이름 반환 */
@@ -21,5 +23,5 @@ public interface UserDetailStrategy {
     void updateProfile(Long userId, Object request);
 
     /** 사용자 아이디 변경 */
-    void updateUserName(Long userId, String newUserName, String password);
+    TokenResponse updateUserName(Long userId, String newUserName, String password);
 }

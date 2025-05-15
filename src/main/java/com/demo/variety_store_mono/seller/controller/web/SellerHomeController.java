@@ -4,7 +4,11 @@ import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategy;
 import com.demo.variety_store_mono.admin.service.strategy.UserDetailStrategyFactory;
 import com.demo.variety_store_mono.common.dto.form.AdminProfileForm;
 import com.demo.variety_store_mono.common.dto.form.SellerProfileForm;
+import com.demo.variety_store_mono.common.dto.response.TokenResponse;
 import com.demo.variety_store_mono.security.entity.UserType;
+import com.demo.variety_store_mono.security.jwt.JwtProperties;
+import com.demo.variety_store_mono.utility.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SellerHomeController {
 
     private final UserDetailStrategyFactory strategyFactory;
+    private final JwtProperties jwtProperties;
 
     /** 판매자 대시보드 페이지 */
     @GetMapping("/dashboard")
@@ -108,9 +113,8 @@ public class SellerHomeController {
 
     /** 사용자 아이디 수정 API */
     @PostMapping("/userName/edit")
-    public String editUserName(@AuthenticationPrincipal Jwt jwt, Model model,
-                               @RequestParam String newUserName, @RequestParam String password,
-                               RedirectAttributes redirectAttributes) {
+    public String editUserName(@AuthenticationPrincipal Jwt jwt, Model model, HttpServletResponse response,
+                               @RequestParam String newUserName, @RequestParam String password) {
 
         Long userId = jwt.getClaim("id");
         String userName = jwt.getSubject();
@@ -123,7 +127,16 @@ public class SellerHomeController {
 
         UserDetailStrategy strategy = strategyFactory.getStrategy(userType);
         try {
-            strategy.updateUserName(userId, newUserName, password);
+            TokenResponse tokenResponse = strategy.updateUserName(userId, newUserName, password);
+
+            // Access Token 세션 쿠키에 저장.
+            CookieUtil.addCookie(response, "accessToken",
+                    tokenResponse.getAccessToken(), -1);
+
+            // Refresh Token 을 영속 쿠키에 저장.( 클라이언트에서 직접 접근 불가 )
+            CookieUtil.addCookie(response, "refreshToken",
+                    tokenResponse.getRefreshToken(), jwtProperties.getRefreshTokenValidityMillis().intValue());
+
         } catch (RuntimeException ex) {
             model.addAttribute("userName", userName);
             model.addAttribute("error", ex.getMessage());

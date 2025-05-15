@@ -4,8 +4,13 @@ import com.demo.variety_store_mono.admin.dto.request.AdminDetailRequest;
 import com.demo.variety_store_mono.admin.dto.response.AdminDetailResponse;
 import com.demo.variety_store_mono.admin.entity.Role;
 import com.demo.variety_store_mono.common.dto.form.AdminProfileForm;
+import com.demo.variety_store_mono.common.dto.response.TokenResponse;
+import com.demo.variety_store_mono.security.entity.RefreshToken;
 import com.demo.variety_store_mono.security.entity.User;
 import com.demo.variety_store_mono.admin.repository.RoleRepository;
+import com.demo.variety_store_mono.security.jwt.JwtProperties;
+import com.demo.variety_store_mono.security.jwt.JwtTokenProvider;
+import com.demo.variety_store_mono.security.repository.RefreshTokenRepository;
 import com.demo.variety_store_mono.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,7 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -24,8 +32,11 @@ public class AdminDetailStrategy implements UserDetailStrategy {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final ModelMapper modelMapper;
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProperties jwtProperties;
+
+    private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -92,7 +103,7 @@ public class AdminDetailStrategy implements UserDetailStrategy {
     }
 
     @Override
-    public void updateUserName(Long userId, String newUserName, String password) {
+    public TokenResponse updateUserName(Long userId, String newUserName, String password) {
         User user = userRepository.findUserDetailsById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
@@ -104,6 +115,28 @@ public class AdminDetailStrategy implements UserDetailStrategy {
             throw new IllegalArgumentException("중복된 아이디 입니다.");
         }
 
+        // 아이디 수정.
         user.updateUserName(newUserName);
+
+        // JWT 재발급.
+        String accessToken = jwtTokenProvider.generateAccessToken(
+                user.getUserName(),
+                Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
+                        "id", user.getId(),
+                        "userType", user.getUserType())
+        );
+
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(
+                user.getUserName(),
+                Map.of("roles", user.getRoles().stream().map(Role::getName).toList(),
+                        "id", user.getId(),
+                        "userType", user.getUserType())
+        );
+
+        RefreshToken refreshToken = user.getRefreshToken();
+        refreshToken.update(newRefreshToken,
+                Instant.now().plusMillis(jwtProperties.getRefreshTokenValidityMillis()));
+
+        return new TokenResponse(accessToken, newRefreshToken);
     }
 }
