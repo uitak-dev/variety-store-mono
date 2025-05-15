@@ -67,11 +67,11 @@
 3. **예외 처리 & 입력 검증**
 
    * 글로벌 예외 핸들러, DTO 레벨 유효성 검사 적용
-4. **CI/CD**
 
-   * GitHub Actions 기반 빌드→Docker 이미지 생성→AWS ECS 배포 파이프라인 구성
+## 📊 ERD
 
-## 📊 [ERD](https://dbdiagram.io/d/68261c255b2fc4582fcc1f93)
+   * [DBDiagram](https://dbdiagram.io/d/68261c255b2fc4582fcc1f93)
+   * ![ERD](variety-store-ERD.png)
 
 ## 💡 향후 개선 및 계획
 
