@@ -9,7 +9,7 @@ spring:
     name: variety-store-mono
 
   datasource:
-    url: jdbc:h2:file:/home/ubuntu/data/h2db/variety-store-mono
+    url: jdbc:h2:/home/ubuntu/h2db/variety-store-mono;AUTO_SERVER=TRUE;MODE=MySQL
     username: sa
     password:
     driver-class-name: org.h2.Driver
