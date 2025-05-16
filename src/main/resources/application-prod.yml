@@ -9,10 +9,14 @@ spring:
     name: variety-store-mono
 
   datasource:
-    url: jdbc:h2:tcp://localhost/~/h2db/variety-store-mono
+    url: jdbc:h2:file:/home/ubuntu/data/h2db/variety-store-mono
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
   jpa:
     hibernate:
@@ -32,4 +36,4 @@ jwt:
   refresh-token-validity-millis: 604800000  # 7 * 24 * 60 * 60 * 1000 milliseconds(= 7 days)
 
 file:
-  directory: "/Users/uitak/Pictures/variety-store/"
+  directory: "/home/ubuntu/variety_store_uploads/"

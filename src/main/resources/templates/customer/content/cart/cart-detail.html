@@ -140,7 +140,46 @@
             });
         });
 
+        /*
         // 주문하기
+        document.getElementById('checkoutBtn')
+            .addEventListener('click', () => {
+                // 1) payload 준비: itemId, quantity 만큼
+                const items = Array.from(document.querySelectorAll('tbody tr'))
+                    .map(tr => ({
+                        itemId: Number(tr.getAttribute('data-item-id')),
+                        quantity: Number(tr.querySelector('.quantity-input').value)
+                    }));
+
+                // 2) 서버에 검증+주문 요청
+                fetch('/api/orders/checkout', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items })
+                })
+                    .then(async res => {
+                        if (res.status === 400) {
+                            // 재고 부족 등 검증 실패 시 메시지 표시
+                            const { message } = await res.json();
+                            return alert(`주문 실패: ${message}`);
+                        }
+                        if (res.status === 401) {
+                            if (confirm('로그인이 필요합니다. 로그인하시겠습니까?')) {
+                                return window.location.href = '/auth/customer/login';
+                            }
+                        }
+                        if (!res.ok) throw new Error('주문 처리 중 오류가 발생했습니다');
+                        return res.json();
+                    })
+                    .then(order => {
+                        if (order && order.id) {
+                            window.location.href = `/order/complete/${order.id}`;
+                        }
+                    })
+                    .catch(err => console.error(err));
+            });
+        */
     });
 </script>
 </body>

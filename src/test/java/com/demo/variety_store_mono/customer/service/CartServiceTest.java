@@ -242,6 +242,7 @@ class CartServiceTest {
         int newQuantity = 5;
 
         CartItem existingItem = new CartItem(dummyCart, dummyProduct, initialQuantity);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(dummyUserCustomer));
         when(cartItemRepository.findById(cartItemId)).thenReturn(Optional.of(existingItem));
 
         // When: 수량 업데이트 요청
@@ -257,14 +258,17 @@ class CartServiceTest {
     void testRemoveCartItem() {
         // Given
         Long customerId = 1L;
-        Long cartItemId = 20L;
-        when(cartItemRepository.existsById(cartItemId)).thenReturn(true);
+        Long cartItemId = 10L;
+
+        CartItem existingItem = new CartItem(dummyCart, dummyProduct, 1);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(dummyUserCustomer));
+        when(cartItemRepository.findById(cartItemId)).thenReturn(Optional.of(existingItem));
 
         // When: CartItem 삭제 요청
         cartService.removeCartItem(customerId, cartItemId);
 
         // Then: existsById와 deleteById가 각각 호출되어야 함
-        verify(cartItemRepository, times(1)).existsById(cartItemId);
+        verify(cartItemRepository, times(1)).findById(cartItemId);
         verify(cartItemRepository, times(1)).deleteById(cartItemId);
     }
 
