@@ -32,7 +32,7 @@ public class ProductController {
     @GetMapping("/new")
     public String productNew(Model model) {
         model.addAttribute("categories", categoryService.getBottomCategories());
-        return "/seller/content/product/product-new";
+        return "seller/content/product/product-new";
     }
 
     /** 상품 등록 API */
