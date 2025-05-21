@@ -25,7 +25,7 @@ public class CartController {
 
         model.addAttribute("cart", cartDetails);
 
-        return "/customer/content/cart/cart-detail";
+        return "customer/content/cart/cart-detail";
     }
 
 }
