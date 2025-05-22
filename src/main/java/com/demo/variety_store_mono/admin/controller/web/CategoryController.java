@@ -33,7 +33,7 @@ public class CategoryController {
     /** 카테고리 목록 조회 페이지 */
     @GetMapping
     public String categoryList(@ModelAttribute SearchCategory searchCategory, Model model,
-                               @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                               Pageable pageable) {
 
         Page<CategorySummary> categoryList = categoryService.getCategorySearchList(searchCategory, pageable);
         model.addAttribute("categoryList", categoryList);

@@ -38,6 +38,7 @@ public class CustomOptionRepositoryImpl implements CustomOptionRepository {
                 .where(
                         optionNameEq(searchOption.getName())
                 )
+                .orderBy(globalOption.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .distinct()

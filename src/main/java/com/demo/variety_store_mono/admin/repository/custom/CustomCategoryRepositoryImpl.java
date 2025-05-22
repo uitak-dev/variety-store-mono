@@ -39,6 +39,7 @@ public class CustomCategoryRepositoryImpl implements CustomCategoryRepository {
                 .where(
                         categoryNameEq(searchCategory.getName())
                 )
+                .orderBy(category.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .distinct()

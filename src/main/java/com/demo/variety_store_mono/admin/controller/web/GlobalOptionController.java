@@ -29,7 +29,7 @@ public class GlobalOptionController {
     /** 옵션 목록 조회 페이지 */
     @GetMapping
     public String optionList(@ModelAttribute SearchOption searchOption, Model model,
-                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                             Pageable pageable) {
 
         Page<GlobalOptionSummary> optionList = globalOptionService.getOptionSearchList(searchOption, pageable);
         model.addAttribute("optionList", optionList);
