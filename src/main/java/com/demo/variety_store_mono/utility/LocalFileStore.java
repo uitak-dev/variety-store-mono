@@ -14,7 +14,7 @@ import java.util.UUID;
 @Component("localFileStore")
 public class LocalFileStore implements FileStore {
 
-    @Value("${file.directory}")
+    @Value("${file.picture.directory}")
     private String fileDir;
 
     @Override

@@ -56,9 +56,12 @@
 
 <body class="d-flex align-items-center justify-content-center vh-100 bg-light">
 <div class="container">
-    <h2 class="text-center mb-5">도메인을 선택하세요</h2>
-    <div class="row gy-4">
+    <h2 class="text-center mb-2">도메인을 선택하세요</h2>
+    <p class="text-center text-muted small mb-4">
+        (사이트 이용 가이드 pdf 파일을 꼭 확인해주세요.)
+    </p>
 
+    <div class="row gy-4">
         <!-- 소비자 도메인 -->
         <div class="col-md-4">
             <a th:href="@{/public/home}" class="text-decoration-none">
@@ -110,6 +113,13 @@
             </a>
         </div>
 
+    </div>
+
+    <div class="text-center my-5">
+        <a th:href="@{/api/files/download/variety-store_guideline.pdf}"
+           download class="btn btn-primary rounded-pill px-4 py-2 shadow-lg">
+            📄 사이트 이용 가이드(pdf) 다운로드
+        </a>
     </div>
 </div>
 </body>
